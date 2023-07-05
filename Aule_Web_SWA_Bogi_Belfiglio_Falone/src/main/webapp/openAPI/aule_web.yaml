@@ -1,0 +1,572 @@
+openapi: 3.0.1
+info:
+  title: Aule Web
+  version: '1.0'
+servers:
+  - url: 'http://localhost:8080/AuleWeb'
+paths:
+  '/aule_web/auth/login':
+    post:
+      operationId: doLogin
+      tags:
+        - Autenticazione
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: successful login
+          content:
+            text/plain:
+              schema:
+                type: string
+          headers:
+            Authorization:
+              schema:
+                type: string
+                pattern: 'Bearer [a-z0-9A-Z-]+'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          description: errore nel login
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Non è stato possibile effettuare il login"
+          
+    
+  '/aule_web/auth/logout':
+    delete:
+      operationId: doLogout
+      tags: 
+        - Autenticazione      
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: successful logout
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          description: errore nel logout
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Non è stato possibile effettuare il logout"
+          
+  '/aule_web/aule/{id_aula}/attachment':
+    get:
+      operationId: getCSV
+      tags:
+        - Operazioni su file CSV
+      parameters:
+        - $ref: '#/components/parameters/id_aula'
+      responses:
+        '200':
+          description: CSV ottenuto con successo
+          content:
+            text/csv:
+              schema:
+                type: string
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          description: errore nell'esportazione del file CSV
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Non è stato possibile esportare il file CSV"
+  
+  '/aule_web/aule':
+    post:
+      operationId: doCSV
+      tags:
+        - Operazioni su file CSV
+      requestBody:
+        content:
+          text/csv:
+            schema:
+              type: string
+      responses:
+        '201':
+          description: invio avvenuto con successo
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: errore nell'importazione del file CSV
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Non è stato possibile importare il file CSV"
+
+  '/aule_web/gruppi/{id_gruppo}/aule':
+    parameters:
+      - $ref: '#/components/parameters/id_gruppo'
+    post:
+      operationId: addAula
+      tags:
+        - Operazioni di inserimento
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Aula'
+      responses:
+        '201':
+          description: created
+          headers:
+            location:
+              schema:
+                type: string
+                format: uri
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uri
+        '500':
+          description: errore nell'inserimento di una nuova aula
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Non è stato possibile inserire una nuova aula"
+  
+  '/aule_web/gruppi/{id_gruppo}/aule/{id_aula}':
+    parameters:
+      - $ref: '#/components/parameters/id_gruppo'
+      - $ref: '#/components/parameters/id_aula'
+    post:
+      operationId: assignmentAulaToGruppo
+      tags:
+        - item aula
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Aula'
+      responses:
+        '201':
+          description: created
+          headers:
+            location:
+              schema:
+                type: string
+                format: uri
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uri
+        '500':
+          description: errore nell' assegnamento
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Non è stato possibile assegnare un'aula ad un gruppo"
+        
+  '/aule_web/aule/{id_aula}':
+    parameters:
+      - $ref: '#/components/parameters/id_aula'
+    get:
+      operationId: getAula
+      tags:
+        - item aula
+      responses:
+        '200':
+          description: Lettura delle informazioni di base relative ad un'aula
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Aula'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          description: errore nella lettura di informazioni relative all'aula
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Non è stato possibile leggere le informazioni i base relative ad un'aula"
+                
+  '/aule_web/aule/{id_aula}/attrezzature':
+    parameters:
+      - $ref: '#/components/parameters/id_aula'
+    get:
+      operationId: getAttrezzature
+      tags:
+        - item aula
+      responses:
+        '200':
+          description: Lista delle attrezzature presenti in un'aula
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListaAttrezzatura'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          description: errore nella lettura delle attrezzature presenti nell'aula
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Non è stato possibile leggere le attrezzature presenti nell'aula"
+                
+  '/aule_web/eventi':
+    post:
+      operationId: addEvento
+      tags:
+        - Operazioni di inserimento
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Evento'
+      responses:
+        '201':
+          description: created
+          headers:
+            location:
+              schema:
+                type: string
+                format: uri
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uri
+        '500':
+          description: errore nell'inserimento di un nuovo evento
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Non è stato possibile inserire un nuovo evento"
+    put:
+      operationId: updateEvento
+      tags:
+        - item evento
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Evento'
+      responses:
+        '204':
+          description: no content
+        '500':
+          description: errore nella modifica di un'evento
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Non è stato possibile modificare l'evento"
+    
+    get:
+      operationId: getCurrentEvento
+      tags:
+        - collezione eventi
+      responses:
+        '200':
+          description: Lista degli eventi attuali e quelli delle prossime tre ore
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListaEventi'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          description: errore nella lettura degli eventi correnti
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Non è stato possibile leggere gli eventi attuali e quelli delle prossime tre ore"
+    
+  '/aule_web/eventi/{id_evento}':  
+    parameters:
+      - $ref: '#/components/parameters/id_evento'
+    get:
+      operationId: getEvento
+      tags:
+        - item evento
+      responses:
+        '200':
+          description: Lettura di informazioni su un evento
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Evento'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          description: errore nella lettura delle informazioni di un'evento
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Non è stato possibile leggere le informazioni dell'evento"
+                
+  '/aule_web/aule/{id_aula}/eventi/{giorno_inizio}/{giorno_fine}':  
+    parameters:
+      - $ref: '#/components/parameters/id_aula'
+      - $ref: '#/components/parameters/giorno_inizio'
+      - $ref: '#/components/parameters/giorno_fine'
+    get:
+      operationId: getEventiInAWeekByAula
+      tags:
+        - collezione eventi
+      responses:
+        '200':
+          description: Lista degli eventi associati ad una specifica aula in una determinata settimana
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListaEventi'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          description: errore nella lettura degli eventi associati ad una specifica aula in una determinata settimana
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Non è stato possibile leggere gli eventi associati ad una specifica aula in una determinata settimana"
+    
+  '/aule_web/eventi/{data_inizio}/{data_fine}':
+    parameters:
+      - $ref: '#/components/parameters/data_inizio'
+      - $ref: '#/components/parameters/data_fine'
+    get:
+      operationId: getEventiInTime
+      tags:
+        - Collezione eventi
+      responses:
+        '200':
+          description: Esportazione di tutti gli eventi relativi ad un certo intervallo di tempo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListaEventi'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          description: errore nell'importazione degli eventi relativi ad un certo intervallo di tempo
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Non è stato possibile importare gli eventi relativi ad un certo intervallo di tempo"
+    
+    
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: internalToken
+      
+  responses:
+    
+    NotFound:
+      description: elemento non trovato
+      content:
+        text/plain:
+          schema:
+            type: string
+            example: "Elemento inesistente"
+    
+    UnauthorizedError:
+      description: bearer token mancante o non valido
+    
+
+
+  parameters:
+    id_gruppo:
+      name: id_gruppo
+      in: path
+      required: true
+      schema:
+        type: string
+    
+    id_aula:
+      name: id_aula
+      in: path
+      required: true
+      schema:
+        type: string
+  
+    id_evento:
+      name: id_evento
+      in: path
+      required: true
+      schema:
+        type: string
+    
+    giorno_inizio:
+      name: giorno_inizio
+      in: path
+      required: true
+      schema:
+        type: string
+    
+    giorno_fine:
+      name: giorno_fine
+      in: path
+      required: true
+      schema:
+        type: string
+    
+    data_inizio:
+      name: data_inizio
+      in: path
+      required: true
+      schema:
+        type: string
+            
+    data_fine:
+      name: data_fine
+      in: path
+      required: true
+      schema:
+        type: string
+        
+  schemas:
+  
+    Aula:
+      type: object
+      properties:
+        responsabile:
+          $ref: '#/components/schemas/Responsabile'
+        nome:
+          type: string
+        luogo:
+          type: string
+        edificio:
+          type: string
+        piano:
+          type: integer
+          format: int32
+        capienza:
+          type: integer
+          format: int32
+        numeroPreseElettriche:
+          type: integer
+          format: int32
+        numeroPreseDiRete:
+          type: integer
+          format: int32
+        noteGeneriche:
+          type: string
+
+    ListaAttrezzatura:
+      type: array
+      items:
+        type: object
+        properties:
+          aula:
+            $ref: '#/components/schemas/Aula'
+          nome:
+            type: string
+          numeroDiSerie:
+            type: integer
+            format: int32
+            
+    Evento:
+      type: object
+      properties:
+        nome:
+          type: string
+        descrizione:
+          type: string
+        tipologia:
+          type: string
+        data:
+          type: string
+        oraInizio:
+          type: string
+        oraFine:
+          type: string
+        ricorrenza:
+          type: boolean
+        dataFineRicorrenza:
+          type: string
+        Corso:
+          $ref: '#/components/schemas/Corso'
+        Aula:
+          $ref: '#/components/schemas/Aula'
+        Responsabile:
+          $ref: '#/components/schemas/Responsabile'
+    
+    ListaEventi:
+      type: array
+      items:
+        type: object
+      properties:
+        nome:
+          type: string
+        descrizione:
+          type: string
+        tipologia:
+          type: string
+        data:
+          type: string
+        oraInizio:
+          type: string
+        oraFine:
+          type: string
+        ricorrenza:
+          type: boolean
+        dataFineRicorrenza:
+          type: string
+        Corso:
+          $ref: '#/components/schemas/Corso'
+        Aula:
+          $ref: '#/components/schemas/Aula'
+        Responsabile:
+          $ref: '#/components/schemas/Responsabile'
+          
+    Corso:
+      type: object
+      properties:
+        nome:
+          type: string
+        tipoLaurea:
+          type: string
+        corsoDiLaurea:
+          type: string
+        annoDiFrequentazione:
+          type: integer
+          format: int32
+    
+    Responsabile:
+      type: object
+      properties:
+        nome:
+          type: string
+        cognome:
+          type: string
+        codiceFiscale:
+          type: string
+        email:
+          type: string
+
+          
+      
+    
+  
