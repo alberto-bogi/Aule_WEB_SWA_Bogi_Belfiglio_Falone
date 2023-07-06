@@ -1,0 +1,167 @@
+p{
+    font-family: sans-serif;
+}
+
+.container{
+    width:100%;
+    margin:0;
+    padding:0;
+    font-family: sans-serif;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.header.color{
+    background-color: #add8e6;
+}
+
+.container .column, .container .columns{
+    float: left;
+    display: inline;
+}
+
+.container .one.column{
+    width:10%;
+    height:100%;
+    margin-right: 1%;
+
+
+}
+.container .two.columns{
+    width:19%;
+    height:100%;
+    padding-left: 1%;
+}
+
+.container .three.columns{
+    width:29%;
+    height:100%;
+    padding-left:1%;
+}
+
+.container .four.columns{
+    width: 40%;
+    height:100%;
+}
+
+.container .five.columns{
+    width: 50%;
+    height:100%;
+}
+
+.container .six.columns{
+    width: 57%;
+    height:100%;
+}
+
+.container .seven.columns{
+    width: 69%;
+    padding-right: 1%;
+}
+
+.container .eigth.columns{
+    width: 79%;
+    height:100%;
+    padding-right:1%;
+}
+
+.container .nine.columns{
+    width: 90%;
+    height:100%;
+}
+
+.container .ten.columns{
+    width: 100%;
+    height:100%;
+}
+
+.login{
+    text-align: right;
+}
+
+.login button{
+    background-color: #9c9c9c;
+    border-color: black;
+    color: white;
+    height: 25px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.export{
+    text-align: right;
+}
+
+.export button{
+    padding: 0;
+    display: inline-block;
+    width: auto; /* Imposta la larghezza automaticamente */
+    height: auto; /* Imposta l'altezza automaticamente */
+    background-color: #9c9c9c;
+    border:1px solid black;
+    border-radius: 3px;
+    cursor:pointer;
+}
+
+.export button:hover{
+    background-color: white;
+}
+
+
+
+
+.title.header{
+    font-size: x-large;
+    color: white;
+    text-shadow: -1.5px 0 #000000, 0 1.5px #000000, 1.5px 0 #000000, 0 -1.5px #000000;
+}
+
+
+.cerca p{
+    margin-left: 1.5%;
+    font-weight: bold;
+    font-size: medium;
+}
+
+.cerca input{
+    border-color: black;
+    width: 40%;
+    padding: 0.4%;
+    
+}
+
+.cerca img{
+    width: 4%;
+    vertical-align: middle;
+}
+
+.cerca button{
+    font-weight: bold;
+    font-size: medium;
+    color:white;
+    background-color: #9c9c9c;
+}
+
+.cerca .search{
+    display: flex;
+    align-items: center;
+}
+
+.cerca label{
+    display: inline-block;
+    line-height: 1;
+    vertical-align: middle;
+    width:100%;
+    margin-left:1%;
+    margin-bottom: 2%;
+}
+
+.cerca .container{
+    padding-bottom:1%;
+    border-bottom: 2px solid black;
+}
+
+
+

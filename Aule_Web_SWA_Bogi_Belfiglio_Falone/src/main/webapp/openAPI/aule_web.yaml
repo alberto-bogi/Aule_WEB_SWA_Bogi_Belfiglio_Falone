@@ -278,7 +278,7 @@ paths:
                 example: "Non è stato possibile modificare l'evento"
     
     get:
-      operationId: getCurrentEvento
+      operationId: getCurrentEventi
       tags:
         - collezione eventi
       responses:

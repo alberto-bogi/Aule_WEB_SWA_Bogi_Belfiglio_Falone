@@ -4,6 +4,7 @@
  */
 package org.project.aule.web.swa.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,7 +16,7 @@ import org.project.aule.web.swa.model.enumerable.Ricorrenza;
 import org.project.aule.web.swa.model.enumerable.Tipologia;
 import org.project.aule.web.swa.resources.database.DBConnection;
 
-public class Evento extends DBConnection {
+public class Evento{
 
     private String nome;
     private String descrizione;
@@ -30,7 +31,6 @@ public class Evento extends DBConnection {
     private int responsabileKey;
 
     public Evento() {
-        super();
         nome = "";
         descrizione = "";
         tipologia = null;
@@ -80,7 +80,7 @@ public class Evento extends DBConnection {
     public Corso getCorso() throws Exception {
         if (corsoKey > 0) {
             try {
-                PreparedStatement corsoById = this.getConnection().prepareStatement("SELECT * FROM Corso WHERE ID = ?");
+                PreparedStatement corsoById = DBConnection.getConnection().prepareStatement("SELECT * FROM Corso WHERE ID = ?");
                 corsoById.setInt(1, corsoKey);
                 try ( ResultSet rs = corsoById.executeQuery()) {
                     if (rs.next()) {
@@ -97,7 +97,7 @@ public class Evento extends DBConnection {
     public Aula getAula() throws Exception {
         if (aulaKey > 0) {
             try {
-                PreparedStatement aulaById = this.getConnection().prepareStatement("SELECT * FROM Aula WHERE ID = ?");
+                PreparedStatement aulaById = DBConnection.getConnection().prepareStatement("SELECT * FROM Aula WHERE ID = ?");
                 aulaById.setInt(1, aulaKey);
                 try ( ResultSet rs = aulaById.executeQuery()) {
                     if (rs.next()) {
@@ -114,7 +114,7 @@ public class Evento extends DBConnection {
     public Responsabile getResponsabile() throws Exception {
         if (responsabileKey > 0) {
             try {
-                PreparedStatement responsabileById = this.getConnection().prepareStatement("SELECT * FROM Responsabile WHERE ID = ?");
+                PreparedStatement responsabileById = DBConnection.getConnection().prepareStatement("SELECT * FROM Responsabile WHERE ID = ?");
                 responsabileById.setInt(1, responsabileKey);
                 try ( ResultSet rs = responsabileById.executeQuery()) {
                     if (rs.next()) {
@@ -218,7 +218,7 @@ public class Evento extends DBConnection {
 
     public static Evento createEvento(ResultSet rs) throws Exception {
         try {
-            Evento evento = null;
+            Evento evento = new Evento();
             evento.setDataEvento((rs.getDate("data_evento").toLocalDate()));
             evento.setNome(rs.getString("nome"));
             evento.setDescrizione(rs.getString("descrizione"));
@@ -283,7 +283,7 @@ public class Evento extends DBConnection {
 
             return evento;
         } catch (SQLException ex) {
-            throw new Exception("Errore nella creazione dell'oggetto evento");
+            throw new Exception(ex);
         }
 
     }

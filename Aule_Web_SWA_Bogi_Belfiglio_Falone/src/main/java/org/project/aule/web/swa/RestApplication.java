@@ -7,20 +7,24 @@ package org.project.aule.web.swa;
 import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import org.project.aule.web.swa.jackson.ObjectMapperContextResolver;
 import org.project.aule.web.swa.resources.EventiResources;
+import org.project.aule.web.swa.security.AuthLoggedFilter;
+import org.project.aule.web.swa.security.CORSFilter;
 
 /**
  *
  * @author acer
  */
-@ApplicationPath("aule_web")
+@ApplicationPath("rest")
 public class RestApplication extends Application{
 
     private final Set<Class<?>> classes;
 
-    public RESTApplication() {
+    public RestApplication() {
         HashSet<Class<?>> c = new HashSet<Class<?>>();
         //aggiungiamo tutte le *root resurces* (cioè quelle
         //con l'annotazione Path) che vogliamo pubblicare
@@ -41,9 +45,7 @@ public class RestApplication extends Application{
         //aggiungiamo il filtro che gestisce gli header CORS
         c.add(CORSFilter.class);
 
-        //esempi di exception mapper, che mappano in Response eccezioni non già derivanti da WebApplicationException
-        c.add(AppExceptionMapper.class);
-        c.add(JacksonExceptionMapper.class);
+        
 
         classes = Collections.unmodifiableSet(c);
     }
@@ -59,4 +61,4 @@ public class RestApplication extends Application{
 }
 
     
-}
+

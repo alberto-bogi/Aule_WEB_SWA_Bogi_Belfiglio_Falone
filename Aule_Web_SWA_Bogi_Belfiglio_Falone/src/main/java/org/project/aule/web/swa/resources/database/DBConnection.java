@@ -4,36 +4,27 @@
  */
 package org.project.aule.web.swa.resources.database;
 
+import com.mysql.cj.jdbc.ConnectionImpl;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
+
 
 /**
  *
  * @author acer
  */
 public class DBConnection {
-    private Connection connection;
 
-    public DBConnection() {
-        this.connection = null;
-        String url = "jdbc:mysql://localhost/aule_web?serverTimezone=UTC";
-        String username = "root";
-        String password = "password";
+    private static final String URL = "jdbc:mysql://localhost:3306/aule_web";
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "password";
 
-        try {
-            this.connection = DriverManager.getConnection(url, username, password);
-            System.out.println("Connessione al database MySQL stabilita con successo!");
-        } catch (SQLException e) {
-            System.out.println("Errore durante la connessione al database MySQL: " + e.getMessage());
-        }
+
+    public static Connection getConnection() throws SQLException, ClassNotFoundException {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        return DriverManager.getConnection(URL, USERNAME, PASSWORD);
     }
-    
-    public Connection getConnection(){
-        return this.connection;
-    }
-
 }
+
+

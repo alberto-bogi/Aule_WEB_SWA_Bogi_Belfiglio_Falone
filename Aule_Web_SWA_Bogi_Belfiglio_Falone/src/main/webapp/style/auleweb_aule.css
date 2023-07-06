@@ -1,0 +1,40 @@
+
+#popupSelectAula{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #c0c0c0;
+  
+  border-radius: 2px;
+  border: 1px solid black;
+  height: 50%;
+  width:70%;
+  text-align: center;
+}
+
+#popupSelectAula p{
+    font-size: large;
+    font-weight: bold;  
+}
+
+#popupSelectAula .left{
+    text-align: left;
+    padding-left: 2%;
+    padding-top:2%;
+}
+
+#popupSelectAula .left button{
+    height: 40px;
+    width: 40px;
+    border-radius: 0px;
+    border-color: black;
+    background-color: white; 
+    font-weight: bold;
+    font-size: large;
+    color: red;
+    cursor: pointer;
+}
+
+
+

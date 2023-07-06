@@ -7,8 +7,8 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import java.util.Calendar;
 import jakarta.ws.rs.ext.ContextResolver;
 import jakarta.ws.rs.ext.Provider;
+import java.util.List;
 import org.project.aule.web.swa.model.Evento;
-import org.univaq.swa.fattura.fatturarest.model.Fattura;
 
 /**
  *
@@ -37,10 +37,6 @@ public class ObjectMapperContextResolver implements ContextResolver<ObjectMapper
         //configuriamo i nostri serializzatori custom
         customSerializer.addSerializer(Calendar.class, new JavaCalendarSerializer());
         customSerializer.addDeserializer(Calendar.class, new JavaCalendarDeserializer());
-        //
-        customSerializer.addSerializer(Evento.class, new EventoSerializer());
-        customSerializer.addDeserializer(Evento.class, new FatturaDeserializer());
-        //
 
         mapper.registerModule(customSerializer);
 

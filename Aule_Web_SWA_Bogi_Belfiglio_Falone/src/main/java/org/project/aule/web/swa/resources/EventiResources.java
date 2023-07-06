@@ -9,6 +9,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import java.net.URI;
@@ -16,8 +17,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import org.project.aule.web.swa.exception.RESTWebApplicationException;
 import org.project.aule.web.swa.model.Aula;
 import org.project.aule.web.swa.model.Corso;
@@ -30,37 +33,34 @@ import org.project.aule.web.swa.resources.database.DBConnection;
  * @author acer
  */
 @Path("eventi")
-public class EventiResources extends DBConnection {
+public class EventiResources {
 
     @GET
-    @Produces("application/json")
-    public Response getCurrentEventi(
-            @Context UriInfo uriinfo
-    ) {
-        List<String> urlEventi = new ArrayList();
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCurrentEventi() {
+        Map<Integer, Map<String, Object>> response = new HashMap();
         try {
-            PreparedStatement idCurrentEventi = this.getConnection().prepareStatement("SELECT * FROM Evento WHERE data_evento = CURDATE() AND ((ora_inizio BETWEEN (CURTIME() - INTERVAL 15 MINUTE) AND (CURTIME() + INTERVAL 3 HOUR)) "
+            PreparedStatement currentEventi = DBConnection.getConnection().prepareStatement("SELECT * FROM Evento WHERE data_evento = CURDATE() AND ((ora_inizio BETWEEN (CURTIME() - INTERVAL 15 MINUTE) AND (CURTIME() + INTERVAL 3 HOUR)) "
                     + "OR(CURTIME() BETWEEN ora_inizio AND ora_fine))ORDER BY data_evento, ora_inizio;");
-            List<Integer> idEventiCorrenti = new ArrayList();
-            try ( ResultSet rs = idCurrentEventi.executeQuery()) {
-                while (rs.next()) {
-                    idEventiCorrenti.add(rs.getInt("ID"));
-                }
-                Iterator<Integer> keys = idEventiCorrenti.iterator();
-                while (keys.hasNext()) {
-                    Integer eventoKey = keys.next();
-                    URI uri = uriinfo.getBaseUriBuilder()
-                            .path(getClass())
-                            .path(getClass(), "getEvento")
-                            .build(eventoKey);
-                    urlEventi.add(uri.toString());
-                }
 
+            try ( ResultSet rs = currentEventi.executeQuery()) {
+                while (rs.next()) {
+                    Evento evento = Evento.createEvento(rs);
+                    Map<String, Object> item = new HashMap();
+                    item.put("nome", evento.getNome());
+                    item.put("aula", evento.getAula().getNome());
+                    item.put("ora_inizio", evento.getOraInizio().toString());
+                    item.put("ora_fine", evento.getOraFine().toString());
+                    
+                    response.put(rs.getInt("ID"), item);
+                }
             }
-        } catch (SQLException ex) {
-            throw new RESTWebApplicationException(ex);
+        } catch (SQLException | ClassNotFoundException ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
+        } catch (Exception ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
         }
-        return Response.ok(urlEventi).build();
+        return Response.ok(response).build();
     }
 
     @Path("eventi/{id_evento: [0-9]+}")
@@ -72,7 +72,7 @@ public class EventiResources extends DBConnection {
             Aula aula = null;
             Corso corso = null;
             Responsabile responsabile = null;
-            PreparedStatement eventoById = this.getConnection().prepareStatement("SELECT * FROM Evento WHERE ID = ?");
+            PreparedStatement eventoById = DBConnection.getConnection().prepareStatement("SELECT * FROM Evento WHERE ID = ?");
 
             //ricaviamo l'evento dal suo ID
             eventoById.setInt(1, eventoKey);
@@ -84,7 +84,7 @@ public class EventiResources extends DBConnection {
             }
             return new EventoResource(evento);
         } catch (Exception ex) {
-            throw new RESTWebApplicationException(ex);
+            throw new RESTWebApplicationException(ex.getMessage());
         }
     }
 }

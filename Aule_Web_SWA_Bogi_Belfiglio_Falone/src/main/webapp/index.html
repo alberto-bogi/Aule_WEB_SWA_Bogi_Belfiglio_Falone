@@ -1,22 +1,106 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Start Page</title>
+        <title>Aule web</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
-
-
+        <link rel="stylesheet" href="style/auleweb.css"  type="text/css" />
+        <link rel="stylesheet" href="style/auleweb_aule.css"  type="text/css" />
+        <link rel="stylesheet" href="style/auleweb_eventi.css"  type="text/css" />
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <div class="container header color">
+            <div class="three columns">
+                <p class="title header">AULE WEB</p>
+            </div>
+            <div class="six columns">
+                <div class="export"> 
+                    <button type="button" onclick="myFunction()">
+                        <img src="images/calendar.png" alt="calendar">
+                    </button>
 
-        <form id="getCurrentEventi">
-            <button type="submit">cerca</button> 
-            <table id="tableEventiCorrenti">
+                </div>
+            </div>
 
-            </table>
-        </form>
+            <div class="one column">
+                <div class="login">
+                    <button type="button" onclick="">LOGIN</button>
+                </div>
+            </div>
+        </div>
 
-        <script src="script/aule_web.js"></script>
+        <div class="cerca">
+            <div class="container">
+                <div class="five columns">
+                    <p>Evento:</p>
+                    <form action="get">
+                        <label>
+                            <img src="images/search.png" alt="icona_search" />
+
+                            <input type="text" name="search" placeholder="nome evento..." />
+                            <button type="button">cerca</button> 
+                        </label>
+
+                    </form>
+                </div>
+                <div class="five columns">
+                    <p>Aula:</p>
+                    <form action="get">
+                        <label>
+                            <img src="images/search.png" alt="icona_search" />
+
+                            <input type="text" name="search" placeholder="nome aula..." />
+                            <button type="button">cerca</button> 
+                        </label>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="eventi correnti">
+            <label>vedi gli eventi attuali:</label>
+            <button type="button" onclick="getCurrentEventi()">cerca</button> 
+        </div>
+
+        <div class="container">
+            <div class="ten columns">
+               
+                    <div id="tableEventi">
+
+
+                    </div>
+            </div>
+        </div>
+
+
+
+
+
+        <div id="popupSelectAula">
+            <div class="left">
+                <div class="one column">
+                    <button type="button" onclick="fadeOutPopupSelectAula()">X</button>
+                </div>
+            </div>
+            <p>SELEZIONA AULA</p>
+            <form action="" method="get">
+                <input type="text" name="search" placeholder="nome aula..." />
+            </form>
+        </div>
+
+
+
+
+
+
+
+
+        <script src="script/auleweb_eventi.js"></script>
+        <script src="script/auleweb_aule.js"></script>
     </body>
 </html>
