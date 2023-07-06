@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="style/auleweb.css"  type="text/css" />
         <link rel="stylesheet" href="style/auleweb_aule.css"  type="text/css" />
         <link rel="stylesheet" href="style/auleweb_eventi.css"  type="text/css" />
+        <link rel="stylesheet" href="style/login.css"  type="text/css" />
     </head>
     <body>
         <div class="container header color">
@@ -24,7 +25,7 @@
 
             <div class="one column">
                 <div class="login">
-                    <button type="button" onclick="">LOGIN</button>
+                    <button type="button" onclick="showLogin()">LOGIN</button>
                 </div>
             </div>
         </div>
@@ -75,6 +76,20 @@
 
                     </div>
             </div>
+        </div>
+        
+        <div id="popupLogin">
+            <div class="pageLogin">
+                <p class="titoloLogin">Login</p>
+                <form action="" method="get">
+                    <label class="labelLogin">Username:</label><br>
+                    <input type="text" class="inputLogin" name="username" placeholder="Inserisci il tuo username" required /><br>
+                    <label class="labelLogin">Password:</label><br>
+                    <input type="password" class="inputLogin" name="password" placeholder="Inserisci la tua password" required /><br>
+                    <button type="submit" class="buttonLogin" name="login">Accedi</button>
+                </form>
+            </div>
+            
         </div>
 
 

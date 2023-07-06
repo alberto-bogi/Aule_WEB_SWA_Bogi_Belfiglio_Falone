@@ -1,0 +1,37 @@
+.pageLogin{
+    position: fixed;
+    top: 9%;
+    right: 1%;
+    padding: 2%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    box-shadow: 0 0 20px 5px #add8e6;
+}
+
+.inputLogin{
+    margin-bottom: 10%;
+}
+
+.labelLogin{
+    margin-bottom: 5%;
+}
+
+.titoloLogin{
+    text-align: center;
+    margin-top: 5%;
+    font-size: x-large;
+    color: #add8e6;
+    text-shadow: -1.5px 0 #000000, 0 1.5px #000000, 1.5px 0 #000000, 0 -1.5px #000000;
+}
+
+.buttonLogin{
+    background-color: #add8e6;
+    border-radius: 5px;
+}
+
+.buttonLogin:hover{
+    background-color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}

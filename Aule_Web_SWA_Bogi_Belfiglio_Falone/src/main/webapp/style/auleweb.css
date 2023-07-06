@@ -88,6 +88,12 @@ p{
     height: 25px;
     border-radius: 4px;
     font-weight: bold;
+    cursor: pointer;
+}
+
+.login button:hover{
+    background-color: white;
+    color: black;
 }
 
 .export{
