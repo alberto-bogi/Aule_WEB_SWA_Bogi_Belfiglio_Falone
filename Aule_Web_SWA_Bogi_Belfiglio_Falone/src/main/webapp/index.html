@@ -34,12 +34,12 @@
             <div class="container">
                 <div class="five columns">
                     <p>Evento:</p>
-                    <form action="get">
+                    <form action="get" id="search_evento">
                         <label>
                             <img src="images/search.png" alt="icona_search" />
 
-                            <input type="text" name="search" placeholder="nome evento..." />
-                            <button type="button">cerca</button> 
+                            <input type="text" name="searchEvento" placeholder="nome evento..." />
+                            <button type="button" onclick="showEventInformationsByName()">cerca</button> 
                         </label>
 
                     </form>

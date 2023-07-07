@@ -3,7 +3,7 @@ $(document).ready(function () {
     $("#popupLogin").hide();
 });
 
-function showAulaInformationsBy
+
 
 function showAulaInformationsByName(){
     let form = document.getElementById("search_aula");
@@ -12,7 +12,7 @@ function showAulaInformationsByName(){
     $.ajax({
        url: "rest/aule/" + search,
        method: "GET",
-       success: 
+      
     });
 }
 

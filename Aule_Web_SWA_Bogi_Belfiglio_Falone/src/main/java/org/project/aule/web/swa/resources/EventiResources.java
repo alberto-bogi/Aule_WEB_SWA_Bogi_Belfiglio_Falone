@@ -74,13 +74,13 @@ public class EventiResources {
             Evento evento = new Evento();
             Map<String, Object> response = new HashMap<>();
             PreparedStatement eventoById = DBConnection.getConnection().prepareStatement("SELECT * FROM Evento WHERE ID = ?");
-            
+
             //ricaviamo l'evento dal suo ID
             eventoById.setInt(1, eventoKey);
             try ( ResultSet rs = eventoById.executeQuery()) {
                 if (rs.next()) {
                     evento = Evento.createEvento(rs);
-                    
+
                     response.put("nome", evento.getNome());
                     response.put("data", evento.getDataEvento().toString());
                     response.put("ora_inizio", evento.getOraInizio().toString());
@@ -90,13 +90,13 @@ public class EventiResources {
                     response.put("tipo", evento.getTipologia().toString());
                     if (evento.getCorsoKey() > 0) {
                         response.put("corso", evento.getCorso().getNome());
-                    }else{
+                    } else {
                         response.put("corso", "non specificato");
                     }
                     response.put("ricorrenza", evento.getRicorrenza().toString());
                     if (!"NESSUNA".equals(evento.getRicorrenza().toString())) {
                         response.put("data_ricorrenza", evento.getDataFineRicorrenza().toString());
-                    }else{
+                    } else {
                         response.put("data_ricorrenza", "non definita");
                     }
                 }
@@ -106,4 +106,49 @@ public class EventiResources {
             throw new RESTWebApplicationException(ex.getMessage());
         }
     }
+
+    @Path("{name_evento: [a-zA-Z0-9]+}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getEventoByName(
+            @PathParam("name_evento") String nome
+    ) {
+        try {
+            Evento evento = new Evento();
+            Map<String, Object> response = new HashMap<>();
+            PreparedStatement eventoByName = DBConnection.getConnection().prepareStatement("SELECT * FROM Evento WHERE nome = ?");
+
+            //ricaviamo l'evento dal suo nome
+            eventoByName.setString(1, nome.toUpperCase());
+            try ( ResultSet rs = eventoByName.executeQuery()) {
+                if (rs.next()) {
+                    evento = Evento.createEvento(rs);
+
+                    response.put("nome", evento.getNome());
+                    response.put("data", evento.getDataEvento().toString());
+                    response.put("ora_inizio", evento.getOraInizio().toString());
+                    response.put("ora_fine", evento.getOraFine().toString());
+                    response.put("aula", evento.getAula().getNome());
+                    response.put("responsabile", evento.getResponsabile().getEmail());
+                    response.put("tipo", evento.getTipologia().toString());
+                    if (evento.getCorsoKey() > 0) {
+                        response.put("corso", evento.getCorso().getNome());
+                    } else {
+                        response.put("corso", "non specificato");
+                    }
+                    response.put("ricorrenza", evento.getRicorrenza().toString());
+                    if (!"NESSUNA".equals(evento.getRicorrenza().toString())) {
+                        response.put("data_ricorrenza", evento.getDataFineRicorrenza().toString());
+                    } else {
+                        response.put("data_ricorrenza", "non definita");
+                    }
+                }
+            }
+            return Response.ok(response).build();
+        } catch (Exception ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
+        }
+    }
+
 }
+
