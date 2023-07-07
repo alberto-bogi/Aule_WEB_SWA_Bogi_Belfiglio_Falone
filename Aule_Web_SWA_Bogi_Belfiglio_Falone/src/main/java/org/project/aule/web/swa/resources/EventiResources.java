@@ -107,6 +107,7 @@ public class EventiResources {
         }
     }
 
+
     @Path("{name_evento: [a-zA-Z0-9]+}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -123,7 +124,6 @@ public class EventiResources {
             try ( ResultSet rs = eventoByName.executeQuery()) {
                 if (rs.next()) {
                     evento = Evento.createEvento(rs);
-
                     response.put("nome", evento.getNome());
                     response.put("data", evento.getDataEvento().toString());
                     response.put("ora_inizio", evento.getOraInizio().toString());

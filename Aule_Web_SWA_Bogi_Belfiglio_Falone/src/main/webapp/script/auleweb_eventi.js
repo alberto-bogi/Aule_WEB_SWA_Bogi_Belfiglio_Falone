@@ -31,6 +31,39 @@ function getCurrentEventi() {
     });
 }
 
+function showEventInformationsByName() {
+    let form = document.getElementById("search_evento");
+    let search = form.elements["searchEvento"].value;
+    $.ajax({
+        url: "rest/eventi/" + search,
+        method: "GET",
+        success: function (response) {
+            $("#popupEvento").empty();
+            let eventContent =
+                    "<h2>INFORMAZIONI</h2>" +
+                    "<p>nome: " + response["nome"].toLowerCase() + "</p>" +
+                    "<p>data: " + response["data"] + "</p>" +
+                    "<p>intervallo: " + response["ora_inizio"] + " - " + response["ora_fine"] + "</p>" +
+                    "<p>aula: " + response["aula"].toLowerCase() + "</p>" +
+                    "<p>responsabile: " + response["responsabile"].toLowerCase() + "</p>" +
+                    "<p>tipologia :" + response["tipo"].toLowerCase() + "</p>";
+            if (response["tipo"] === "LEZIONE" || response["tipo"] === "ESAME" || response["tipo"] === "PARZIALE") {
+                eventContent += "<p>corso: " + response["corso"].toLowerCase() + "</p>";
+            }
+            eventContent += "<p>ricorrenza: " + response["ricorrenza"].toLowerCase() + "</p>";
+            if (response["ricorrenza"] !== "NESSUNA") {
+                eventContent += "<p>intervallo ricorrenza: " + response["data"] + " - " + response["data_ricorrenza"] + "</p>";
+            }
+
+            $("#popupEvento").append(eventContent);
+            $("#popupEvento").fadeIn(1000);
+        },
+        error: function (xhr, status, error) {
+            $("#tableEventi").append(xhr.responseText);
+        }
+    });
+}
+
 
 //funzione per visualizzazione informazioni evento
 function showEventInformations(id) {
