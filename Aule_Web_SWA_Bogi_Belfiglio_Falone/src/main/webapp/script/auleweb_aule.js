@@ -1,4 +1,4 @@
-$(document).ready(function(){
+$(document).ready(function () {
     $("#popupSelectAula").hide();
     $("#popupLogin").hide();
 });
@@ -13,10 +13,13 @@ function fadeInPopupSelectAula() {
 
 }
 
-function showLogin(){
-    $("#popupLogin").fadeToggle(1000);
+function fadeInPopupLogin() {
+    $("#popupLogin").fadeIn(800);
 }
 
+function fadeOutPopupLogin() {
+    $("#popupLogin").fadeOut(800);
+}
 
 
 

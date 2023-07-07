@@ -25,7 +25,7 @@
 
             <div class="one column">
                 <div class="login">
-                    <button type="button" onclick="showLogin()">LOGIN</button>
+                    <button type="button" onclick="fadeInPopupLogin()">LOGIN</button>
                 </div>
             </div>
         </div>
@@ -70,16 +70,19 @@
 
         <div class="container">
             <div class="ten columns">
-               
-                    <div id="tableEventi">
+
+                <div id="tableEventi">
 
 
-                    </div>
+                </div>
             </div>
         </div>
-        
+
         <div id="popupLogin">
             <div class="pageLogin">
+                <div class="right">
+                    <button type="button" class="buttonExit" onclick="fadeOutPopupLogin()">X</button>
+                </div>
                 <p class="titoloLogin">Login</p>
                 <form action="" method="get">
                     <label class="labelLogin">Username:</label><br>
@@ -89,7 +92,7 @@
                     <button type="submit" class="buttonLogin" name="login">Accedi</button>
                 </form>
             </div>
-            
+
         </div>
 
 

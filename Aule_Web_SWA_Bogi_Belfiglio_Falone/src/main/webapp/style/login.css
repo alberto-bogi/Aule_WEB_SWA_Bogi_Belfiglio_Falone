@@ -25,13 +25,50 @@
     text-shadow: -1.5px 0 #000000, 0 1.5px #000000, 1.5px 0 #000000, 0 -1.5px #000000;
 }
 
+
+.containerButtonLogin{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
 .buttonLogin{
     background-color: #add8e6;
     border-radius: 5px;
+
 }
 
 .buttonLogin:hover{
     background-color: white;
     border-radius: 5px;
     cursor: pointer;
+}
+
+.buttonExit{
+    font-size: x-large;
+    -webkit-text-stroke: 1px #000;
+    font-weight: bold;
+    color: red;
+    background: transparent;
+    border: 1px solid red;
+    border-radius: 5px;
+    outline: none;
+}
+
+.buttonExit:hover{
+    font-size: x-large;
+    font-family: sans-serif;
+    font-weight: bold;
+    background-color: red;
+    color: white;
+    cursor: pointer;
+}
+
+.right{
+    position: fixed;
+    top: 10%;
+    right: 3%;
+    width: 2%;
+    height: 2%;
 }
