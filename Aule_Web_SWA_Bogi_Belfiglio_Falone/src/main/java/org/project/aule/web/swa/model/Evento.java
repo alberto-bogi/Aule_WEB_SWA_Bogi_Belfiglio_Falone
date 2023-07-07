@@ -76,6 +76,18 @@ public class Evento{
     public LocalDate getDataFineRicorrenza() {
         return this.dataFineRicorrenza;
     }
+    
+    public int getCorsoKey(){
+        return this.corsoKey;
+    }
+    
+    public int getAulaKey(){
+        return this.aulaKey;
+    }
+    
+    public int getResponsabileKey(){
+        return this.responsabileKey;
+    }
 
     public Corso getCorso() throws Exception {
         if (corsoKey > 0) {

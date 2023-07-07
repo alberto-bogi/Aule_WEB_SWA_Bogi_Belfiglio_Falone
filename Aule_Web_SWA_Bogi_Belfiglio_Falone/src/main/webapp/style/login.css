@@ -1,4 +1,4 @@
-.pageLogin{
+#popupLogin{
     position: fixed;
     top: 9%;
     right: 1%;
@@ -7,14 +7,25 @@
     border-radius: 4px;
     background-color: #fff;
     box-shadow: 0 0 20px 5px #add8e6;
+    
 }
 
-.inputLogin{
+#popupLogin input{
     margin-bottom: 10%;
+    margin-top:5%;
 }
 
-.labelLogin{
-    margin-bottom: 5%;
+#popupLogin label{
+    text-align: left;
+    font-family: sans-serif;
+}
+
+#popupLogin button[name="login"]{
+    background-color: #4CAF50;
+    border-radius: 5px;
+    font-weight: bold;
+    color: white;
+
 }
 
 .titoloLogin{
@@ -26,23 +37,17 @@
 }
 
 
-.containerButtonLogin{
+.center.button{
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
 }
 
-.buttonLogin{
-    background-color: #add8e6;
-    border-radius: 5px;
 
-}
-
-.buttonLogin:hover{
+#popupLogin button[name="login"]:hover{
     background-color: white;
-    border-radius: 5px;
     cursor: pointer;
+    color:#4CAF50;
 }
 
 .buttonExit{

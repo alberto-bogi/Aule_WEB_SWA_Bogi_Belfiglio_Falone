@@ -14,11 +14,11 @@ function fadeInPopupSelectAula() {
 }
 
 function fadeInPopupLogin() {
-    $("#popupLogin").fadeIn(800);
+    $("#popupLogin").slideDown(300);
 }
 
 function fadeOutPopupLogin() {
-    $("#popupLogin").fadeOut(800);
+    $("#popupLogin").slideUp(300);
 }
 
 

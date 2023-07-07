@@ -25,7 +25,7 @@
 
             <div class="one column">
                 <div class="login">
-                    <button type="button" onclick="fadeInPopupLogin()">LOGIN</button>
+                    <button type="button" id="button_login" onclick="fadeInPopupLogin()">LOGIN</button>
                 </div>
             </div>
         </div>
@@ -71,7 +71,7 @@
         <div class="container">
             <div class="ten columns">
 
-                <div id="tableEventi">
+                <div id="auleweb">
 
 
                 </div>
@@ -79,20 +79,19 @@
         </div>
 
         <div id="popupLogin">
-            <div class="pageLogin">
-                <div class="right">
-                    <button type="button" class="buttonExit" onclick="fadeOutPopupLogin()">X</button>
-                </div>
-                <p class="titoloLogin">Login</p>
-                <form action="" method="get">
-                    <label class="labelLogin">Username:</label><br>
-                    <input type="text" class="inputLogin" name="username" placeholder="Inserisci il tuo username" required /><br>
-                    <label class="labelLogin">Password:</label><br>
-                    <input type="password" class="inputLogin" name="password" placeholder="Inserisci la tua password" required /><br>
-                    <button type="submit" class="buttonLogin" name="login">Accedi</button>
-                </form>
+            <div class="right">
+                <button type="button" class="buttonExit" onclick="fadeOutPopupLogin()">X</button>
             </div>
-
+            <p class="titoloLogin">Login</p>
+            <form action="" method="get">
+                <label>Username:</label><br>
+                <input type="text" name="username" placeholder="Inserisci il tuo username" required /><br>
+                <label>Password:</label><br>
+                <input type="password" name="password" placeholder="Inserisci la tua password" required /><br>
+                <div class="center button">
+                    <button type="button" name="login">Accedi</button>
+                </div>
+            </form>
         </div>
 
 
@@ -106,9 +105,13 @@
                 </div>
             </div>
             <p>SELEZIONA AULA</p>
-            <form action="" method="get">
+            <form  method="get">
                 <input type="text" name="search" placeholder="nome aula..." />
             </form>
+        </div>
+        
+        <div id="popupEvento">
+            
         </div>
 
 

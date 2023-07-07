@@ -51,7 +51,7 @@ public class EventiResources {
                     item.put("aula", evento.getAula().getNome());
                     item.put("ora_inizio", evento.getOraInizio().toString());
                     item.put("ora_fine", evento.getOraFine().toString());
-                    
+
                     response.put(rs.getInt("ID"), item);
                 }
             }
@@ -63,26 +63,44 @@ public class EventiResources {
         return Response.ok(response).build();
     }
 
-    @Path("eventi/{id_evento: [0-9]+}")
-    public EventoResource getEvento(
+    @Path("{id_evento: [0-9]+}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getEvento(
             @PathParam("id_evento") int eventoKey
     ) {
         try {
-            Evento evento = null;
-            Aula aula = null;
-            Corso corso = null;
-            Responsabile responsabile = null;
+            Evento evento = new Evento();
+            Map<String, Object> response = new HashMap<>();
             PreparedStatement eventoById = DBConnection.getConnection().prepareStatement("SELECT * FROM Evento WHERE ID = ?");
-
+            
             //ricaviamo l'evento dal suo ID
             eventoById.setInt(1, eventoKey);
             try ( ResultSet rs = eventoById.executeQuery()) {
                 if (rs.next()) {
                     evento = Evento.createEvento(rs);
+                    
+                    response.put("nome", evento.getNome());
+                    response.put("data", evento.getDataEvento().toString());
+                    response.put("ora_inizio", evento.getOraInizio().toString());
+                    response.put("ora_fine", evento.getOraFine().toString());
+                    response.put("aula", evento.getAula().getNome());
+                    response.put("responsabile", evento.getResponsabile().getEmail());
+                    response.put("tipo", evento.getTipologia().toString());
+                    if (evento.getCorsoKey() > 0) {
+                        response.put("corso", evento.getCorso().getNome());
+                    }else{
+                        response.put("corso", "non specificato");
+                    }
+                    response.put("ricorrenza", evento.getRicorrenza().toString());
+                    if (!"NESSUNA".equals(evento.getRicorrenza().toString())) {
+                        response.put("data_ricorrenza", evento.getDataFineRicorrenza().toString());
+                    }else{
+                        response.put("data_ricorrenza", "non definita");
+                    }
                 }
-
             }
-            return new EventoResource(evento);
+            return Response.ok(response).build();
         } catch (Exception ex) {
             throw new RESTWebApplicationException(ex.getMessage());
         }
