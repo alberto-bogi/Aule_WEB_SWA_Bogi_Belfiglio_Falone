@@ -49,6 +49,7 @@ public class EventiResources {
                     Map<String, Object> item = new HashMap();
                     item.put("nome", evento.getNome());
                     item.put("aula", evento.getAula().getNome());
+                    item.put("id_aula", evento.getAulaKey());
                     item.put("ora_inizio", evento.getOraInizio().toString());
                     item.put("ora_fine", evento.getOraFine().toString());
 
