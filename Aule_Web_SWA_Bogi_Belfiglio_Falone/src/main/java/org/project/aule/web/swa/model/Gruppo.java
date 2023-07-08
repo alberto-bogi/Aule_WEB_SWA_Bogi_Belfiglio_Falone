@@ -4,6 +4,9 @@
  */
 package org.project.aule.web.swa.model;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 
 public class Gruppo{
     
@@ -39,6 +42,18 @@ public class Gruppo{
 
     public void setDescrizione(String descrizione) {
         this.descrizione = descrizione;
+    }
+    
+    public static Gruppo createGruppo(ResultSet rs)throws Exception {
+        try {
+            Gruppo gruppo = new Gruppo();
+            gruppo.setNome(rs.getString("nome"));
+            gruppo.setTipoGruppo(rs.getString("tipo"));
+            return gruppo;
+        } catch (SQLException ex) {
+            throw new Exception("Impossibile creare l'oggetto Gruppo dal ResultSet", ex);
+        }
+
     }
     
 }

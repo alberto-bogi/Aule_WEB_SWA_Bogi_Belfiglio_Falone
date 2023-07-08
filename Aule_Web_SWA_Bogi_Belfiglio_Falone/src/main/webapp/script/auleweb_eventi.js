@@ -11,7 +11,7 @@ function getCurrentEventi() {
         method: "GET",
         success: function (response) {
             $("#auleweb").empty();
-            let tableCurrentEventi = "<table><tr><th>NOME</th><th>AULA</th><th>ORARIO</th><th>DETTAGLIO</th></tr>";
+            let tableCurrentEventi = "<h3>EVENTI CORRENTI</h3><table><tr><th>NOME</th><th>AULA</th><th>ORARIO</th><th>DETTAGLIO</th></tr>";
             Object.keys(response).forEach(function (key) {
                 let evento = response[key];
                 tableCurrentEventi += "<tr>" +
@@ -69,11 +69,52 @@ function showEventInformations(id) {
     });
 }
 
+function showEventiFormByAulaId(id) {
+    $("#auleweb").empty();
+    $.ajax({
+        url: "rest/aule/" + id,
+        method: "GET",
+        success: function (response) {
+            let contentForm =
+                    '<div class="eventi correnti">' +
+                    '<label>vedi gli eventi attuali: </label>' +
+                    '<button type="button" onclick="getCurrentEventi()">cerca</button> ' +
+                    '</div>' +
+                    '<h3>AULA ' + response["nome"].toUpperCase() + '</h3>' +
+                    '<form id="eventi_aula" method="GET">' +
+                    '<input type="week" id="aula_week" oninput="showEventiByAulaAndWeek()/>' +
+                    '<input type="hidden" id="id_aula" value"' + id + '" />' +
+                    '</form>' +
+                    '<div id="table_eventi_aula"></div>';
+            $("#popupAula").hide();
+            $("#auleweb").append(contentForm);
+
+        }
+    });
+
+
+}
+
+
+function showEventiByAulaAndWeek() {
+    let form = $("#eventi_aula");
+    let id = form.elements["id_aula"].value;
+    let week = form.elements["aula_week"].value;
+    $.ajax({
+        url: "rest/eventi/" + id + "/" + week,
+        method: "GET",
+        success: function (response) {
+
+        }
+    });
+}
+
 
 function fadeOutPopupEvento() {
     $('#popupEvento').fadeOut(1000);
 
 }
+
 
 
 

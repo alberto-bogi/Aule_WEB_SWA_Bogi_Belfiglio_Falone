@@ -169,5 +169,30 @@ p{
     border-bottom: 2px solid black;
 }
 
+#auleweb h3{
+    margin-left:1%;
+    font-family: sans-serif;
+}
+
+#auleweb #aula_week{
+    margin-left: 1%;
+    background-color: #9c9c9c;
+    font-family: sans-serif;
+    color: white;
+    font-size: 90%;
+    font-weight: bold;
+    border: 1px solid black;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-bottom:1%;
+    padding:0.2%;
+}
+
+#auleweb #aula_week:hover{
+    background-color: white;
+    color: black;
+    border: 2px solid black;
+}
+
 
 

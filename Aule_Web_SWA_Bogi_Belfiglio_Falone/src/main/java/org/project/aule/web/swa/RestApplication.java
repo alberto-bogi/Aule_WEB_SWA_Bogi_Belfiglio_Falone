@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import org.project.aule.web.swa.jackson.ObjectMapperContextResolver;
+import org.project.aule.web.swa.resources.AuleResources;
 import org.project.aule.web.swa.resources.EventiResources;
 import org.project.aule.web.swa.security.AuthLoggedFilter;
 import org.project.aule.web.swa.security.CORSFilter;
@@ -29,6 +30,7 @@ public class RestApplication extends Application{
         //aggiungiamo tutte le *root resurces* (cioè quelle
         //con l'annotazione Path) che vogliamo pubblicare
         c.add(EventiResources.class);
+        c.add(AuleResources.class);
 
         
         //aggiungiamo il provider Jackson per poter

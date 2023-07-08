@@ -4,19 +4,21 @@
  */
 package org.project.aule.web.swa.model;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-public class Attrezzatura{
-    
+public class Attrezzatura {
+
     private Aula aula;
     private String nome;
     private String numeroDiSerie;
-    
+
     public Attrezzatura() {
         aula = null;
         nome = "";
         numeroDiSerie = null;
     }
-    
+
     public Aula getAula() {
         return this.aula;
     }
@@ -40,5 +42,17 @@ public class Attrezzatura{
     public void setNumeroDiSerie(String numeroDiSerie) {
         this.numeroDiSerie = numeroDiSerie;
     }
-    
+
+    public static Attrezzatura createAttrezzatura(ResultSet rs)throws Exception {
+        try {
+            Attrezzatura attrezzatura = new Attrezzatura();
+            attrezzatura.setNome(rs.getString("nome"));
+            attrezzatura.setNumeroDiSerie(rs.getString("numero_di_serie"));
+            return attrezzatura;
+        } catch (SQLException ex) {
+            throw new Exception("Impossibile creare l'oggetto Attrezzatura dal ResultSet", ex);
+        }
+
+    }
+
 }
