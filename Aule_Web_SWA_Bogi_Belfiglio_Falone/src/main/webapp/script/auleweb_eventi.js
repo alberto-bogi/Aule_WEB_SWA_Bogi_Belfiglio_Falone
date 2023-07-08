@@ -31,7 +31,6 @@ function getCurrentEventi() {
     });
 }
 
-
 //funzione per visualizzazione informazioni evento
 function showEventInformations(id) {
     $.ajax({
@@ -113,6 +112,68 @@ function showEventiByAulaAndWeek() {
 function fadeOutPopupEvento() {
     $('#popupEvento').fadeOut(1000);
 
+}
+
+function showEventInformationsByName() {
+    let form = document.getElementById("search_evento");
+    let search = form.elements["searchEvento"].value;
+    $.ajax({
+        url: "rest/eventi/" + search,
+        method: "GET",
+        success: function (response) {
+            if (Object.keys(response).length > 0) {
+                $("#popupEvento").empty();
+                let eventContent =
+                        '<div>' +
+                        '<div class="exit">' +
+                        '<button type="button" onclick="fadeOutPopupEvento()">X</button>' +
+                        '</div>' +
+                        '<h2  style="clear: right">INFORMAZIONI</h2>' +
+                        "<p><b>NOME:</b> " + response["nome"].toLowerCase() + "</p>" +
+                        "<p><b>DATA:</b> " + response["data"] + "</p>" +
+                        "<p><b>INTERVALLO:</b> " + response["ora_inizio"] + " - " + response["ora_fine"] + "</p>" +
+                        "<p><b>AULA:</b> " + response["aula"].toLowerCase() + "</p>" +
+                        "<p><b>RESPONSABILE:</b> " + response["responsabile"].toLowerCase() + "</p>" +
+                        "<p><b>TIPOLOGIA:</b> " + response["tipo"].toLowerCase() + "</p>";
+                if (response["tipo"] === "LEZIONE" || response["tipo"] === "ESAME" || response["tipo"] === "PARZIALE") {
+                    eventContent += "<p><b>CORSO:</b> " + response["corso"].toLowerCase() + "</p>";
+                }
+                eventContent += "<p><b>RICORRENZA:</b> " + response["ricorrenza"].toLowerCase() + "</p>";
+                if (response["ricorrenza"] !== "NESSUNA") {
+                    eventContent += "<p><b>INTERVALLO RICORRENZA:</b> " + response["data"] + " - " + response["data_ricorrenza"] + "</p>";
+                }
+
+                $("#popupEvento").append(eventContent);
+                $("#popupEvento").fadeIn(1000);
+            } else {
+                $("#popupEvento").empty();
+                let eventContent =
+                        '<div>' +
+                        '<div class="exit">' +
+                        '<button type="button" onclick="fadeOutPopupEvento()">X</button>' +
+                        '</div>' +
+                        '<h2  style="clear: right; color: red">Evento non trovato</h2>' +
+                        '<p>Non è stato trovato alcun evento con nome "' + search + '"</p>';
+                $("#popupEvento").append(eventContent);
+                $("#popupEvento").fadeIn(1000);
+            }
+
+        },
+        error: function (xhr, status, error) {
+            $("#tableEventi").append(xhr.responseText);
+            $("#popupEvento").empty();
+            let eventContent =
+                    '<div>' +
+                    '<div class="exit">' +
+                    '<button type="button" onclick="fadeOutPopupEvento()">X</button>' +
+                    '</div>' +
+                    '<h2  style="clear: right; color: red">Evento non trovato</h2>' +
+                    '<p>Non sono permessi caratteri speciali per la ricerca di un evento</p>';
+            $("#popupEvento").append(eventContent);
+            $("#popupEvento").fadeIn(1000);
+
+        }
+    });
 }
 
 
