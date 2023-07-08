@@ -26,90 +26,85 @@
             <div class="one column">
                 <div class="login">
                     <button type="button" id="button_login" onclick="fadeInPopupLogin()">LOGIN</button>
+                    <button type="button" id="button_logout">LOGOUT</button>
                 </div>
             </div>
         </div>
 
-        <div class="cerca">
-            <div class="container">
-                <div class="five columns">
-                    <p>Evento:</p>
-                    <form action="get" id="search_evento">
-                        <label>
-                            <img src="images/search.png" alt="icona_search" />
+        <div id="container">
+            <div class="cerca">
+                <div class="container">
+                    <div class="five columns">
+                        <p>Evento:</p>
+                        <form action="get" id="search_evento">
+                            <label>
+                                <img src="images/search.png" alt="icona_search" />
 
-                            <input type="text" name="searchEvento" placeholder="nome evento..." />
-                            <button type="button" onclick="showEventInformationsByName()">cerca</button> 
-                        </label>
+                                <input type="text" name="searchEvento" placeholder="nome evento..." />
+                                <button type="button" onclick="showEventInformationsByName()">cerca</button> 
+                            </label>
 
-                    </form>
-                </div>
-                <div class="five columns">
-                    <p>Aula:</p>
-                    <form action="get" id="search_aula">
-                        <label>
-                            <img src="images/search.png" alt="icona_search" />
+                        </form>
+                    </div>
+                    <div class="five columns">
+                        <p>Aula:</p>
+                        <form action="get" id="search_aula">
+                            <label>
+                                <img src="images/search.png" alt="icona_search" />
 
-                            <input type="text" id="aula" placeholder="nome aula..." />
-                            <button type="button" onclick="showAulaInformationsByName()">cerca</button> 
-                        </label>
+                                <input type="text" id="aula" placeholder="nome aula..." />
+                                <button type="button" onclick="showAulaInformationsByName()">cerca</button> 
+                            </label>
 
-                    </form>
+                        </form>
 
+                    </div>
                 </div>
             </div>
         </div>
 
         <div id="auleweb">
-            
 
-            <div class="container">
-                <div class="ten columns">
-
-
-
-
-                </div>
-            </div>
         </div>
+  
 
 
 
 
+    <!-- POPUP -->
 
 
-        <div id="popupLogin">
-            <div class="right">
-                <button type="button" class="buttonExit" onclick="fadeOutPopupLogin()">X</button>
-            </div>
-            <p class="titoloLogin">Login</p>
-            <form action="" method="get">
-                <label>Username:</label><br>
-                <input type="text" name="username" placeholder="Inserisci il tuo username" required /><br>
-                <label>Password:</label><br>
-                <input type="password" name="password" placeholder="Inserisci la tua password" required /><br>
-                <div class="center button">
-                    <button type="button" name="login">Accedi</button>
-                </div>
-            </form>
+
+    <div id="popupLogin">
+        <div class="right">
+            <button type="button" class="buttonExit" onclick="fadeOutPopupLogin()">X</button>
         </div>
+        <p class="titoloLogin">Login</p>
+        <form action="" method="get">
+            <label>Username:</label><br>
+            <input type="text" name="username" placeholder="Inserisci il tuo username" required /><br>
+            <label>Password:</label><br>
+            <input type="password" name="password" placeholder="Inserisci la tua password" required /><br>
+            <div class="center button">
+                <button type="button" name="login">Accedi</button>
+            </div>
+        </form>
+    </div>
+
+
+    <div id="popupEvento"> </div>
+
+    <div id="popupAula"> </div>
 
 
 
 
 
-        <div id="popupEvento"> </div>
-
-        <div id="popupAula"> </div>
 
 
 
-
-
-
-
-
-        <script src="script/auleweb_eventi.js"></script>
-        <script src="script/auleweb_aule.js"></script>
-    </body>
+    <script src="script/auleweb_eventi.js"></script>
+    <script src="script/auleweb_aule.js"></script>
+    <script src="script/auleweb_administration.js"></script>
+</body>
 </html>

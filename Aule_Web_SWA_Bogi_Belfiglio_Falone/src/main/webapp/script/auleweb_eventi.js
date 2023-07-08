@@ -2,6 +2,7 @@
 $(document).ready(function () {
     getCurrentEventi();
     $("#popupEvento").hide();
+    $("#button_logout").hide();
 
 });
 
@@ -39,11 +40,12 @@ function showEventInformations(id) {
         success: function (response) {
             $("#popupEvento").empty();
             let eventContent =
-                    '<div>' +
                     '<div class="exit">' +
                     '<button type="button" onclick="fadeOutPopupEvento()">X</button>' +
                     '</div>' +
-                    '<h2  style="clear: right">INFORMAZIONI</h2>' +
+                    '<div class="container">' +
+                    '<div class="ten columns">' +
+                    '<h2>INFORMAZIONI</h2>' +
                     "<p><b>NOME</b>: " + response["nome"].toLowerCase() + "</p>" +
                     "<p><b>DATA</b>: " + response["data"] + "</p>" +
                     "<p><b>INTERVALLO</b>: " + response["ora_inizio"] + " - " + response["ora_fine"] + "</p>" +
@@ -57,7 +59,7 @@ function showEventInformations(id) {
             if (response["ricorrenza"] !== "NESSUNA") {
                 eventContent += "<p><b>INTERVALLO RICORRENZA</b>: dal " + response["data"] + " al " + response["data_ricorrenza"] + "</p>";
             }
-            eventContent += "</div>";
+            eventContent += "</div></div>";
 
             $("#popupEvento").append(eventContent);
             $("#popupEvento").fadeIn(1000);
@@ -77,12 +79,12 @@ function showEventiFormByAulaId(id) {
             let contentForm =
                     '<div class="eventi correnti">' +
                     '<label>vedi gli eventi attuali: </label>' +
-                    '<button type="button" onclick="getCurrentEventi()">cerca</button> ' +
+                    '<button type="button" id="currentEventButton" onclick="getCurrentEventi()">cerca</button> ' +
                     '</div>' +
                     '<h3>AULA ' + response["nome"].toUpperCase() + '</h3>' +
                     '<form id="eventi_aula" method="GET">' +
-                    '<input type="week" id="aula_week" oninput="showEventiByAulaAndWeek()/>' +
-                    '<input type="hidden" id="id_aula" value"' + id + '" />' +
+                    '<input type="week" id="aula_week" onchange="showEventiByAulaAndWeek()"/>' +
+                    '<input type="hidden" id="id_aula" value ="' + id + '" />' +
                     '</form>' +
                     '<div id="table_eventi_aula"></div>';
             $("#popupAula").hide();
@@ -96,13 +98,31 @@ function showEventiFormByAulaId(id) {
 
 
 function showEventiByAulaAndWeek() {
-    let form = $("#eventi_aula");
+    let form = document.getElementById("eventi_aula");
     let id = form.elements["id_aula"].value;
     let week = form.elements["aula_week"].value;
     $.ajax({
         url: "rest/eventi/" + id + "/" + week,
         method: "GET",
         success: function (response) {
+            $("#table_eventi_aula").empty();
+            let tableAulaEventi = "<table><tr><th>NOME</th><th>DATA</th><th>ORARIO</th><th>RESPONSABILE</th><th>DETTAGLIO</th></tr>";
+            Object.keys(response).forEach(function (key) {
+                let evento = response[key];
+                tableAulaEventi += "<tr>" +
+                        "<td>" + evento["nome"] + "</td>" +
+                        "<td>" + evento["data"] +
+                        "<td>" + evento["ora_inizio"] + " - " + evento["ora_fine"] + "</td>" +
+                        "<td>" + evento["responsabile"] + '</td>' +
+                        '<td><button type="button" name="ID_evento" value="' + evento["ID_evento"] + '" onclick="showEventInformations(this.value)" >vedi</button></td>' +
+                        "</tr>";
+            });
+            tableAulaEventi += "</table>";
+            $("#table_eventi_aula").append(tableAulaEventi);
+        },
+        error: function (xhr, status, error) {
+            $("#table_eventi_aula").append(xhr.responseText);
+            
 
         }
     });
@@ -117,8 +137,10 @@ function fadeOutPopupEvento() {
 function showEventInformationsByName() {
     let form = document.getElementById("search_evento");
     let search = form.elements["searchEvento"].value;
+    let sanitizedSearch = search.replace(/[<>"'=()*!?]/g, '');
+
     $.ajax({
-        url: "rest/eventi/" + search,
+        url: "rest/eventi/" + sanitizedSearch,
         method: "GET",
         success: function (response) {
             if (Object.keys(response).length > 0) {
@@ -153,7 +175,7 @@ function showEventInformationsByName() {
                         '<button type="button" onclick="fadeOutPopupEvento()">X</button>' +
                         '</div>' +
                         '<h2  style="clear: right; color: red">Evento non trovato</h2>' +
-                        '<p>Non è stato trovato alcun evento con nome "' + search + '"</p>';
+                        '<p>Non è stato trovato alcun evento con nome "' + sanitizedSearch + '"</p>';
                 $("#popupEvento").append(eventContent);
                 $("#popupEvento").fadeIn(1000);
             }

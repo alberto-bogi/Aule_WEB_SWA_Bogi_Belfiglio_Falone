@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.project.aule.web.swa.resources.database.DBConnection;
 
-public class Aula extends DBConnection {
+public class Aula{
 
     private int responsabileKey;
     private String nome;
@@ -37,7 +37,7 @@ public class Aula extends DBConnection {
     public Responsabile getResponsabile() throws Exception {
         if (responsabileKey > 0) {
             try {
-                PreparedStatement responsabileById = this.getConnection().prepareStatement("SELECT * FROM Responsabile WHERE ID = ?");
+                PreparedStatement responsabileById = DBConnection.getConnection().prepareStatement("SELECT * FROM Responsabile WHERE ID = ?");
                 responsabileById.setInt(1, responsabileKey);
                 try ( ResultSet rs = responsabileById.executeQuery()) {
                     if (rs.next()) {

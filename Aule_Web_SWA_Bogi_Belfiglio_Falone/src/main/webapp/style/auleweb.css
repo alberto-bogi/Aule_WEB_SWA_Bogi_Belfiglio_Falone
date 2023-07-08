@@ -148,6 +148,7 @@ p{
     font-size: medium;
     color:white;
     background-color: #9c9c9c;
+    border-radius: 4px;
 }
 
 .cerca button:hover{

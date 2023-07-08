@@ -17,7 +17,7 @@ import org.project.aule.web.swa.model.enumerable.Tipologia;
 import org.project.aule.web.swa.resources.database.DBConnection;
 
 public class Evento{
-
+    private int key;
     private String nome;
     private String descrizione;
     private Tipologia tipologia;
@@ -31,6 +31,7 @@ public class Evento{
     private int responsabileKey;
 
     public Evento() {
+        key = 0;
         nome = "";
         descrizione = "";
         tipologia = null;
@@ -43,6 +44,10 @@ public class Evento{
         aulaKey = 0;
         responsabileKey = 0;
 
+    }
+    
+    public int getKey(){
+        return key;
     }
 
     public String getNome() {
@@ -139,6 +144,10 @@ public class Evento{
         }
         return null;
     }
+    
+    public void setKey(int key){
+        this.key = key;
+    }
 
     public void setNome(String nome) {
         this.nome = nome;
@@ -231,6 +240,7 @@ public class Evento{
     public static Evento createEvento(ResultSet rs) throws Exception {
         try {
             Evento evento = new Evento();
+            evento.setKey(rs.getInt("ID"));
             evento.setDataEvento((rs.getDate("data_evento").toLocalDate()));
             evento.setNome(rs.getString("nome"));
             evento.setDescrizione(rs.getString("descrizione"));

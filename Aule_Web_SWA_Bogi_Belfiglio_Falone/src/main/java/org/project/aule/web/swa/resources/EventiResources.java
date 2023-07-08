@@ -13,10 +13,15 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +30,9 @@ import org.project.aule.web.swa.exception.RESTWebApplicationException;
 import org.project.aule.web.swa.model.Aula;
 import org.project.aule.web.swa.model.Corso;
 import org.project.aule.web.swa.model.Evento;
+import org.project.aule.web.swa.model.EventoRicorrente;
 import org.project.aule.web.swa.model.Responsabile;
+import org.project.aule.web.swa.resources.comparator.EventoComparator;
 import org.project.aule.web.swa.resources.database.DBConnection;
 
 /**
@@ -102,13 +109,14 @@ public class EventiResources {
                 }
             }
             return Response.ok(response).build();
+        } catch (SQLException | ClassNotFoundException ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
         } catch (Exception ex) {
             throw new RESTWebApplicationException(ex.getMessage());
         }
     }
 
-
-    @Path("{name_evento: [a-zA-Z]+[A-Za-z0-9(%20)]*}")
+    @Path("{name_evento: [a-zA-Z][A-Za-z0-9(%20)]+}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getEventoByName(
@@ -145,10 +153,80 @@ public class EventiResources {
                 }
             }
             return Response.ok(response).build();
+        } catch (SQLException | ClassNotFoundException ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
         } catch (Exception ex) {
             throw new RESTWebApplicationException(ex.getMessage());
         }
     }
 
-}
+    @Path("{id_aula: [0-9]+}/{week: \\d{4}-W\\d{2}}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getEventiByAulaAndWeek(
+            @PathParam("id_aula") int aulaKey,
+            @PathParam("week") String week
+    ) {
+        Map<Integer, Object> response = new HashMap();
+        int index = 0;
+        try {
+            PreparedStatement eventiByAulaIdAndPeriod = DBConnection.getConnection().prepareStatement("SELECT * FROM Evento WHERE ID_aula = ? AND (data_evento BETWEEN (? - interval 1 day) AND ?) AND data_evento >= CURDATE()");
+            PreparedStatement eventiRicorrentiByAulaIdAndPeriod = DBConnection.getConnection().prepareStatement("SELECT EV.* FROM Evento E, Evento_ricorrente EV WHERE EV.ID_evento = E.ID AND E.ID_aula = ? AND (EV.data_evento BETWEEN ? AND ?) AND EV.data_evento >= CURDATE()");
 
+            //ricaviamo il periodo di nostro interesse
+            String settimana[] = week.split("-W");
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.clear();
+            calendar.set(Calendar.YEAR, Integer.parseInt(settimana[0]));
+            calendar.set(Calendar.WEEK_OF_YEAR, Integer.parseInt(settimana[1]));
+
+            LocalDate dataInizio = calendar.getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate dataFine = dataInizio.plusDays(6);
+
+            //ricaviamo gli eventi principali
+            List<Evento> eventi = new ArrayList();
+            eventiByAulaIdAndPeriod.setInt(1, aulaKey);
+            eventiByAulaIdAndPeriod.setDate(2, Date.valueOf(dataInizio));
+            eventiByAulaIdAndPeriod.setDate(3, Date.valueOf(dataFine));
+            try ( ResultSet rs = eventiByAulaIdAndPeriod.executeQuery()) {
+                while (rs.next()) {
+                    eventi.add(Evento.createEvento(rs));
+                }
+            }
+            eventiRicorrentiByAulaIdAndPeriod.setInt(1, aulaKey);
+            eventiRicorrentiByAulaIdAndPeriod.setDate(2, Date.valueOf(dataInizio));
+            eventiRicorrentiByAulaIdAndPeriod.setDate(3, Date.valueOf(dataFine));
+            try ( ResultSet rs = eventiRicorrentiByAulaIdAndPeriod.executeQuery()) {
+                while (rs.next()) {
+                    EventoRicorrente e = EventoRicorrente.createEventoRicorrente(rs);
+                    Evento ev = e.getEvento();
+                    ev.setDataEvento(e.getDataEvento());
+                    eventi.add(ev);
+                }
+            }
+            Collections.sort(eventi, new EventoComparator());
+            for (Evento evento : eventi) {
+                Map<String, Object> item = new HashMap();
+                item.put("ID_evento", evento.getKey());
+                item.put("nome", evento.getNome());
+                item.put("responsabile", evento.getResponsabile().getEmail());
+                item.put("data", evento.getDataEvento().toString());
+                item.put("ora_inizio", evento.getOraInizio().toString());
+                item.put("ora_fine", evento.getOraFine().toString());
+
+                response.put(index, item);
+                index++;
+
+            }
+            return Response.ok(response).build();
+
+        } catch (SQLException | ClassNotFoundException ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
+        } catch (Exception ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
+        }
+
+    }
+
+}
