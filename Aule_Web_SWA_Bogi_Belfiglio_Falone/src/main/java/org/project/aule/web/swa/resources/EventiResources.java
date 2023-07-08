@@ -108,7 +108,7 @@ public class EventiResources {
     }
 
 
-    @Path("{name_evento: [a-zA-Z]+[A-Za-z0-9(%20)]*}")
+    @Path("{name_evento: [A-Za-z][A-Za-z0-9(%20)]*[A-Za-z0-9]}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getEventoByName(
