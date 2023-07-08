@@ -74,22 +74,27 @@
     <!-- POPUP -->
 
 
-
-    <div id="popupLogin">
-        <div class="right">
-            <button type="button" class="buttonExit" onclick="fadeOutPopupLogin()">X</button>
-        </div>
-        <p class="titoloLogin">Login</p>
-        <form action="" method="get">
-            <label>Username:</label><br>
-            <input type="text" name="username" placeholder="Inserisci il tuo username" required /><br>
-            <label>Password:</label><br>
-            <input type="password" name="password" placeholder="Inserisci la tua password" required /><br>
-            <div class="center button">
-                <button type="button" name="login">Accedi</button>
+        
+        
+        
+        
+        
+        <div id="popupLogin">
+            <div class="right">
+                <button type="button" class="buttonExit" onclick="fadeOutPopupLogin()">X</button>
             </div>
-        </form>
-    </div>
+            <p class="titoloLogin">Login</p>
+            <form action="" method="get">
+                <label>Username:</label><br>
+                <input type="text" name="username" id="username" placeholder="Inserisci il tuo username" required /><br>
+                <label>Password:</label><br>
+                <input type="password" name="password" id="password" placeholder="Inserisci la tua password" required /><br>
+                <div class="center button">
+                    <button type="button" id="button_access" name="login">Accedi</button>
+                </div>
+            </form>
+        </div>
+
 
 
     <div id="popupEvento"> </div>
@@ -105,6 +110,6 @@
 
     <script src="script/auleweb_eventi.js"></script>
     <script src="script/auleweb_aule.js"></script>
-    <script src="script/auleweb_administration.js"></script>
+    <script src="script/auleweb_auth.js"></script>
 </body>
 </html>
