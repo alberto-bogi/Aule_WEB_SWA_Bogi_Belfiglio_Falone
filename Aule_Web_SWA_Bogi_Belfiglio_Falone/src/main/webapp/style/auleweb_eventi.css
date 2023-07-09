@@ -80,13 +80,6 @@ table td button:hover{
     padding-bottom: 5%;
 }
 
-
-#popupEvento h2{
-    font-family: sans-serif;
-    color: white;
-    text-shadow: -1.5px 0 #000000, 0 1.5px #000000, 1.5px 0 #000000, 0 -1.5px #000000;
-}
-
 #popupEvento .exit{
     float:right;
     width: 10%;
@@ -111,6 +104,12 @@ table td button:hover{
     cursor: pointer;
 }
 
+#popupEvento h2{
+    font-family: sans-serif;
+    color: white;
+    text-shadow: -1.5px 0 #000000, 0 1.5px #000000, 1.5px 0 #000000, 0 -1.5px #000000;
+}
+
 #popupEvento .error h2{
     font-family: sans-serif;
     color: white;
@@ -119,6 +118,12 @@ table td button:hover{
 
 #popupEvento .error p{
     font-weight: bold;
+    font-size: large;
+    padding-left:5%;
+    padding-right: 5%;
+}
+
+#popupEvento p.search.null{
     font-size: large;
     padding-left:5%;
     padding-right: 5%;

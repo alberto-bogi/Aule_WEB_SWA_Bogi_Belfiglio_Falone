@@ -1,14 +1,13 @@
 //funzione per visualizzazione eventi correnti (eventi attuali e delle prossime 3 ore)
 $(document).ready(function () {
-    getCurrentEventi();
     $("#popupEvento").hide();
-    $("#button_logout").hide();
+    
 
 });
 
 function getCurrentEventi() {
     $.ajax({
-        url: "rest/eventi",
+        url: "rest/eventi/current",
         method: "GET",
         success: function (response) {
             $("#auleweb").empty();
@@ -122,7 +121,7 @@ function showEventiByAulaAndWeek() {
         },
         error: function (xhr, status, error) {
             $("#table_eventi_aula").append(xhr.responseText);
-            
+
 
         }
     });
@@ -174,8 +173,8 @@ function showEventInformationsByName() {
                         '<div class="exit">' +
                         '<button type="button" onclick="fadeOutPopupEvento()">X</button>' +
                         '</div>' +
-                        '<h2  style="clear: right; color: red">Evento non trovato</h2>' +
-                        '<p>Non è stato trovato alcun evento con nome "' + sanitizedSearch + '"</p>';
+                        '<h2  style="clear: right;">Evento non trovato</h2>' +
+                        '<p class="search null">Non è stato trovato alcun evento con nome <b><em>' + sanitizedSearch + '</b></em></p>' ;
                 $("#popupEvento").append(eventContent);
                 $("#popupEvento").fadeIn(1000);
             }

@@ -44,6 +44,36 @@ public class EventiResources {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    public Response getEventi() {
+        Map<Integer, Map<String, Object>> response = new HashMap();
+        try {
+            PreparedStatement currentEventi = DBConnection.getConnection().prepareStatement("SELECT E* FROM Evento E, Evento_ricorrente EV WHERE"
+                    + " (E.data_evento >= CURDATE() AND E.ora_inizio >= CURTIME()) OR (E.ID=EV.ID_evento AND EV.data_evento >= CURDATE() AND E.ora_inizio >= CURTIME()) GROUP BY E.ID");
+            // da vedere
+            try ( ResultSet rs = currentEventi.executeQuery()) {
+                while (rs.next()) {
+                    Evento evento = Evento.createEvento(rs);
+                    Map<String, Object> item = new HashMap();
+                    item.put("nome", evento.getNome());
+                    item.put("aula", evento.getAula().getNome());
+                    item.put("id_aula", evento.getAulaKey());
+                    item.put("ora_inizio", evento.getOraInizio().toString());
+                    item.put("ora_fine", evento.getOraFine().toString());
+
+                    response.put(rs.getInt("ID"), item);
+                }
+            }
+        } catch (SQLException | ClassNotFoundException ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
+        } catch (Exception ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
+        }
+        return Response.ok(response).build();
+    }
+
+    @Path("current")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getCurrentEventi() {
         Map<Integer, Map<String, Object>> response = new HashMap();
         try {
@@ -115,8 +145,6 @@ public class EventiResources {
             throw new RESTWebApplicationException(ex.getMessage());
         }
     }
-
-
 
     @Path("{name_evento: [A-Za-z][A-Za-z0-9(%20)]*[A-Za-z0-9]}")
     @GET

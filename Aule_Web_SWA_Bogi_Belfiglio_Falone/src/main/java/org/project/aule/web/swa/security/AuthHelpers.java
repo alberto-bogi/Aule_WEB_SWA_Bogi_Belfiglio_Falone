@@ -27,22 +27,22 @@ public class AuthHelpers {
 
     public boolean authenticateAdmin(String username, String password) {
         Amministratore amministratore = new Amministratore();
-        try ( PreparedStatement adminByUserPass = DBConnection.getConnection().prepareStatement("SELECT * FROM Amministratore WHERE username = ? AND password = ?;")) {
+        try ( PreparedStatement adminByUserPass = DBConnection.getConnection().prepareStatement("SELECT * FROM Amministratore WHERE username = ?")) {
             adminByUserPass.setString(1, username);
-            adminByUserPass.setString(2, password);
             try ( ResultSet rs = adminByUserPass.executeQuery()) {
                 if (rs.next()) {
                     amministratore = Amministratore.createAmministratore(rs);
+                    if (amministratore != null && SecurityHelpers.checkPasswordHashPBKDF2(password, amministratore.getPassword())) {
+                        return true;
+                    }else{
+                        return false;
+                    }
                 }
             }
         } catch (Exception ex) {
             throw new RESTWebApplicationException(ex.getMessage());
         }
-        if (amministratore != null) {
-            return true;
-        } else {
-            return false;
-        }
+        return false;
     }
 
     public String issueToken(UriInfo context, String username) {

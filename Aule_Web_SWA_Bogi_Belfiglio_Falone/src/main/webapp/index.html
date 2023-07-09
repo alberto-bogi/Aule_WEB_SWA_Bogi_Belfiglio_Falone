@@ -15,76 +15,35 @@
                 <p class="title header">AULE WEB</p>
             </div>
             <div class="six columns">
-                <div class="export"> 
-                    <button type="button" onclick="myFunction()">
-                        <img src="images/calendar.png" alt="calendar">
-                    </button>
+                <div id="export_eventi_div">
 
                 </div>
             </div>
 
             <div class="one column">
-                <div class="login">
-                    <button type="button" id="button_login" onclick="fadeInPopupLogin()">LOGIN</button>
-                    <button type="button" id="button_logout">LOGOUT</button>
+                <div class="login" id="login_div">
+                        
                 </div>
             </div>
         </div>
 
+        
         <div id="container">
-            <div class="cerca">
-                <div class="container">
-                    <div class="five columns">
-                        <p>Evento:</p>
-                        <form action="get" id="search_evento">
-                            <label>
-                                <img src="images/search.png" alt="icona_search" />
-
-                                <input type="text" name="searchEvento" placeholder="nome evento..." />
-                                <button type="button" onclick="showEventInformationsByName()">cerca</button> 
-                            </label>
-
-                        </form>
-                    </div>
-                    <div class="five columns">
-                        <p>Aula:</p>
-                        <form action="get" id="search_aula">
-                            <label>
-                                <img src="images/search.png" alt="icona_search" />
-
-                                <input type="text" id="aula" placeholder="nome aula..." />
-                                <button type="button" onclick="showAulaInformationsByName()">cerca</button> 
-                            </label>
-
-                        </form>
-
-                    </div>
-                </div>
-            </div>
+            
         </div>
 
-        <div id="auleweb">
-
-        </div>
-  
 
 
 
 
-    <!-- POPUP -->
+        <!-- POPUP -->
 
-
-        
-        
-        
-        
-        
-        <div id="popupLogin">
+        <div id="popupLogin" style="display:none">
             <div class="right">
                 <button type="button" class="buttonExit" onclick="fadeOutPopupLogin()">X</button>
             </div>
             <p class="titoloLogin">Login</p>
-            <form action="" method="get">
+            <form name="loginForm" method="get">
                 <label>Username:</label><br>
                 <input type="text" name="username" id="username" placeholder="Inserisci il tuo username" required /><br>
                 <label>Password:</label><br>
@@ -97,19 +56,20 @@
 
 
 
-    <div id="popupEvento"> </div>
+        <div id="popupEvento" style="display: none"> </div>
 
-    <div id="popupAula"> </div>
-
-
+        <div id="popupAula" style="display: none"> </div>
 
 
 
 
 
 
-    <script src="script/auleweb_eventi.js"></script>
-    <script src="script/auleweb_aule.js"></script>
-    <script src="script/auleweb_auth.js"></script>
-</body>
+
+
+        <script src="script/auleweb_eventi.js"></script>
+        <script src="script/auleweb_aule.js"></script>
+        <script src="script/auleweb_auth.js"></script>
+        <script src="script/auleweb.js"></script>
+    </body>
 </html>

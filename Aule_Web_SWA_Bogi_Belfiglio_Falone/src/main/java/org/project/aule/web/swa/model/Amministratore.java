@@ -6,13 +6,12 @@ package org.project.aule.web.swa.model;
 
 import java.sql.ResultSet;
 
+public class Amministratore {
 
-public class Amministratore{
-    
     private String username;
     private String password;
-    
-    public Amministratore(){
+
+    public Amministratore() {
         username = "";
         password = "";
     }
@@ -32,12 +31,12 @@ public class Amministratore{
     public void setPassword(String password) {
         this.password = password;
     }
-    
+
     public static Amministratore createAmministratore(ResultSet rs) throws Exception {
         Amministratore amministratore = new Amministratore();
         amministratore.setUsername(rs.getString("username"));
         amministratore.setPassword(rs.getString("psw"));
         return amministratore;
     }
-    
+
 }
