@@ -5,8 +5,8 @@ $(document).ready(function () {
     if (sessionStorage.getItem("authToken")) {
         let timer = setInterval(function () {
             count++;
-            alert(count);
-            if (count === 6) {
+            //alert(count);
+            if (count === 30) {
                 $.ajax({
                     url: 'rest/auth/refresh',
                     type: 'GET',
@@ -18,7 +18,7 @@ $(document).ready(function () {
                         let authToken = response; //mi salvo il nuovo token dalla response
                         sessionStorage.removeItem("authToken");
                         sessionStorage.setItem("authToken", response);
-                        alert("Token cambiato con successo!");
+                        //alert("Token cambiato con successo!");
 
                         location.reload();
                     },
@@ -28,7 +28,7 @@ $(document).ready(function () {
                     }
                 });
             }
-        }, 5000);
+        }, 60000);
 
 
     }
