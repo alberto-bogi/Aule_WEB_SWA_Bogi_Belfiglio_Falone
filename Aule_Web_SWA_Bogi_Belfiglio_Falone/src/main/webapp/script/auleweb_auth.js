@@ -1,12 +1,44 @@
 $(document).ready(function () {
 
+    let count = 0;
+
+    if (sessionStorage.getItem("authToken")) {
+        let timer = setInterval(function () {
+            count++;
+            alert(count);
+            if (count === 6) {
+                $.ajax({
+                    url: 'rest/auth/refresh',
+                    type: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + sessionStorage.getItem("authToken")
+                    },
+                    contentType: 'application/x-www-form-urlencoded',
+                    success: function (response) {
+                        let authToken = response; //mi salvo il nuovo token dalla response
+                        sessionStorage.removeItem("authToken");
+                        sessionStorage.setItem("authToken", response);
+                        alert("Token cambiato con successo!");
+
+                        location.reload();
+                    },
+                    error: function (request, status, error) {
+                        handleError(request, status, error, "Errore in fase di refresh del token.");
+
+                    }
+                });
+            }
+        }, 5000);
+
+
+    }
+
+
     $("#button_access").click(function () {
         let form = document.forms["loginForm"];
-        alert(form);
         let username = form.elements["username"].value;
         let password = form.elements["password"].value;
-        alert(username);
-        alert(password);
+
         //oggetto dati da inviare al server
         let formData = {
             username: username,
@@ -20,8 +52,8 @@ $(document).ready(function () {
             data: formData,
             success: function (response) {
                 let token = response;
-
                 sessionStorage.setItem("authToken", response);
+
                 location.reload();
             },
             error: function () {
@@ -40,7 +72,12 @@ function logout() {
             'Authorization': 'Bearer ' + sessionStorage.getItem("authToken")
         },
         success: function () {
-            sessionStorage.removeItem("authToken");
+            if(sessionStorage.getItem("authToken") !== null){
+                sessionStorage.removeItem("authToken");
+            }else if(sessionStorage.getItem("newToken") !== null){
+                sessionStorage.removeItem("newToken");
+            }
+            
             alert("Logout effettuato con successo.");
             location.reload();
         },

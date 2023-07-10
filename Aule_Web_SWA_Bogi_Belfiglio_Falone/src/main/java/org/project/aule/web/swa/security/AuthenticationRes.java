@@ -62,9 +62,13 @@ public class AuthenticationRes {
     public Response refresh(@Context ContainerRequestContext req, @Context UriInfo uriinfo) {
         //proprietà iniettata nella request dal filtro di autenticazione
         String username = (String) req.getProperty("user");
-        String newtoken = AuthHelpers.getInstance().issueToken(uriinfo, username);
-        return Response.ok(newtoken)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + newtoken).build();
+   /*     String token = (String) req.getProperty("token");
+        if(token != null){
+            AuthHelpers.getInstance().revokeToken(token);
+        }*/
+        String authToken = AuthHelpers.getInstance().issueToken(uriinfo, username);
+        return Response.ok(authToken)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken).build();
 
     }
 }

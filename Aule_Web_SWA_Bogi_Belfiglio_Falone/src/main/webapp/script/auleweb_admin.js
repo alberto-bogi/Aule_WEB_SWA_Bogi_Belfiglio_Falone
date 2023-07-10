@@ -133,17 +133,17 @@ function insertOrModifyEvent(id) {
             '<h4>ATTREZZATURA</h4>' +
             '<div id="attrezzatura"></div>' +
             '<div id="button_operation_event"></div>' +
-            '</div>' + 
-            '</div>' + 
+            '</div>' +
+            '</div>' +
             '</div>';
     $("#container").empty().append(form);
-    
-    if(!id){
+
+    if (!id) {
         $("button_operation_event").empty().append('<button type="button" onclick="inserNewEvent()>inserisci</button>');
         fillResponsabiliTable();
         //fillAuleTable();
         //fillAttrezzatureTable();
-    }else{
+    } else {
         $("button_operation_event").empty().append('<button type="button" onclick="modifyEvent()>modifica</button>');
         fillFormEvent(id);
     }

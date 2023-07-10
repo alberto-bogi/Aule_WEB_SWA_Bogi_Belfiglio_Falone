@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="style/auleweb_aule.css"  type="text/css" />
         <link rel="stylesheet" href="style/auleweb_eventi.css"  type="text/css" />
         <link rel="stylesheet" href="style/auleweb_admin.css"  type="text/css" />
+        <link rel="stylesheet" href="style/auleweb_export_eventi.css"  type="text/css" />
         <link rel="stylesheet" href="style/login.css"  type="text/css" />
     </head>
     <body>
@@ -16,7 +17,14 @@
                 <p class="title header">AULE WEB</p>
             </div>
             <div class="six columns">
+
                 <div id="export_eventi_div">
+
+                <div class="export"> 
+                    <button type="button" onclick="fadeInPopupExport()">
+                        <img src="images/calendar.png" alt="calendar">
+                    </button>
+
 
                 </div>
             </div>
@@ -54,8 +62,22 @@
                 </div>
             </form>
         </div>
-
-
+        
+        
+        <div id="popupExport" style="display:none">
+            <div class="right">
+                <button type="button" class="buttonExit" onclick="fadeOutPopupExport()">X</button>
+            </div>
+            <p>Scarica gli eventi di un determinato periodo a tua scelta in formato CSV</p>
+            <form action="" method="get">
+                <label>data di inizio:</label>
+                <input type="date" name="data_inizio" id="input_csv_date_1" oninput="checkCSVButton()"/><br>
+                <label>data di fine:</label>
+                <input type="date" name="data_fine" id="input_csv_date_2" oninput="checkCSVButton()"/><br>
+                <button type="submit" id="button_csv_eventi" disabled>scarica</button>
+             </form>   
+       </div>
+      
 
         <div id="popupEvento" style="display: none"> </div>
 
@@ -75,5 +97,8 @@
         <script src="script/auleweb_responsabili.js"></script>
         <script src="script/auleweb_attrezzature.js"></script>
         <script src="script/auleweb.js"></script>
+
+        <script src="script/auleweb_export_eventi.js"></script>
+
     </body>
 </html>
