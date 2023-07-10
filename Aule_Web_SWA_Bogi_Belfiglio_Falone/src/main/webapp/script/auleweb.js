@@ -54,8 +54,8 @@ $(document).ready(function () {
 
 
         //Riempiamo
-        let container = 
-                '<div class="container">' + 
+        let container =
+                '<div class="container">' +
                 '<div class="ten columns">' +
                 '<h3>EVENTI</h3>' +
                 '<button type="button" onclick="formInsertEvento()">inserisci</button>' +

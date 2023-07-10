@@ -6,9 +6,9 @@ $(document).ready(function(){
 function getEventiAdministration(){
     let eventi_administration = $("#eventi_administration");
     
-    $.ajax{
+    $.ajax({
         
-    }
+    });
 }
 
 
