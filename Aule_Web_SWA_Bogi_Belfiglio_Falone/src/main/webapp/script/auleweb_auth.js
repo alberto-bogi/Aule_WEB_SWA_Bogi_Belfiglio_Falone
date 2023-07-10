@@ -1,26 +1,4 @@
 $(document).ready(function () {
-    let count = 0;
-    let timer = setInterval(function () {
-        count++;
-    }, 60000);
-    if (sessionStorage.getItem("authToken")) {
-        if (count === 30) {
-            $.ajax({
-                url: 'rest/auth/refresh',
-                type: 'GET',
-                success: function (response) {
-                    let newToken = response; //mi salvo il nuovo token dalla response
-                    sessionStorage.removeItem("authToken");
-                    sessionStorage.setItem("newToken", response);
-                    location.reload();
-                },
-                error: function (request, status, error) {
-                    handleError(request, status, error, "Errore in fase di refresh del token.");
-
-                }
-            });
-        }
-    }
 
     $("#button_access").click(function () {
         let form = document.forms["loginForm"];

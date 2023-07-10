@@ -8,6 +8,7 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -34,6 +35,8 @@ import org.project.aule.web.swa.model.EventoRicorrente;
 import org.project.aule.web.swa.model.Responsabile;
 import org.project.aule.web.swa.resources.comparator.EventoComparator;
 import org.project.aule.web.swa.resources.database.DBConnection;
+import org.project.aule.web.swa.security.AuthHelpers;
+import org.project.aule.web.swa.security.Logged;
 
 /**
  *
@@ -42,25 +45,30 @@ import org.project.aule.web.swa.resources.database.DBConnection;
 @Path("eventi")
 public class EventiResources {
 
+    @Logged
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getEventi() {
+    public Response getEventi(@Context ContainerRequestContext req) {
+        String token = (String) req.getProperty("token");
+        if (token == null) {
+            throw new RESTWebApplicationException();
+        }
         Map<Integer, Map<String, Object>> response = new HashMap();
         try {
-            PreparedStatement currentEventi = DBConnection.getConnection().prepareStatement("SELECT E* FROM Evento E, Evento_ricorrente EV WHERE"
-                    + " (E.data_evento >= CURDATE() AND E.ora_inizio >= CURTIME()) OR (E.ID=EV.ID_evento AND EV.data_evento >= CURDATE() AND E.ora_inizio >= CURTIME()) GROUP BY E.ID");
+            PreparedStatement allEventi = DBConnection.getConnection().prepareStatement("SELECT E.* FROM Evento E, Evento_ricorrente EV WHERE"
+                    + "(E.data_evento > CURDATE() OR (E.data_evento = CURDATE() AND E.ora_inizio >= CURTIME())) OR (E.ID=EV.ID_evento AND ((EV.data_evento > CURDATE()) OR (EV.data_evento = CURDATE() AND E.ora_inizio >= CURTIME()))) GROUP BY E.ID");
             // da vedere
-            try ( ResultSet rs = currentEventi.executeQuery()) {
+            try ( ResultSet rs = allEventi.executeQuery()) {
                 while (rs.next()) {
                     Evento evento = Evento.createEvento(rs);
                     Map<String, Object> item = new HashMap();
                     item.put("nome", evento.getNome());
                     item.put("aula", evento.getAula().getNome());
                     item.put("id_aula", evento.getAulaKey());
-                    item.put("ora_inizio", evento.getOraInizio().toString());
-                    item.put("ora_fine", evento.getOraFine().toString());
+                    item.put("responsabile", evento.getResponsabile().getEmail());
+                    item.put("tipo", evento.getTipologia().toString());
 
-                    response.put(rs.getInt("ID"), item);
+                    response.put(evento.getKey(), item);
                 }
             }
         } catch (SQLException | ClassNotFoundException ex) {
@@ -257,6 +265,40 @@ public class EventiResources {
             throw new RESTWebApplicationException(ex.getMessage());
         }
 
+    }
+
+    @Path("{search:[A-Za-z0-9(%20)]*}/dynamic")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getEventiByDynamicSearch(
+            @PathParam("search") String search) {
+ 
+        Map<Integer, Map<String, Object>> response = new HashMap();
+        try {
+            PreparedStatement eventiByDynamicSearch = DBConnection.getConnection().prepareStatement("SELECT E.* FROM Evento E, Evento_ricorrente EV WHERE"
+                    + " substring(E.nome,1,?) = ? AND ((E.data_evento > CURDATE() OR (E.data_evento = CURDATE() AND E.ora_inizio >= CURTIME())) OR (E.ID=EV.ID_evento AND ((EV.data_evento > CURDATE()) OR (EV.data_evento = CURDATE() AND E.ora_inizio >= CURTIME())))) GROUP BY E.ID");
+            // da vedere
+            eventiByDynamicSearch.setInt(1, search.length());
+            eventiByDynamicSearch.setString(2, search);
+            try ( ResultSet rs = eventiByDynamicSearch.executeQuery()) {
+                while (rs.next()) {
+                    Evento evento = Evento.createEvento(rs);
+                    Map<String, Object> item = new HashMap();
+                    item.put("nome", evento.getNome());
+                    item.put("aula", evento.getAula().getNome());
+                    item.put("id_aula", evento.getAulaKey());
+                    item.put("responsabile", evento.getResponsabile().getEmail());
+                    item.put("tipo", evento.getTipologia().toString());
+
+                    response.put(evento.getKey(), item);
+                }
+            }
+        } catch (SQLException | ClassNotFoundException ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
+        } catch (Exception ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
+        }
+        return Response.ok(response).build();
     }
 
 }

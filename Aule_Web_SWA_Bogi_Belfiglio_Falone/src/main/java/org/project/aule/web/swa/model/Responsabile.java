@@ -9,6 +9,7 @@ import java.sql.SQLException;
 
 public class Responsabile {
 
+    private int key;
     private String nome;
     private String cognome;
     private String codiceFiscale;
@@ -16,10 +17,15 @@ public class Responsabile {
 
     public Responsabile() {
         super();
+        key = 0;
         nome = "";
         cognome = "";
         codiceFiscale = "";
         email = "";
+    }
+    
+    public int getKey(){
+        return this.key;
     }
 
     public String getNome() {
@@ -36,6 +42,10 @@ public class Responsabile {
 
     public String getEmail() {
         return this.email;
+    }
+    
+    public void setKey(int key){
+        this.key = key;
     }
 
     public void setNome(String nome) {
@@ -57,6 +67,7 @@ public class Responsabile {
     public static Responsabile createResponsabile(ResultSet rs) throws Exception {
         Responsabile r = new Responsabile();
         try {
+            r.setKey(rs.getInt("ID"));
             r.setNome(rs.getString("nome"));
             r.setCognome(rs.getString("cognome"));
             r.setCodiceFiscale(rs.getString("codice_fiscale"));

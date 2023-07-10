@@ -8,6 +8,7 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -23,6 +24,7 @@ import org.project.aule.web.swa.model.Attrezzatura;
 import org.project.aule.web.swa.model.Aula;
 import org.project.aule.web.swa.model.Gruppo;
 import org.project.aule.web.swa.resources.database.DBConnection;
+import org.project.aule.web.swa.security.Logged;
 
 /**
  *
@@ -30,6 +32,37 @@ import org.project.aule.web.swa.resources.database.DBConnection;
  */
 @Path("aule")
 public class AuleResources {
+    
+    @Logged
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAule(@Context ContainerRequestContext req){
+        String token = (String) req.getProperty("token");
+        if(token == null){
+           throw new RESTWebApplicationException(); 
+        }
+        Map<Integer, Map<String, Object>> response = new HashMap();
+        try {
+            PreparedStatement allAule = DBConnection.getConnection().prepareStatement("SELECT * FROM Aula");
+            // da vedere
+            try ( ResultSet rs = allAule.executeQuery()) {
+                while (rs.next()) {
+                    Aula aula = Aula.createAula(rs);
+                    Map<String, Object> item = new HashMap();
+                    item.put("nome", aula.getNome());
+                    item.put("responsabile", aula.getResponsabile().getEmail());
+                    item.put("luogo", aula.getLuogo());
+
+                    response.put(aula.getKey(), item);
+                }
+            }
+        } catch (SQLException | ClassNotFoundException ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
+        } catch (Exception ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
+        }
+        return Response.ok(response).build();
+    }
 
     @Path("{name:[a-zA-Z]+[a-zA-Z0-9\\.]*}")
     @GET
@@ -146,6 +179,36 @@ public class AuleResources {
         } catch (Exception ex) {
             throw new RESTWebApplicationException(ex.getMessage());
         }
+    }
+    
+    @Path("{search:[a-zA-Z]+[a-zA-Z0-9\\.]*}/dynamic")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAuleByDynamicSearch(
+            @PathParam("search") String search
+    ){
+        Map<Integer, Map<String, Object>> response = new HashMap();
+        try {////VEDERE QUIIIIIIIII
+            PreparedStatement auleByDynamicSearch = DBConnection.getConnection().prepareStatement("SELECT * FROM Aula WHERE substring(nome,1,?) = ?");
+            auleByDynamicSearch.setInt(1, search.length());
+            auleByDynamicSearch.setString(2, search);
+            try ( ResultSet rs = auleByDynamicSearch.executeQuery()) {
+                while (rs.next()) {
+                    Aula aula = Aula.createAula(rs);
+                    Map<String, Object> item = new HashMap();
+                    item.put("nome", aula.getNome());
+                    item.put("responsabile", aula.getResponsabile().getEmail());
+                    item.put("luogo", aula.getLuogo());
+
+                    response.put(aula.getKey(), item);
+                }
+            }
+        } catch (SQLException | ClassNotFoundException ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
+        } catch (Exception ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
+        }
+        return Response.ok(response).build();
     }
 
 }

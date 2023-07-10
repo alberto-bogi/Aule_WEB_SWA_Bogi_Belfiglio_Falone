@@ -53,8 +53,14 @@ function showAulaInformationsById(id) {
                     '</div>' +
                     '<div class="container">' +
                     '<div class="ten columns">' +
-                    '<h2>INFORMAZIONI</h2>' +
-                    '<button type="button" value="' + response["id_aula"] + '" onclick="showEventiFormByAulaId(this.value)">eventi</button>' +
+                    '<h2>INFORMAZIONI</h2>';
+            if (sessionStorage.getItem("authToken") !== null) {
+                popupContent += '<button type="button" value="' + response["id_aula"] + '" onclick="assignGruppoForAula(this.value)">assegna gruppi</button>';
+            } else {
+                popupContent += '<button type="button" value="' + response["id_aula"] + '" onclick="showEventiFormByAulaId(this.value)">eventi</button>';
+            }
+
+            popupContent +=
                     "<p><b>NOME</b>: " + response["nome"].toLowerCase() + "</p>" +
                     "<p><b>LUOGO</b>: " + response["luogo"].toLowerCase() + "</p>" +
                     "<p><b>EDIFICIO</b>: " + response["edificio"].toLowerCase() + "</p>" +
@@ -66,7 +72,7 @@ function showAulaInformationsById(id) {
                     '<div id="attrezzatureAula"></div>' +
                     '<p class="attrezzature" id="showGruppi" onclick="showGruppiByAula(' + response["id_aula"] + ')">mostra i gruppi di appartenenza</p>' +
                     '<div id="gruppiAula"></div>' +
-                    '</div>' + 
+                    '</div>' +
                     '</div>';
 
 
@@ -133,6 +139,30 @@ function showAttrezzatureByAula(id) {
 
     });
 }
+
+function fillAuleTable(){
+    $.ajax({
+            url:"rest/aule",
+            method:"get",
+            success: function(response){
+                let table = "";
+                table += '<table><th></th><th>NOME</th>';
+                Object.keys(response).forEach(function(key){
+                    let aula = response[key];
+                    table +=
+                            '<tr>' + 
+                            '<td><input type="radio" name="aula" value="' + aula["ID"] + '" onchange="validateEventInputs()/></td>' +
+                            '<td>' + aula['nome'] + '</td>' +
+                            '</tr>';
+                });
+                $("#aula").empty().append(table);
+            },
+            error: function(xhr){
+                $("#aula").empty().append(xhr.responseText);
+            }
+        });
+}
+
 
 function hideAttrezzature() {
     $("#attrezzatureAula").hide();

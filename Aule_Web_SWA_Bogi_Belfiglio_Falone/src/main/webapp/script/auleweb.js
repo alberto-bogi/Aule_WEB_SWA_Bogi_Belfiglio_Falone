@@ -51,19 +51,29 @@ $(document).ready(function () {
     }
 
     function firstPageAdmin() {
-
-
         //Riempiamo
-        let container = 
-                '<div class="container">' + 
+        let container =
+                '<div class="container">' +
                 '<div class="ten columns">' +
+                '<div class="administration">' +
                 '<h3>EVENTI</h3>' +
-                '<button type="button" onclick="formInsertEvento()">inserisci</button>' +
+                '<label>' +
+                '<img src="images/search.png" alt="icona_search" />' +
+                '<input type="text" oninput="dynamicSearchEvent(this)" placeholder="ricerca evento..." />' +
+                ' | ' +
+                '<button type="button" onclick="insertOrModifyEvent()">inserisci</button>' +
+                '</label>' +
                 '<div id="eventi_administration">' +
                 '</div>' +
                 '<h3>AULE</h3>' +
-                '<button type="button" onclick="formInsertEvento()">inserisci</button>' +
+                '<label>' +
+                '<img src="images/search.png" alt="icona_search" />' +
+                '<input type="text" oninput="dynamicSearchAula(this)" placeholder="ricerca aula..." />' +
+                ' | ' +
+                '<button type="button" onclick="insertAula()">inserisci</button>' +
+                '</label>' +
                 '<div id="aule_administration">' +
+                '</div>' +
                 '</div>' +
                 '</div>';
         let login_div = '<button type="button" id="button_logout" onclick="logout()">LOGOUT</button>';

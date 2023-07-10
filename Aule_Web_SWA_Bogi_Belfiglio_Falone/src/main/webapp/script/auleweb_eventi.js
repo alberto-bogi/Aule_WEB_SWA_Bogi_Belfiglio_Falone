@@ -44,7 +44,11 @@ function showEventInformations(id) {
                     '</div>' +
                     '<div class="container">' +
                     '<div class="ten columns">' +
-                    '<h2>INFORMAZIONI</h2>' +
+                    '<h2>INFORMAZIONI</h2>';
+            if(sessionStorage.getItem("authToken") !== null){
+                eventContent += '<button type="button" value="' + id + '" onclick="insertOrModifyEvent(this.value)">modifica</button>';
+            }
+            eventContent +=
                     "<p><b>NOME</b>: " + response["nome"].toLowerCase() + "</p>" +
                     "<p><b>DATA</b>: " + response["data"] + "</p>" +
                     "<p><b>INTERVALLO</b>: " + response["ora_inizio"] + " - " + response["ora_fine"] + "</p>" +
@@ -64,7 +68,7 @@ function showEventInformations(id) {
             $("#popupEvento").fadeIn(1000);
         },
         error: function (xhr, status, error) {
-            $("#tableEventi").append(xhr.responseText);
+            
         }
     });
 }

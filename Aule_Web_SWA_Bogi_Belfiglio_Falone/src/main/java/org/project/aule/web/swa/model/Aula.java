@@ -11,6 +11,7 @@ import org.project.aule.web.swa.resources.database.DBConnection;
 
 public class Aula{
 
+    private int key;
     private int responsabileKey;
     private String nome;
     private String luogo;
@@ -23,6 +24,7 @@ public class Aula{
 
     public Aula() {
         super();
+        key = 0;
         responsabileKey = 0;
         nome = "";
         luogo = "";
@@ -49,6 +51,14 @@ public class Aula{
             }
         } 
         return null;
+    }
+    
+     public int getKey() {
+        return key;
+    }
+
+    public void setKey(int key) {
+        this.key = key;
     }
 
     public void setResponsabileKey(int responsabileKey) {
@@ -122,6 +132,7 @@ public class Aula{
     public static Aula createAula(ResultSet rs) throws Exception {
         try {
             Aula a = new Aula();
+            a.setKey(rs.getInt("ID"));
             a.setNome(rs.getString("nome"));
             a.setLuogo(rs.getString("luogo"));
             a.setEdificio(rs.getString("edificio"));

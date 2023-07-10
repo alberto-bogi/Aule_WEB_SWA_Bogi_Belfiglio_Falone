@@ -129,6 +129,20 @@ table td button:hover{
     padding-right: 5%;
 }
 
+#popupEvento button{
+    font-weight: bold;
+    font-size: medium;
+    color:white;
+    background-color: #9c9c9c;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#popupEvento button:hover{
+    color: black;
+    background-color: white;
+}
+
 #currentEventButton{
     border-radius: 4px;
     background-color: #9c9c9c;

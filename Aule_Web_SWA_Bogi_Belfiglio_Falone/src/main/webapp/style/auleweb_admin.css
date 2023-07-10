@@ -1,0 +1,53 @@
+.administration button{
+    border-radius: 4px;
+    background-color: #9c9c9c;
+    color: white;
+    font-weight: bold;
+    font-size: medium;
+    cursor: pointer;
+    margin-left: 0.5%;
+}
+
+.administration button:hover{
+    background-color: white;
+    color: black;
+    
+}
+
+.administration img{
+    width: 2%;
+    vertical-align: middle;
+    
+}
+
+.administration label{
+    display: inline-block;
+    line-height: 1;
+    vertical-align: middle;
+    width:100%;
+}
+
+.administration input{
+    border-color: black;
+    width: 15%;
+    padding: 0.2%;
+    margin-right: 0.5%;
+    
+}
+
+
+
+#eventi_administration{
+    height: 200px;
+    overflow: auto;
+    padding-bottom: 2%;
+}
+
+#eventi_administration{
+    border-bottom: 2px solid black;
+}
+
+#aule_administration{
+    height: 200px;
+    overflow: auto;
+}
