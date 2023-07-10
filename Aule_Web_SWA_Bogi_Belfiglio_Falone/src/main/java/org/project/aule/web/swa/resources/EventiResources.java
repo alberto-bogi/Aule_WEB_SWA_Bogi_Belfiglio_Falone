@@ -45,14 +45,10 @@ import org.project.aule.web.swa.security.Logged;
 @Path("eventi")
 public class EventiResources {
 
-    @Logged
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getEventi(@Context ContainerRequestContext req) {
-        String token = (String) req.getProperty("token");
-        if (token == null) {
-            throw new RESTWebApplicationException();
-        }
+    public Response getEventi() {
         Map<Integer, Map<String, Object>> response = new HashMap();
         try {
             PreparedStatement allEventi = DBConnection.getConnection().prepareStatement("SELECT E.* FROM Evento E, Evento_ricorrente EV WHERE"

@@ -51,3 +51,94 @@
     height: 200px;
     overflow: auto;
 }
+
+.form.event h3,h4{
+    font-family: sans-serif;
+}
+
+.form.event input{
+    border-color: black;
+    width: 20%;
+    padding: 0.4%;
+    margin-right:0.5%;
+    margin-bottom:0.5%;
+    margin-left: 0.5%;  
+}
+
+.form.event input[type="date"]{
+    width:10%;
+}
+
+.form.event input[type="time"]{
+    width:5%;
+}
+
+.form.event input[type="radio"]{
+    width: 100%;
+}
+
+.form.event #responsabile td{
+    padding: 0.5%;
+    font-family: sans-serif;
+    font-size: medium;
+    border: 2px solid black;
+    text-align: center;
+    background-color: white;
+}
+
+.form.event #responsabile table{
+    width:50%;
+}
+
+.form.event #fine_ricorrenza{
+    margin-top: 2%;
+    margin-left: 1%;
+    padding-left: 0.5%;
+    border-left: 3px solid black;
+}
+
+.form.event #corso{
+    margin-top: 2%;
+    margin-left: 1%;
+    padding-left: 1%;
+    border-left: 3px solid black;
+}
+
+.form.event #corso table{
+    width: 60%;
+}
+
+.form.event #aula table{
+    width: 20%;
+}
+
+.form.event table{
+    width:30%;
+}
+
+
+
+.form.event textarea{
+    border-color: black;
+}
+
+.form.event button{
+    font-weight: bold;
+    font-size: medium;
+    color:white;
+    background-color: #9c9c9c;
+    border-radius: 4px;
+    margin-bottom: 2%;
+}
+
+.form.event button:hover{
+    background-color: white;
+    color: black;
+    cursor: pointer;
+}
+
+#aula{
+    margin-bottom: 1%;
+}
+
+

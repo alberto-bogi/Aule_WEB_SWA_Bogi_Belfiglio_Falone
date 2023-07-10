@@ -8,9 +8,6 @@ function getEventiAdministration() {
     $.ajax({
         url: "rest/eventi",
         method: "GET",
-        headers: {
-            'Authorization': 'Bearer ' + sessionStorage.getItem("authToken")
-        },
         success: function (response) {
             $("#eventi_administration").empty();
             let tableEventi = "<table><tr><th>NOME</th><th>AULA</th><th>RESPONSABILE</th><th>TIPO</th><th>DETTAGLIO</th></tr>";
@@ -69,10 +66,10 @@ function insertOrModifyEvent(id) {
     //////svuotiamo il container totale per inserire la form dell'evento
     let form = "";
     form +=
-            '<h3>FORM EVENTO</h3>' +
-            '<div class="formEvent">' +
+            '<div class="form event">' +
             '<div class="container">' +
             '<div class="ten columns">' +
+            '<h3>FORM EVENTO</h3>' +
             '<button type="button" onclick="">annulla</button><br>' +
             '<label for="input1Ev">nome:</label>' +
             '<input type="text" name="nome" id="input_evento_1" oninput="validateEventsInputs(1)" />' +
@@ -90,21 +87,37 @@ function insertOrModifyEvent(id) {
             '<textarea name="descrizione" id="input_evento_2" oninput="validateEventsInputs(1)"></textarea>' +
             '<br>' +
             '<h4>TIPOLOGIA</h4>' +
-            '<input type="radio" name="tipologia" value="1" onchange="showExtendedEventForm(this.value); validateEventsInputs(1)"/>' +
-            '<label>LEZIONE</label><br>' +
-            '<input type="radio" name="tipologia" value="2" onchange="showExtendedEventForm(this.value); validateEventsInputs(1)"/>' +
-            '<label>ESAME</label><br>' +
-            '<input type="radio" name="tipologia" value="3" onchange="showExtendedEventForm(this.value); validateEventsInputs(1)"/>' +
-            '<label>PARZIALE</label><br>' +
-            '<input type="radio" name="tipologia" value="4" onchange="showExtendedEventForm(this.value); validateEventsInputs(1)"/>' +
-            '<label>SEMINARIO</label><br>' +
-            '<input type="radio" name="tipologia" value="5" onchange="showExtendedEventForm(this.value); validateEventsInputs(1)"/>' +
-            '<label>RIUNIONE</label><br>' +
-            '<input type="radio" name="tipologia" value="6" onchange="showExtendedEventForm(this.value); validateEventsInputs(1)"/>' +
-            '<label>LAUREA</label><br>' +
-            '<input type="radio" name="tipologia" value="7" onchange="showExtendedEventForm(this.value); validateEventsInputs(1)"/>' +
-            '<label>ALTRO</label><br>' +
-            '<div id="corsi_evento" style="display:none">' +
+            '<table><th></th><th>NOME</th>' +
+            '<tr>' +
+            '<td><input type="radio" name="tipologia" value="1" onchange="showCorsi(); validateEventsInputs(1)"/></td>' +
+            '<td>LEZIONE</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td><input type="radio" name="tipologia" value="2" onchange="showCorsi(); validateEventsInputs(1)"/></td>' +
+            '<td>ESAME</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td><input type="radio" name="tipologia" value="3" onchange="showCorsi(); validateEventsInputs(1)"/></td>' +
+            '<td>PARZIALE</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td><input type="radio" name="tipologia" value="4" onchange="showCorsi(); validateEventsInputs(1)"/></td>' +
+            '<td>SEMINARIO</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td><input type="radio" name="tipologia" value="5" onchange="showCorsi(); validateEventsInputs(1)"/></td>' +
+            '<td>RIUNIONE</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td><input type="radio" name="tipologia" value="6" onchange="showCorsi(); validateEventsInputs(1)"/></td>' +
+            '<td>LAUREA</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td><input type="radio" name="tipologia" value="7" onchange="showCorsi(); validateEventsInputs(1)"/></td>' +
+            '<td>ALTRO</td>' +
+            '</tr>' +
+            '</table>' +
+            '<div id="corso" style="display:none">' +
             '</div>' +
             '<div id="request_time_input" style="display:none">' +
             '<p>Attenzione. verificare che:</p>' +
@@ -115,23 +128,33 @@ function insertOrModifyEvent(id) {
             '<li>L\'orario sia inserito con scarti di 15 minuti</li>' +
             '</ul>' +
             '</div>' +
-            '<h4>Ricorrenza</h4>' +
-            '<input type="radio" name="ricorrenza" class="ricorrenza" value="1" onchange="showFineRicorrenza(1); validateEventsInputs(1)"/></td>' +
-            '<label>GIORNALIERA</label><br>' +
-            '<input type="radio" name="ricorrenza" class="ricorrenza" value="2" onchange="showFineRicorrenza(1); validateEventsInputs(1)"/></td>' +
-            '<label>SETTIMANALE</label><br>' +
-            '<input type="radio" name="ricorrenza" class="ricorrenza" value="3" onchange="showFineRicorrenza(1); validateEventsInputs(1)"/></td>' +
-            '<label>MENSILE</label><br>' +
-            '<input type="radio" name="ricorrenza" class="ricorrenza" value="4" onchange="showFineRicorrenza(1); validateEventsInputs(1)"/></td>' +
-            '<label>NESSUNA</label><br>' +
+            '<h4>RICORRENZA</h4>' +
+            '<table><th></th><th>FREQUENZA</th>' +
+            '<tr>' +
+            '<td><input type="radio" name="ricorrenza" class="ricorrenza" value="1" onchange="showFineRicorrenza(); validateEventsInputs(1)"/></td>' +
+            '<td>GIORNALIERA</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td><input type="radio" name="ricorrenza" class="ricorrenza" value="2" onchange="showFineRicorrenza(); validateEventsInputs(1)"/></td>' +
+            '<td>SETTIMANALE</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td><input type="radio" name="ricorrenza" class="ricorrenza" value="3" onchange="showFineRicorrenza(); validateEventsInputs(1)"/></td>' +
+            '<td>MENSILE</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td><input type="radio" name="ricorrenza" class="ricorrenza" value="4" onchange="showFineRicorrenza(); validateEventsInputs(1)"/></td>' +
+            '<td>NESSUNA</td>' +
+            '</tr>' +
+            '</table>' +
             '<div id="fine_ricorrenza" style="display:none">' +
+            '<label>segnare la data di fine ricorrenza</label>' +
+            '<input type="date" id="data_ricorrenza" name="fine_ricorrenza" />' +
             '</div>' +
             '<h4>RESPONSABILI</h4>' +
             '<div id="responsabile"></div>' +
             '<h4>AULA</h4>' +
             '<div id="aula"></div>' +
-            '<h4>ATTREZZATURA</h4>' +
-            '<div id="attrezzatura"></div>' +
             '<div id="button_operation_event"></div>' +
             '</div>' +
             '</div>' +
@@ -139,12 +162,13 @@ function insertOrModifyEvent(id) {
     $("#container").empty().append(form);
 
     if (!id) {
-        $("button_operation_event").empty().append('<button type="button" onclick="inserNewEvent()>inserisci</button>');
+        let button = '<button type="button" onclick="insertNewEvent()">inserisci</button>';
+        $("#button_operation_event").empty().append(button);
         fillResponsabiliTable();
-        //fillAuleTable();
-        //fillAttrezzatureTable();
+        fillAuleTable();
+        fillCorsiTable();
     } else {
-        $("button_operation_event").empty().append('<button type="button" onclick="modifyEvent()>modifica</button>');
+        $("button_operation_event").empty().append('<button type="button" onclick="modifyEvent()">modifica</button>');
         fillFormEvent(id);
     }
 

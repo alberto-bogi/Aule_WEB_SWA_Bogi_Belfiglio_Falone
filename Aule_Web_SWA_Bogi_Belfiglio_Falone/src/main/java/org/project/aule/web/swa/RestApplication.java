@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.project.aule.web.swa.jackson.ObjectMapperContextResolver;
 import org.project.aule.web.swa.resources.AuleResources;
+import org.project.aule.web.swa.resources.CorsiResources;
 import org.project.aule.web.swa.resources.EventiResources;
 import org.project.aule.web.swa.resources.ResponsabiliResource;
 import org.project.aule.web.swa.security.AuthLoggedFilter;
@@ -35,7 +36,7 @@ public class RestApplication extends Application{
         c.add(AuleResources.class);
         c.add(AuthenticationRes.class);
         c.add(ResponsabiliResource.class);
-
+        c.add(CorsiResources.class);
         
         //aggiungiamo il provider Jackson per poter
         //usare i suoi servizi di serializzazione e 

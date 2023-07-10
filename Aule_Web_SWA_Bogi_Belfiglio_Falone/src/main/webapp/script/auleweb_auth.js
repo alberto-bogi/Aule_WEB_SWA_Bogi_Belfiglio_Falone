@@ -82,7 +82,8 @@ function logout() {
             location.reload();
         },
         error: function (request, status, error) {
-            handleError(request, status, error, "", "Errore in fase di logout.");
+            sessionStorage.removeItem("authToken");
+            $(window.location).attr('href', 'index.html');
         }
     });
 

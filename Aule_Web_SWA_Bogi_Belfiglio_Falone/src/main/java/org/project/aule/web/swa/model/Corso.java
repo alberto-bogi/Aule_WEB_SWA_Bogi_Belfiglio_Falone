@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import org.project.aule.web.swa.model.enumerable.TipoLaurea;
 
 public class Corso{
+    private int key;
     private String nome;
     private TipoLaurea tipoLaurea;
     private String corsoDiLaurea;
@@ -17,12 +18,16 @@ public class Corso{
     
     public Corso(){
         super();
+        key = 0;
         nome = "";
         corsoDiLaurea = "";
         annoDiFrequentazione = 0;
         tipoLaurea = null;
     }
      
+    public int getKey(){
+        return this.key;
+    }
     
     public String getNome(){
          return this.nome;
@@ -38,6 +43,10 @@ public class Corso{
 
     public int getAnnoDiFrequentazione() {
         return this.annoDiFrequentazione;
+    }
+    
+    public void setKey(int key){
+        this.key=key;
     }
 
     public void setTipoLaurea(TipoLaurea tipoLaurea) {
@@ -61,6 +70,7 @@ public class Corso{
     public static Corso createCorso(ResultSet rs) throws Exception {
         Corso c = new Corso();
         try {
+            c.setKey(rs.getInt("ID"));
             c.setNome(rs.getString("nome"));
             if("TRIENNALE".equals(rs.getString("tipo_laurea"))) {
                 c.setTipoLaurea(TipoLaurea.TRIENNALE);

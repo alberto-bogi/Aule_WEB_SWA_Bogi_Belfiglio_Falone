@@ -55,7 +55,10 @@ function showAulaInformationsById(id) {
                     '<div class="ten columns">' +
                     '<h2>INFORMAZIONI</h2>';
             if (sessionStorage.getItem("authToken") !== null) {
-                popupContent += '<button type="button" value="' + response["id_aula"] + '" onclick="assignGruppoForAula(this.value)">assegna gruppi</button>';
+                popupContent += 
+                        '<button type="button" value="' + response["id_aula"] + '" onclick="assignGruppoForAula(this.value)">assegna gruppi</button>' +
+                        '<button type="button" value="' + response["id_aula"] + '" onclick="exportAulaCSV(this.value)">esporta</button>'
+                
             } else {
                 popupContent += '<button type="button" value="' + response["id_aula"] + '" onclick="showEventiFormByAulaId(this.value)">eventi</button>';
             }
@@ -151,10 +154,11 @@ function fillAuleTable(){
                     let aula = response[key];
                     table +=
                             '<tr>' + 
-                            '<td><input type="radio" name="aula" value="' + aula["ID"] + '" onchange="validateEventInputs()/></td>' +
+                            '<td><input type="radio" name="aula" value="' + aula["ID"] + '" onchange="validateEventInputs()"/></td>' +
                             '<td>' + aula['nome'] + '</td>' +
                             '</tr>';
                 });
+                table += '</table>';
                 $("#aula").empty().append(table);
             },
             error: function(xhr){

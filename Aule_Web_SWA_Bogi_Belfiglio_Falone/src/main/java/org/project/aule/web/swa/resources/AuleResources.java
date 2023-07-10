@@ -33,14 +33,10 @@ import org.project.aule.web.swa.security.Logged;
 @Path("aule")
 public class AuleResources {
     
-    @Logged
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAule(@Context ContainerRequestContext req){
-        String token = (String) req.getProperty("token");
-        if(token == null){
-           throw new RESTWebApplicationException(); 
-        }
+    public Response getAule(){
         Map<Integer, Map<String, Object>> response = new HashMap();
         try {
             PreparedStatement allAule = DBConnection.getConnection().prepareStatement("SELECT * FROM Aula");
