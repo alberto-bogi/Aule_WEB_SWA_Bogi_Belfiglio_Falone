@@ -1,6 +1,14 @@
 $(document).ready(function () {
+    if (sessionStorage.getItem("ID_evento") !== null){
+        showEventInformations(sessionStorage.getItem("ID_evento"));
+        sessionStorage.removeItem("ID_evento");
+    }
+    
     getEventiAdministration();
     getAuleAdministration();
+
+
+
 });
 
 //FUNZIONI PER EVENTI LATO AMMINISTRATIVO
@@ -10,7 +18,7 @@ function getEventiAdministration() {
         method: "GET",
         success: function (response) {
             $("#eventi_administration").empty();
-            let tableEventi = "<table><tr><th>NOME</th><th>AULA</th><th>RESPONSABILE</th><th>TIPO</th><th>DETTAGLIO</th></tr>";
+            let tableEventi = "<table><thead><tr><th>NOME</th><th>AULA</th><th>RESPONSABILE</th><th>TIPO</th><th>DETTAGLIO</th></tr></thead><tbody>";
             Object.keys(response).forEach(function (key) {
                 let evento = response[key];
                 tableEventi += "<tr>" +
@@ -21,8 +29,14 @@ function getEventiAdministration() {
                         '<td><button type="button" name="ID_evento" value="' + key + '" onclick="showEventInformations(this.value)" >vedi</button></td>' +
                         "</tr>";
             });
-            tableEventi += "</table>";
+            tableEventi += "</tbody></table>";
             $("#eventi_administration").append(tableEventi);
+            let div_eventi = document.getElementById("eventi_administration");
+            let table = div_eventi.querySelector('table');
+            let thElements = table.querySelectorAll('th');
+            thElements.forEach(function (thElement) {
+                thElement.style.width = thElement.offsetWidth + 'px';
+            });
         },
         error: function (xhr) {
             $("#eventi_administration").append(xhr.responseText);
@@ -71,49 +85,49 @@ function insertOrModifyEvent(id) {
             '<div class="ten columns">' +
             '<h3>FORM EVENTO</h3>' +
             '<button type="button" onclick="">annulla</button><br>' +
-            '<label for="input1Ev">nome:</label>' +
-            '<input type="text" name="nome" id="input_evento_1" oninput="validateEventsInputs(1)" />' +
+            '<label for="nome">nome:</label>' +
+            '<input type="text" name="nome" id="nome" oninput="validateEventsInputs()" />' +
             '<br>' +
-            '<label for="input4Ev">data:</label>' +
-            '<input type="date" name="data" id="input_evento_3" oninput="validateEventsInputs(1), verifyCorrectnessTimeEvento(1)"/>' +
+            '<label for="data_evento">data:</label>' +
+            '<input type="date" name="data" id="data_evento" onchange="validateEventsInputs(), verifyCorrectnessTimeEvento()"/>' +
             '<br>' +
-            '<label for="input5Ev">ora inizio:</label>' +
-            '<input type="time" step="900" name="ora_inizio" class="orario" id="input_evento_4" oninput="validateEventsInputs(1), verifyCorrectnessTimeEvento(1)"/>' +
+            '<label for="ora_inizio">ora inizio:</label>' +
+            '<input type="time" step="900" name="ora_inizio" class="orario" id="ora_inizio" onchange="validateEventsInputs(), verifyCorrectnessTimeEvento()"/>' +
             '<br>' +
-            '<label for="input6Ev">ora fine:</label>' +
-            '<input type="time" step="900" name="ora_fine" class="orario" id="input_evento_5" oninput="validateEventsInputs(1), verifyCorrectnessTimeEvento(1)"/>' +
+            '<label for="ora_fine">ora fine:</label>' +
+            '<input type="time" step="900" name="ora_fine" class="orario" id="ora_fine" onchange="validateEventsInputs(), verifyCorrectnessTimeEvento()"/>' +
             '<br>' +
-            '<label for="input2Ev">descrizione:</label><br>' +
-            '<textarea name="descrizione" id="input_evento_2" oninput="validateEventsInputs(1)"></textarea>' +
+            '<label for="descrizione">descrizione:</label><br>' +
+            '<textarea name="descrizione" id="descrizione" oninput="validateEventsInputs()"></textarea>' +
             '<br>' +
             '<h4>TIPOLOGIA</h4>' +
             '<table><th></th><th>NOME</th>' +
             '<tr>' +
-            '<td><input type="radio" name="tipologia" value="1" onchange="showCorsi(); validateEventsInputs(1)"/></td>' +
+            '<td><input type="radio" name="tipologia" value="1" onchange="showCorsi(); validateEventsInputs()"/></td>' +
             '<td>LEZIONE</td>' +
             '</tr>' +
             '<tr>' +
-            '<td><input type="radio" name="tipologia" value="2" onchange="showCorsi(); validateEventsInputs(1)"/></td>' +
+            '<td><input type="radio" name="tipologia" value="2" onchange="showCorsi(); validateEventsInputs()"/></td>' +
             '<td>ESAME</td>' +
             '</tr>' +
             '<tr>' +
-            '<td><input type="radio" name="tipologia" value="3" onchange="showCorsi(); validateEventsInputs(1)"/></td>' +
+            '<td><input type="radio" name="tipologia" value="3" onchange="showCorsi(); validateEventsInputs()"/></td>' +
             '<td>PARZIALE</td>' +
             '</tr>' +
             '<tr>' +
-            '<td><input type="radio" name="tipologia" value="4" onchange="showCorsi(); validateEventsInputs(1)"/></td>' +
+            '<td><input type="radio" name="tipologia" value="4" onchange="showCorsi(); validateEventsInputs()"/></td>' +
             '<td>SEMINARIO</td>' +
             '</tr>' +
             '<tr>' +
-            '<td><input type="radio" name="tipologia" value="5" onchange="showCorsi(); validateEventsInputs(1)"/></td>' +
+            '<td><input type="radio" name="tipologia" value="5" onchange="showCorsi(); validateEventsInputs()"/></td>' +
             '<td>RIUNIONE</td>' +
             '</tr>' +
             '<tr>' +
-            '<td><input type="radio" name="tipologia" value="6" onchange="showCorsi(); validateEventsInputs(1)"/></td>' +
+            '<td><input type="radio" name="tipologia" value="6" onchange="showCorsi(); validateEventsInputs()"/></td>' +
             '<td>LAUREA</td>' +
             '</tr>' +
             '<tr>' +
-            '<td><input type="radio" name="tipologia" value="7" onchange="showCorsi(); validateEventsInputs(1)"/></td>' +
+            '<td><input type="radio" name="tipologia" value="7" onchange="showCorsi(); validateEventsInputs()"/></td>' +
             '<td>ALTRO</td>' +
             '</tr>' +
             '</table>' +
@@ -131,25 +145,25 @@ function insertOrModifyEvent(id) {
             '<h4>RICORRENZA</h4>' +
             '<table><th></th><th>FREQUENZA</th>' +
             '<tr>' +
-            '<td><input type="radio" name="ricorrenza" class="ricorrenza" value="1" onchange="showFineRicorrenza(); validateEventsInputs(1)"/></td>' +
+            '<td><input type="radio" name="ricorrenza" class="ricorrenza" value="1" onchange="showFineRicorrenza(); validateEventsInputs()"/></td>' +
             '<td>GIORNALIERA</td>' +
             '</tr>' +
             '<tr>' +
-            '<td><input type="radio" name="ricorrenza" class="ricorrenza" value="2" onchange="showFineRicorrenza(); validateEventsInputs(1)"/></td>' +
+            '<td><input type="radio" name="ricorrenza" class="ricorrenza" value="2" onchange="showFineRicorrenza(); validateEventsInputs()"/></td>' +
             '<td>SETTIMANALE</td>' +
             '</tr>' +
             '<tr>' +
-            '<td><input type="radio" name="ricorrenza" class="ricorrenza" value="3" onchange="showFineRicorrenza(); validateEventsInputs(1)"/></td>' +
+            '<td><input type="radio" name="ricorrenza" class="ricorrenza" value="3" onchange="showFineRicorrenza(); validateEventsInputs()"/></td>' +
             '<td>MENSILE</td>' +
             '</tr>' +
             '<tr>' +
-            '<td><input type="radio" name="ricorrenza" class="ricorrenza" value="4" onchange="showFineRicorrenza(); validateEventsInputs(1)"/></td>' +
+            '<td><input type="radio" name="ricorrenza" class="ricorrenza" value="4" onchange="showFineRicorrenza(); validateEventsInputs()"/></td>' +
             '<td>NESSUNA</td>' +
             '</tr>' +
             '</table>' +
             '<div id="fine_ricorrenza" style="display:none">' +
             '<label>segnare la data di fine ricorrenza</label>' +
-            '<input type="date" id="data_ricorrenza" name="fine_ricorrenza" />' +
+            '<input type="date" id="data_ricorrenza" name="fine_ricorrenza" onchange="validateEventsInputs()" />' +
             '</div>' +
             '<h4>RESPONSABILI</h4>' +
             '<div id="responsabile"></div>' +
@@ -162,13 +176,13 @@ function insertOrModifyEvent(id) {
     $("#container").empty().append(form);
 
     if (!id) {
-        let button = '<button type="button" onclick="insertNewEvent()">inserisci</button>';
+        let button = '<button type="button" id="button_event" onclick="insertNewEvento()"disabled>inserisci</button>';
         $("#button_operation_event").empty().append(button);
         fillResponsabiliTable();
         fillAuleTable();
         fillCorsiTable();
     } else {
-        $("button_operation_event").empty().append('<button type="button" onclick="modifyEvent()">modifica</button>');
+        $("button_operation_event").empty().append('<button type="button" id="button_event" onclick="modifyEvento()">modifica</button>');
         fillFormEvent(id);
     }
 
@@ -190,14 +204,14 @@ function getAuleAdministration()
             let tableAule = "<table><tr><th>NOME</th><th>RESPONSABILE</th><th>LUOGO</th><th>DETTAGLIO</th></tr>";
             Object.keys(response).forEach(function (key) {
                 let aula = response[key];
-                tableAule += "<tr>" +
+                tableAule += "<tbody><tr>" +
                         "<td>" + aula["nome"] + "</td>" +
                         "<td>" + aula["responsabile"] + '</td>' +
                         "<td>" + aula["luogo"] + "</td>" +
                         '<td><button type="button" name="ID_aula" value="' + key + '" onclick="showAulaInformationsById(this.value)" >vedi</button></td>' +
                         "</tr>";
             });
-            tableAule += "</table>";
+            tableAule += "</tbody></table>";
             $("#aule_administration").append(tableAule);
         },
         error: function (xhr) {

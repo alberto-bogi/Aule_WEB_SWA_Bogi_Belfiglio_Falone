@@ -154,7 +154,7 @@ function fillAuleTable(){
                     let aula = response[key];
                     table +=
                             '<tr>' + 
-                            '<td><input type="radio" name="aula" value="' + aula["ID"] + '" onchange="validateEventInputs()"/></td>' +
+                            '<td><input type="radio" name="aula" value="' + key + '" onchange="validateEventsInputs()"/></td>' +
                             '<td>' + aula['nome'] + '</td>' +
                             '</tr>';
                 });

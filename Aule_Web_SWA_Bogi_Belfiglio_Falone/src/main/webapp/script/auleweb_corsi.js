@@ -11,7 +11,7 @@ function fillCorsiTable() {
                 let corso = response[key];
                 table +=
                         '<tr>' +
-                        '<td><input type="radio" name="corso" value="' + key + '" onchange="validateEventInputs()"/></td>' +
+                        '<td><input type="radio" name="corso" value="' + key + '" onchange="validateEventsInputs()"/></td>' +
                         '<td>' + corso["nome"] + '</td>' +
                         '<td>' + corso["laurea"] + '</td>' +
                         '<td>' + corso["tipo"] + "</td>";

@@ -9,7 +9,7 @@ function fillResponsabiliTable(){
                 Object.keys(response).forEach(function(key){
                     table +=
                             '<tr>' + 
-                            '<td><input type="radio" name="responsabile" value="' + key + '" onchange="validateEventInputs()"/></td>' +
+                            '<td><input type="radio" name="responsabile" value="' + key + '" onchange="validateEventsInputs()"/></td>' +
                             '<td>' + response[key] + '</td>' +
                             '</tr>';
                 });

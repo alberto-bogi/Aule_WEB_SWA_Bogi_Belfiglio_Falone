@@ -11,13 +11,13 @@
 .administration button:hover{
     background-color: white;
     color: black;
-    
+
 }
 
 .administration img{
     width: 2%;
     vertical-align: middle;
-    
+
 }
 
 .administration label{
@@ -32,24 +32,23 @@
     width: 15%;
     padding: 0.2%;
     margin-right: 0.5%;
-    
-}
 
+}
 
 
 #eventi_administration{
     height: 200px;
-    overflow: auto;
+    width:100%;
+    overflow-y: auto;
+    border-bottom: 2px solid black;
     padding-bottom: 2%;
 }
 
-#eventi_administration{
-    border-bottom: 2px solid black;
-}
 
 #aule_administration{
     height: 200px;
-    overflow: auto;
+    width:100%;
+    overflow-y: auto;
 }
 
 .form.event h3,h4{
@@ -62,7 +61,7 @@
     padding: 0.4%;
     margin-right:0.5%;
     margin-bottom:0.5%;
-    margin-left: 0.5%;  
+    margin-left: 0.5%;
 }
 
 .form.event input[type="date"]{
@@ -135,6 +134,12 @@
     background-color: white;
     color: black;
     cursor: pointer;
+}
+
+.form.event button:disabled{
+    background-color: #c0c0c0;
+    color: white;
+    cursor: inherit;
 }
 
 #aula{

@@ -4,7 +4,9 @@
  */
 package org.project.aule.web.swa.resources;
 
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -18,6 +20,8 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -33,6 +37,8 @@ import org.project.aule.web.swa.model.Corso;
 import org.project.aule.web.swa.model.Evento;
 import org.project.aule.web.swa.model.EventoRicorrente;
 import org.project.aule.web.swa.model.Responsabile;
+import org.project.aule.web.swa.model.enumerable.Ricorrenza;
+import org.project.aule.web.swa.model.enumerable.Tipologia;
 import org.project.aule.web.swa.resources.comparator.EventoComparator;
 import org.project.aule.web.swa.resources.database.DBConnection;
 import org.project.aule.web.swa.security.AuthHelpers;
@@ -44,7 +50,6 @@ import org.project.aule.web.swa.security.Logged;
  */
 @Path("eventi")
 public class EventiResources {
-
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -121,7 +126,7 @@ public class EventiResources {
             try ( ResultSet rs = eventoById.executeQuery()) {
                 if (rs.next()) {
                     evento = Evento.createEvento(rs);
-
+                    response.put("ID", evento.getKey());
                     response.put("nome", evento.getNome());
                     response.put("data", evento.getDataEvento().toString());
                     response.put("ora_inizio", evento.getOraInizio().toString());
@@ -268,7 +273,7 @@ public class EventiResources {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getEventiByDynamicSearch(
             @PathParam("search") String search) {
- 
+
         Map<Integer, Map<String, Object>> response = new HashMap();
         try {
             PreparedStatement eventiByDynamicSearch = DBConnection.getConnection().prepareStatement("SELECT E.* FROM Evento E, Evento_ricorrente EV WHERE"
@@ -297,4 +302,96 @@ public class EventiResources {
         return Response.ok(response).build();
     }
 
+    @Logged
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response addEvento(
+            @Context ContainerRequestContext req,
+            @Context UriInfo uriinfo,
+            Map<String, Object> eventoJson
+    ) {
+        try {
+            if (req.getProperty("token") == null) {
+                throw new RESTWebApplicationException();
+            }
+            URI uri;
+            PreparedStatement insertEvento = DBConnection.getConnection().prepareStatement("INSERT INTO Evento"
+                    + "(nome, descrizione, tipologia, data_evento, ora_inizio, ora_fine, ricorrenza, data_fine_ricorrenza, ID_corso, "
+                    + "ID_responsabile, ID_aula) VALUES (?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+            insertEvento.setString(1, eventoJson.get("nome").toString());
+            insertEvento.setString(2, eventoJson.get("descrizione").toString());
+            insertEvento.setDate(4, Date.valueOf(eventoJson.get("data_evento").toString()));
+            insertEvento.setTime(5, Time.valueOf(eventoJson.get("ora_inizio").toString() + ":00"));
+            insertEvento.setTime(6, Time.valueOf(eventoJson.get("ora_fine").toString() + ":00"));
+            insertEvento.setInt(10, Integer.parseInt(eventoJson.get("id_responsabile").toString()));
+            insertEvento.setInt(11, Integer.parseInt(eventoJson.get("id_aula").toString()));
+
+            switch (Integer.parseInt(eventoJson.get("tipologia").toString())) {
+                case 1:
+                    insertEvento.setString(3, "LEZIONE");
+                    insertEvento.setInt(9, Integer.parseInt(eventoJson.get("id_corso").toString()));
+                    break;
+                case 2:
+                    insertEvento.setString(3, "ESAME");
+                    insertEvento.setInt(9, Integer.parseInt(eventoJson.get("id_corso").toString()));
+                    break;
+                case 3:
+                    insertEvento.setString(3, "PARZIALE");
+                    insertEvento.setInt(9, Integer.parseInt(eventoJson.get("id_corso").toString()));
+                case 4:
+                    insertEvento.setString(3, "SEMINARIO");
+                    insertEvento.setNull(9, java.sql.Types.INTEGER);
+                    break;
+                case 5:
+                    insertEvento.setString(3, "RIUNIONE");
+                    insertEvento.setNull(9, java.sql.Types.INTEGER);
+                    break;
+                case 6:
+                    insertEvento.setString(3, "LAUREA");
+                    insertEvento.setNull(9, java.sql.Types.INTEGER);
+                    break;
+                case 7:
+                    insertEvento.setString(3, "ALTRO");
+                    insertEvento.setNull(9, java.sql.Types.INTEGER);
+                    break;
+            }
+
+            switch (Integer.parseInt(eventoJson.get("ricorrenza").toString())) {
+                case 1:
+                    insertEvento.setString(7, "GIORNALIERA");
+                    insertEvento.setDate(8, Date.valueOf(eventoJson.get("data_ricorrenza").toString()));
+                    break;
+                case 2:
+                    insertEvento.setString(7, "SETTIMANALE");
+                    insertEvento.setDate(8, Date.valueOf(eventoJson.get("data_ricorrenza").toString()));
+                    break;
+                case 3:
+                    insertEvento.setString(7, "MENSILE");
+                    insertEvento.setDate(8, Date.valueOf(eventoJson.get("data_ricorrenza").toString()));
+                    break;
+                case 4:
+                    insertEvento.setString(7, "NESSUNA");
+                    insertEvento.setNull(8, java.sql.Types.DATE);
+                    break;
+            }
+            if (insertEvento.executeUpdate() == 1) {
+                try ( ResultSet keys = insertEvento.getGeneratedKeys()) {
+
+                    if (keys.next()) {
+                        int key = keys.getInt(1);
+                        uri = uriinfo.getBaseUriBuilder()
+                                .path(getClass())
+                                .path(getClass(), "getEvento")
+                                .build(key);
+                        return Response.created(uri).build();
+                    }
+
+                }
+            }
+
+        } catch (SQLException | ClassNotFoundException ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
+        }
+        throw new RESTWebApplicationException();
+    }
 }

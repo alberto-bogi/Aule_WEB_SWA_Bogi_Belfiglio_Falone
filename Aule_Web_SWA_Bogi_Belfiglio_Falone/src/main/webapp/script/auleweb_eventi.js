@@ -1,9 +1,4 @@
-//funzione per visualizzazione eventi correnti (eventi attuali e delle prossime 3 ore)
-$(document).ready(function () {
-    $("#popupEvento").hide();
-    
 
-});
 
 function getCurrentEventi() {
     $.ajax({
@@ -45,7 +40,7 @@ function showEventInformations(id) {
                     '<div class="container">' +
                     '<div class="ten columns">' +
                     '<h2>INFORMAZIONI</h2>';
-            if(sessionStorage.getItem("authToken") !== null){
+            if (sessionStorage.getItem("authToken") !== null) {
                 eventContent += '<button type="button" value="' + id + '" onclick="insertOrModifyEvent(this.value)">modifica</button>';
             }
             eventContent +=
@@ -68,7 +63,7 @@ function showEventInformations(id) {
             $("#popupEvento").fadeIn(1000);
         },
         error: function (xhr, status, error) {
-            
+
         }
     });
 }
@@ -178,7 +173,7 @@ function showEventInformationsByName() {
                         '<button type="button" onclick="fadeOutPopupEvento()">X</button>' +
                         '</div>' +
                         '<h2  style="clear: right;">Evento non trovato</h2>' +
-                        '<p class="search null">Non è stato trovato alcun evento con nome <b><em>' + sanitizedSearch + '</b></em></p>' ;
+                        '<p class="search null">Non è stato trovato alcun evento con nome <b><em>' + sanitizedSearch + '</b></em></p>';
                 $("#popupEvento").append(eventContent);
                 $("#popupEvento").fadeIn(1000);
             }
@@ -199,6 +194,75 @@ function showEventInformationsByName() {
 
         }
     });
+}
+
+function insertNewEvento() {
+    let nome = document.getElementById("nome").value;
+    let data_evento = document.getElementById("data_evento").value;
+    let ora_inizio = document.getElementById("ora_inizio").value;
+    let ora_fine = document.getElementById("ora_fine").value;
+    let descrizione = document.getElementById("descrizione").value;
+    let ricorrenza = document.querySelector('input[type="radio"][name="ricorrenza"]:checked').value;
+    let data_ricorrenza;
+    if (document.getElementById("data_ricorrenza").value)
+        data_ricorrenza = document.getElementById("data_ricorrenza").value;
+    else
+        data_ricorrenza = "";
+    let tipologia = document.querySelector('input[type="radio"][name="tipologia"]:checked').value;
+    let responsabileKey = document.querySelector('input[type="radio"][name="responsabile"]:checked').value;
+    let aulaKey = document.querySelector('input[type="radio"][name="aula"]:checked').value;
+    let corsoKey;
+    if (document.querySelector('input[type="radio"][name="corso"]:checked') !== null)
+        corsoKey = document.querySelector('input[type="radio"][name="corso"]:checked').value;
+    else
+        corsoKey = 0;
+
+    let evento = {
+        nome: nome,
+        data_evento: data_evento,
+        ora_inizio: ora_inizio,
+        ora_fine: ora_fine,
+        descrizione: descrizione,
+        ricorrenza: ricorrenza,
+        data_ricorrenza: data_ricorrenza,
+        tipologia: tipologia,
+        id_corso: corsoKey,
+        id_aula: aulaKey,
+        id_responsabile: responsabileKey
+    };
+
+
+    $.ajax({
+        url: "rest/eventi",
+        method: "post",
+        headers: {
+            'Authorization': 'Bearer ' + sessionStorage.getItem("authToken")
+        },
+        contentType: "application/json",
+        data: JSON.stringify(evento),
+        success: function (data, textStatus, jqXHR) {
+            //jqXHR rappresenta l'oggetto jqXHR (XMLHttpRequest) che contiene le informazioni sulla richiesta AJAX
+            //come lo stato, gli header, i metodi ausiliari. Può essere utilizzato per accedere a informazioni aggiuntive sulla richiesta
+            //Prendiamo la URI che ci indirizza all'oggetto appena creato
+            if (jqXHR.status === 201) {
+                let uri = jqXHR.getResponseHeader('Location');
+                $.ajax({
+                    url: uri,
+                    method: 'get',
+                    success: function (response) {
+                        sessionStorage.setItem("ID_evento", response["ID"]);
+                        location.reload();
+                        
+                    }
+
+                });
+            }
+        },
+        error: function (xhr) {
+            $("#container").empty().append(xhr.responseText);
+        }
+    });
+
 }
 
 
