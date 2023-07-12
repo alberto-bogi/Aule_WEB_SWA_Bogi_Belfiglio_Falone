@@ -55,10 +55,10 @@ function showAulaInformationsById(id) {
                     '<div class="ten columns">' +
                     '<h2>INFORMAZIONI</h2>';
             if (sessionStorage.getItem("authToken") !== null) {
-                popupContent += 
+                popupContent +=
                         '<button type="button" value="' + response["id_aula"] + '" onclick="assignGruppoForAula(this.value)">assegna gruppi</button>' +
-                        '<button type="button" value="' + response["id_aula"] + '" onclick="exportAulaCSV(this.value)">esporta</button>'
-                
+                        '<button type="button" value="' + response["id_aula"] + '" onclick="exportAulaCSV(this.value)">esporta</button>';
+
             } else {
                 popupContent += '<button type="button" value="' + response["id_aula"] + '" onclick="showEventiFormByAulaId(this.value)">eventi</button>';
             }
@@ -82,8 +82,6 @@ function showAulaInformationsById(id) {
 
             $("#popupAula").append(popupContent);
             $("#popupAula").fadeIn(1000);
-            let form = document.getElementById("search_aula");
-            let search = form.elements["aula"].value = "";
         }
     });
 }
@@ -143,28 +141,64 @@ function showAttrezzatureByAula(id) {
     });
 }
 
-function fillAuleTable(){
+function fillAuleTable(id) {
     $.ajax({
-            url:"rest/aule",
-            method:"get",
-            success: function(response){
-                let table = "";
-                table += '<table><th></th><th>NOME</th>';
-                Object.keys(response).forEach(function(key){
-                    let aula = response[key];
-                    table +=
-                            '<tr>' + 
-                            '<td><input type="radio" name="aula" value="' + key + '" onchange="validateEventsInputs()"/></td>' +
-                            '<td>' + aula['nome'] + '</td>' +
-                            '</tr>';
-                });
-                table += '</table>';
-                $("#aula").empty().append(table);
-            },
-            error: function(xhr){
-                $("#aula").empty().append(xhr.responseText);
+        url: "rest/aule",
+        method: "get",
+        success: function (response) {
+            let table = "";
+            table += '<table><th></th><th>NOME</th>';
+            if (id) {
+                let aula = response[id];
+                table +=
+                        '<tr>' +
+                        '<td><input type="radio" name="aula" value="' + id + '" onchange="validateEventsInputs()" checked/></td>' +
+                        '<td>' + aula['nome'] + '</td>' +
+                        '</tr>';
+                delete response[id];
             }
-        });
+            Object.keys(response).forEach(function (key) {
+                let aula = response[key];
+                table +=
+                        '<tr>' +
+                        '<td><input type="radio" name="aula" value="' + key + '" onchange="validateEventsInputs()"/></td>' +
+                        '<td>' + aula['nome'] + '</td>' +
+                        '</tr>';
+            });
+            table += '</table>';
+            $("#aula").empty().append(table);
+        },
+        error: function (xhr) {
+            $("#aula").empty().append(xhr.responseText);
+        }
+    });
+}
+
+function exportAulaCSV(id) {
+    $.ajax({
+        url: "rest/aule/" + id + "/export",
+        method: "get",
+        headers: {
+            'Authorization': 'Bearer ' + sessionStorage.getItem("authToken")
+        },
+        xhrFields: {
+            responseType: "blob"
+        },
+        success: function (response) {
+            //specifichiamo un url temporaneo che ci servirà per accedere ai dati binari
+            let url = window.URL.createObjectURL(new Blob([response]));
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = "aula_export.csv";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        },
+        error: function (xhr, status, error) {
+            $("#container").empty().append(xhr.responseText);
+        }
+    });
 }
 
 

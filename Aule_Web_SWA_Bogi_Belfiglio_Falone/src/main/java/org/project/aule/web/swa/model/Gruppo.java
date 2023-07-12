@@ -15,7 +15,7 @@ public class Gruppo{
     private String descrizione;
     
     public Gruppo() {
-        tipoGruppo = null;
+        tipoGruppo = "";
         nome = "";
         descrizione = "";
     }

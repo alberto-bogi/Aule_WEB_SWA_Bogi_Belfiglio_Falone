@@ -88,6 +88,8 @@ $(document).ready(function () {
 
     } else {
         firstPageAdmin();
+        getEventiAdministration();
+        getAuleAdministration();
 
     }
 
