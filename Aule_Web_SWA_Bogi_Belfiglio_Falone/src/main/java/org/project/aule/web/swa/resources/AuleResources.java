@@ -4,17 +4,27 @@
  */
 package org.project.aule.web.swa.resources;
 
+
 import jakarta.ws.rs.Consumes;
+
+import jakarta.servlet.ServletContext;
+
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.StreamingOutput;
 import jakarta.ws.rs.core.UriInfo;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -30,6 +40,7 @@ import org.project.aule.web.swa.exception.RESTWebApplicationException;
 import org.project.aule.web.swa.model.Attrezzatura;
 import org.project.aule.web.swa.model.Aula;
 import org.project.aule.web.swa.model.Gruppo;
+import org.project.aule.web.swa.resources.csv.CSVResult;
 import org.project.aule.web.swa.resources.database.DBConnection;
 import org.project.aule.web.swa.security.Logged;
 
@@ -263,6 +274,53 @@ public class AuleResources {
             throw new RESTWebApplicationException(ex.getMessage());
         }
         throw new RESTWebApplicationException();
+    }
+    @Path("{id_aula: [0-9]+}/export")
+    @GET
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response exportAulaCSV(
+            @Context ContainerRequestContext req,
+            @Context ServletContext sc,
+            @PathParam("id_aula") int aulaKey
+    ) {
+        try {
+            Aula aula = null;
+            List<Gruppo> gruppi = new ArrayList<>();
+            List<Attrezzatura> attrezzature = new ArrayList();
+            PreparedStatement attrezzatureByAula = DBConnection.getConnection().prepareStatement("SELECT * FROM Attrezzatura WHERE ID_aula = ?");
+            PreparedStatement gruppiByAula = DBConnection.getConnection().prepareStatement("SELECT G.* FROM Gruppo G, associazione_aula_gruppo AG WHERE AG.ID_aula = ? AND AG.ID_gruppo = G.ID");
+            PreparedStatement aulaById = DBConnection.getConnection().prepareStatement("SELECT * FROM Aula WHERE ID = ?");
+
+            attrezzatureByAula.setInt(1, aulaKey);
+            gruppiByAula.setInt(1, aulaKey);
+            aulaById.setInt(1, aulaKey);
+
+            try ( ResultSet rs = aulaById.executeQuery()) {
+                if (rs.next()) {
+                    aula = Aula.createAula(rs);
+                    try ( ResultSet rs2 = gruppiByAula.executeQuery()) {
+                        while (rs2.next()) {
+                            gruppi.add(Gruppo.createGruppo(rs2));
+                        }
+                    }
+                    try ( ResultSet rs3 = attrezzatureByAula.executeQuery()) {
+                        while (rs3.next()) {
+                            attrezzature.add(Attrezzatura.createAttrezzatura(rs3));
+                        }
+                    }
+
+                }
+
+            }
+            File response = CSVResult.createCSVAulaFile(aula, attrezzature, gruppi, sc.getRealPath("") + File.separatorChar + "aula.csv");
+
+            return Response.ok(response).build();
+        } catch (SQLException | ClassNotFoundException ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
+        } catch (Exception ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
+        }
+
     }
 
 }

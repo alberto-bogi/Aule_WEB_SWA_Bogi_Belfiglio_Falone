@@ -266,6 +266,79 @@ function insertNewEvento() {
 }
 
 
+function modifyEvento(id){
+    let nome = document.getElementById("nome").value;
+    let data_evento = document.getElementById("data_evento").value;
+    let ora_inizio = document.getElementById("ora_inizio").value;
+    let ora_fine = document.getElementById("ora_fine").value;
+    let descrizione = document.getElementById("descrizione").value;
+    let ricorrenza = document.querySelector('input[type="radio"][name="ricorrenza"]:checked').value;
+    let data_ricorrenza;
+    if (document.getElementById("data_ricorrenza").value)
+        data_ricorrenza = document.getElementById("data_ricorrenza").value;
+    else
+        data_ricorrenza = "";
+    let tipologia = document.querySelector('input[type="radio"][name="tipologia"]:checked').value;
+    alert(tipologia);
+    let responsabileKey = document.querySelector('input[type="radio"][name="responsabile"]:checked').value;
+    let aulaKey = document.querySelector('input[type="radio"][name="aula"]:checked').value;
+    let corsoKey;
+    if (document.querySelector('input[type="radio"][name="corso"]:checked') !== null)
+        corsoKey = document.querySelector('input[type="radio"][name="corso"]:checked').value;
+    else
+        corsoKey = 0;
+
+    alert(corsoKey);
+    let evento = {
+        nome: nome,
+        data_evento: data_evento,
+        ora_inizio: ora_inizio,
+        ora_fine: ora_fine,
+        descrizione: descrizione,
+        ricorrenza: ricorrenza,
+        data_ricorrenza: data_ricorrenza,
+        tipologia: tipologia,
+        id_corso: corsoKey,
+        id_aula: aulaKey,
+        id_responsabile: responsabileKey
+    };
+
+
+    $.ajax({
+        url: "rest/eventi/" + id,
+        method: "put",
+        headers: {
+            'Authorization': 'Bearer ' + sessionStorage.getItem("authToken")
+        },
+        contentType: "application/json",
+        data: JSON.stringify(evento),
+        success: function (data, textStatus, jqXHR) {
+            //jqXHR rappresenta l'oggetto jqXHR (XMLHttpRequest) che contiene le informazioni sulla richiesta AJAX
+            //come lo stato, gli header, i metodi ausiliari. Può essere utilizzato per accedere a informazioni aggiuntive sulla richiesta
+            //Prendiamo la URI che ci indirizza all'oggetto appena creato
+            if (jqXHR.status === 201) {
+                let uri = jqXHR.getResponseHeader('Location');
+                $.ajax({
+                    url: uri,
+                    method: 'get',
+                    success: function (response) {
+                        sessionStorage.setItem("ID_evento", response["ID"]);
+                        location.reload();
+                        
+                    }
+
+                });
+            }
+        },
+        error: function (xhr) {
+            $("#container").empty().append(xhr.responseText);
+        }
+    });
+
+    
+}
+
+
 
 
 

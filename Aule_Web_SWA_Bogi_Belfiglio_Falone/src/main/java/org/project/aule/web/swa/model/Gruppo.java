@@ -15,7 +15,7 @@ public class Gruppo {
 
     public Gruppo() {
         key = 0;
-        tipoGruppo = null;
+        tipoGruppo = "";
         nome = "";
         descrizione = "";
     }

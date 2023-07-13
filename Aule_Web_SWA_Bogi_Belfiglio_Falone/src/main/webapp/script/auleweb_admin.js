@@ -7,9 +7,10 @@ $(document).ready(function () {
         alert(sessionStorage.getItem(("ID_aula")));
         sessionStorage.removeItem("ID_aula");
     }
-
+    
     getEventiAdministration();
     getAuleAdministration();
+
 
 
 
@@ -88,7 +89,7 @@ function insertOrModifyEvent(id) {
             '<div class="container">' +
             '<div class="ten columns">' +
             '<h3>FORM EVENTO</h3>' +
-            '<button type="button" onclick="">annulla</button><br>' +
+            '<button type="button" onclick="location.reload()">annulla</button><br>' +
             '<label for="nome">nome:</label>' +
             '<input type="text" name="nome" id="nome" oninput="validateEventsInputs()" />' +
             '<br>' +
@@ -186,11 +187,92 @@ function insertOrModifyEvent(id) {
         fillAuleTable();
         fillCorsiTable();
     } else {
-        $("button_operation_event").empty().append('<button type="button" id="button_event" onclick="modifyEvento()">modifica</button>');
+        let button = '<button type="button" id="button_event" value="' + id +'" onclick="modifyEvento(this.value)">modifica</button>';
+        $("#button_operation_event").empty().append(button);
         fillFormEvent(id);
+        $("#popupEvento").hide();
     }
 
 }
+
+function fillFormEvent(id) {
+    $.ajax({
+        url: "rest/eventi/" + id,
+        method: "get",
+        success: function (response) {
+            document.getElementById("nome").value = response["nome"];
+            document.getElementById("data_evento").value = response["data"];
+            document.getElementById("ora_inizio").value = response["ora_inizio"];
+            document.getElementById("ora_fine").value = response["ora_fine"];
+            document.getElementById("descrizione").value = response["descrizione"];
+            if (response["ricorrenza"] === "GIORNALIERA") {
+                document.querySelector('input[type="radio"][name="ricorrenza"]').checked = false;
+                document.querySelector('input[type="radio"][name="ricorrenza"][value="1"]').checked = true;
+                document.getElementById("data_ricorrenza").value = response["data_ricorrenza"];
+                document.getElementById("fine_ricorrenza").style.display = "block";
+            } else if (response["ricorrenza"] === "SETTIMANALE") {
+                document.querySelector('input[type="radio"][name="ricorrenza"]').checked = false;
+                document.querySelector('input[type="radio"][name="ricorrenza"][value="2"]').checked = true;
+                document.getElementById("data_ricorrenza").value = response["data_ricorrenza"];
+                document.getElementById("fine_ricorrenza").style.display = "block";
+            } else if (response["ricorrenza"] === "MENSILE") {
+                document.querySelector('input[type="radio"][name="ricorrenza"]').checked = false;
+                document.querySelector('input[type="radio"][name="ricorrenza"][value="3"]').checked = true;
+                document.getElementById("data_ricorrenza").value = response["data_ricorrenza"];
+                document.getElementById("fine_ricorrenza").style.display = "block";
+            } else if (response["ricorrenza"] === "NESSUNA") {
+                document.querySelector('input[type="radio"][name="ricorrenza"]').checked = false;
+                document.querySelector('input[type="radio"][name="ricorrenza"][value="4"]').checked = true;
+                document.getElementById("fine_ricorrenza").style.display = "none";
+            }
+
+            if (response["tipo"] === "LEZIONE") {
+                document.querySelector('input[type="radio"][name="tipologia"]').checked = false;
+                document.querySelector('input[type="radio"][name="tipologia"][value="1"]').checked = true;
+                fillCorsiTable(response["id_corso"]);
+                document.getElementById("corso").style.display = "block";
+            } else if (response["tipo"] === "ESAME") {
+                document.querySelector('input[type="radio"][name="tipologia"]').checked = false;
+                document.querySelector('input[type="radio"][name="tipologia"][value="2"]').checked = true;
+                fillCorsiTable(response["id_corso"]);
+                document.getElementById("corso").style.display = "block";
+            } else if (response["tipo"] === "PARZIALE") {
+                document.querySelector('input[type="radio"][name="tipologia"]').checked = false;
+                document.querySelector('input[type="radio"][name="tipologia"][value="3"]').checked = true;
+                fillCorsiTable(response["id_corso"]);
+                document.getElementById("corso").style.display = "block";
+            } else if (response["tipo"] === "SEMINARIO") {
+                document.querySelector('input[type="radio"][name="tipologia"]').checked = false;
+                document.querySelector('input[type="radio"][name="tipologia"][value="4"]').checked = true;
+                fillCorsiTable();
+                document.getElementById("corso").style.display = "none";
+            } else if (response["tipo"] === "RIUNIONE") {
+                document.querySelector('input[type="radio"][name="tipologia"]').checked = false;
+                document.querySelector('input[type="radio"][name="tipologia"][value="5"]').checked = true;
+                fillCorsiTable();
+                document.getElementById("corso").style.display = "none";
+            } else if (response["tipo"] === "LAUREA") {
+                document.querySelector('input[type="radio"][name="tipologia"]').checked = false;
+                document.querySelector('input[type="radio"][name="tipologia"][value="6"]').checked = true;
+                fillCorsiTable();
+                document.getElementById("corso").style.display = "none";
+            } else if (response["tipo"] === "ALTRO") {
+                document.querySelector('input[type="radio"][name="tipologia"]').checked = false;
+                document.querySelector('input[type="radio"][name="tipologia"][value="7"]').checked = true;
+                fillCorsiTable();
+                document.getElementById("corso").style.display = "none";
+            }
+
+            fillResponsabiliTable(response["id_responsabile"]);
+            fillAuleTable(response["id_aula"]);
+        },
+        error: function (xhr) {
+            $("#container").empty().append(xhr.responseText);
+        }
+    });
+}
+
+
 
 
 
