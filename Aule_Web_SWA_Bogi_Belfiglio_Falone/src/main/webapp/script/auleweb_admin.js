@@ -7,10 +7,6 @@ $(document).ready(function () {
         alert(sessionStorage.getItem(("ID_aula")));
         sessionStorage.removeItem("ID_aula");
     }
-    
-    getEventiAdministration();
-    getAuleAdministration();
-
 
 
 
@@ -85,7 +81,7 @@ function insertOrModifyEvent(id) {
     //////svuotiamo il container totale per inserire la form dell'evento
     let form = "";
     form +=
-            '<div class="form event">' +
+            '<div id="form_evento" class="form event">' +
             '<div class="container">' +
             '<div class="ten columns">' +
             '<h3>FORM EVENTO</h3>' +
@@ -229,6 +225,7 @@ function fillFormEvent(id) {
             if (response["tipo"] === "LEZIONE") {
                 document.querySelector('input[type="radio"][name="tipologia"]').checked = false;
                 document.querySelector('input[type="radio"][name="tipologia"][value="1"]').checked = true;
+                alert(response["id_corso"]);
                 fillCorsiTable(response["id_corso"]);
                 document.getElementById("corso").style.display = "block";
             } else if (response["tipo"] === "ESAME") {
@@ -342,7 +339,7 @@ function insertAula(id) {
     let form = "";
     form +=
             '<h3>FORM AULA</h3>' +
-            '<div class="form aula">' +
+            '<div id="form_aula" class="form aula">' +
             '<div class="container">' +
             '<div class="ten columns">' +
             '<button type="button" onclick="">annulla</button><br>' +

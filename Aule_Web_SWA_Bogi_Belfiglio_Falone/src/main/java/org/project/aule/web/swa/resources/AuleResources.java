@@ -4,7 +4,6 @@
  */
 package org.project.aule.web.swa.resources;
 
-
 import jakarta.ws.rs.Consumes;
 
 import jakarta.servlet.ServletContext;
@@ -275,6 +274,7 @@ public class AuleResources {
         }
         throw new RESTWebApplicationException();
     }
+
     @Path("{id_aula: [0-9]+}/export")
     @GET
     @Produces(MediaType.APPLICATION_OCTET_STREAM)

@@ -36,6 +36,7 @@ function showCorsi() {
 
 
 function validateEventsInputs() {
+
     let nome = document.getElementById("nome").value;
     let data_evento = document.getElementById("data_evento").value;
     let ora_inizio = document.getElementById("ora_inizio").value;
@@ -77,7 +78,10 @@ function validateEventsInputs() {
     }
 }
 
+
+
 function validateAuleInputs() {
+
     let nome = document.getElementById("nome").value;
     let luogo = document.getElementById("luogo").value;
     let edificio = document.getElementById("edificio").value;
@@ -99,6 +103,8 @@ function validateAuleInputs() {
         return;
     }
 }
+
+
 
 
 function verifyCorrectnessTimeEvento() {
