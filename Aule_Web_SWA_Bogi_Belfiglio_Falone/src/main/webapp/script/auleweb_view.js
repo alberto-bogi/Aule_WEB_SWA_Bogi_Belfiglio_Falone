@@ -77,6 +77,28 @@ function validateEventsInputs() {
     }
 }
 
+function validateAuleInputs() {
+    let nome = document.getElementById("nome").value;
+    let luogo = document.getElementById("luogo").value;
+    let edificio = document.getElementById("edificio").value;
+    let piano = document.getElementById("piano").value;
+    let capienza = document.getElementById("capienza").value;
+    let prese_elettriche = document.getElementById("prese_elettriche").value;
+    let prese_rete = document.getElementById("prese_rete").value;
+    let note_generiche = document.getElementById("note_generiche").value;
+    let responsabile = document.querySelector('input[type="radio"][name="responsabile"]:checked');
+    let attrezzatura = document.querySelectorAll('input[type="checkbox"][name="attrezzatura"]:checked');
+    let button = document.getElementById("button_aula");
+
+    if (nome && luogo && edificio && piano && capienza && prese_elettriche && prese_rete && note_generiche && responsabile && attrezzatura) {
+        button.disabled = false;
+        return;
+
+    } else {
+        button.disabled = true;
+        return;
+    }
+}
 
 
 function verifyCorrectnessTimeEvento() {

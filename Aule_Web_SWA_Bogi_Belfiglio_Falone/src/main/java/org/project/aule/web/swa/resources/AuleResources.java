@@ -4,7 +4,9 @@
  */
 package org.project.aule.web.swa.resources;
 
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -14,10 +16,15 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Time;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.project.aule.web.swa.exception.RESTWebApplicationException;
 import org.project.aule.web.swa.model.Attrezzatura;
@@ -32,11 +39,10 @@ import org.project.aule.web.swa.security.Logged;
  */
 @Path("aule")
 public class AuleResources {
-    
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAule(){
+    public Response getAule() {
         Map<Integer, Map<String, Object>> response = new HashMap();
         try {
             PreparedStatement allAule = DBConnection.getConnection().prepareStatement("SELECT * FROM Aula");
@@ -84,8 +90,7 @@ public class AuleResources {
             throw new RESTWebApplicationException(ex.getMessage());
         }
     }
-    
-    
+
     @Path("{id_aula: [0-9]+}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -118,7 +123,7 @@ public class AuleResources {
             throw new RESTWebApplicationException(ex.getMessage());
         }
     }
-    
+
     @Path("{id_aula: [0-9]+}/attrezzature")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -135,7 +140,7 @@ public class AuleResources {
                     Attrezzatura attrezzatura = Attrezzatura.createAttrezzatura(rs);
                     Map<String, Object> item = new HashMap<>();
                     item.put("nome", attrezzatura.getNome());
-                    
+
                     response.put(rs.getInt("ID"), item);
                 }
             }
@@ -147,7 +152,7 @@ public class AuleResources {
             throw new RESTWebApplicationException(ex.getMessage());
         }
     }
-    
+
     @Path("{id_aula: [0-9]+}/gruppi")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -176,13 +181,13 @@ public class AuleResources {
             throw new RESTWebApplicationException(ex.getMessage());
         }
     }
-    
+
     @Path("{search:[a-zA-Z]+[a-zA-Z0-9\\.]*}/dynamic")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAuleByDynamicSearch(
             @PathParam("search") String search
-    ){
+    ) {
         Map<Integer, Map<String, Object>> response = new HashMap();
         try {////VEDERE QUIIIIIIIII
             PreparedStatement auleByDynamicSearch = DBConnection.getConnection().prepareStatement("SELECT * FROM Aula WHERE substring(nome,1,?) = ?");
@@ -205,6 +210,59 @@ public class AuleResources {
             throw new RESTWebApplicationException(ex.getMessage());
         }
         return Response.ok(response).build();
+    }
+
+    @Logged
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response addAula(
+            @Context ContainerRequestContext req,
+            @Context UriInfo uriinfo,
+            Map<String, Object> eventoJson
+    ) {
+        try {
+            if (req.getProperty("token") == null) {
+                throw new RESTWebApplicationException();
+            }
+            URI uri;
+            PreparedStatement insertAula = DBConnection.getConnection().prepareStatement("INSERT INTO aula (nome,luogo,edificio,piano,capienza,numero_prese_elettriche,numero_prese_di_rete,note_generiche,ID_responsabile) VALUES(?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement updateAttrezzatura = DBConnection.getConnection().prepareStatement("UPDATE attrezzatura SET ID_aula=? WHERE ID=?");
+            insertAula.setString(1, eventoJson.get("nome").toString());
+            insertAula.setString(2, eventoJson.get("luogo").toString());
+            insertAula.setString(3, eventoJson.get("edificio").toString());
+            insertAula.setInt(4, Integer.parseInt(eventoJson.get("piano").toString()));
+            insertAula.setInt(5, Integer.parseInt(eventoJson.get("capienza").toString()));
+            insertAula.setInt(6, Integer.parseInt(eventoJson.get("prese_elettriche").toString()));
+            insertAula.setInt(7, Integer.parseInt(eventoJson.get("prese_rete").toString()));
+            insertAula.setString(8, eventoJson.get("note_generiche").toString());
+            insertAula.setInt(9, Integer.parseInt(eventoJson.get("id_responsabile").toString()));
+            List<String> attrezzature = new ArrayList<>();
+            attrezzature = (List<String>) eventoJson.get("attrezzature");
+
+            if (insertAula.executeUpdate() == 1) {
+                try ( ResultSet keys = insertAula.getGeneratedKeys()) {
+                    if (keys.next()) {
+                        int key = keys.getInt(1);
+                        for (String attrezzatura : attrezzature) {
+                            updateAttrezzatura.setInt(1, key);
+                            updateAttrezzatura.setInt(2, Integer.parseInt(attrezzatura));
+                            updateAttrezzatura.executeUpdate();
+                        }
+
+                        uri = uriinfo.getBaseUriBuilder()
+                                .path(getClass())
+                                .path(getClass(), "getAula")
+                                .build(key);
+                        return Response.created(uri).build();
+                    }
+
+                }
+            }
+
+        } catch (SQLException | ClassNotFoundException ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
+        }
+        throw new RESTWebApplicationException();
     }
 
 }

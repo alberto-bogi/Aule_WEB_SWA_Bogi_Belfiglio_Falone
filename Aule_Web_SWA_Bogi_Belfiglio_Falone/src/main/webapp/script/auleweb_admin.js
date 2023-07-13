@@ -1,9 +1,13 @@
 $(document).ready(function () {
-    if (sessionStorage.getItem("ID_evento") !== null){
+    if (sessionStorage.getItem("ID_evento") !== null) {
         showEventInformations(sessionStorage.getItem("ID_evento"));
         sessionStorage.removeItem("ID_evento");
+    }else if(sessionStorage.getItem("ID_aula") !== null){
+        showAulaInformationsById(sessionStorage.getItem("ID_aula"));
+        alert(sessionStorage.getItem(("ID_aula")));
+        sessionStorage.removeItem("ID_aula");
     }
-    
+
     getEventiAdministration();
     getAuleAdministration();
 
@@ -250,6 +254,70 @@ function dynamicSearchAula(input) {
         });
     }
 }
+
+function insertAula(id) {
+    //////svuotiamo il container totale per inserire la form dell'evento
+    let form = "";
+    form +=
+            '<h3>FORM AULA</h3>' +
+            '<div class="form aula">' +
+            '<div class="container">' +
+            '<div class="ten columns">' +
+            '<button type="button" onclick="">annulla</button><br>' +
+            '<label for="input_aula_1">nome:</label>' +
+            '<input type="text" name="nome" id="nome" placeholder="inserisci nome aula" oninput="validateAuleInputs()" />' +
+            '<br>' +
+            '<label for="input_aula_2">luogo:</label>' +
+            '<input type="text" name="luogo" id="luogo" placeholder="inserisci nome luogo" oninput="validateAuleInputs()" />' +
+            '<br>' +
+            '<label for="input_aula_3">edificio:</label>' +
+            '<input type="text" name="edificio" id="edificio" placeholder="inserisci nome edificio" oninput="validateAuleInputs()" />' +
+            '<br>' +
+            '<label for="input_aula_4">piano:</label>' +
+            '<input type="number" min="0" name="piano" id="piano" oninput="validateAuleInputs()" />' +
+            '<br>' +
+            '<label for="input_aula_5">capienza:</label>' +
+            '<input type="number" min="0" name="capienza" id="capienza" oninput="validateAuleInputs()" />' +
+            '<br>' +
+            '<label for="input_aula_6">numero prese elettriche:</label>' +
+            '<input type="number" min="0" name="prese_elettriche" id="prese_elettriche" oninput="validateAuleInputs()" />' +
+            '<br>' +
+            '<label for="input_aula_7">numero prese di rete:</label>' +
+            '<input type="number" min="0" name="prese_rete" id="prese_rete" oninput="validateAuleInputs()" />' +
+            '<br>' +
+            '<label for="input_aula_8">note generiche:</label><br>' +
+            '<textarea name="note_generiche" id="note_generiche" placeholder="inserisci delle note generiche" oninput="validateAuleInputs()"></textarea>' +
+            '<br>' +
+            '<h4>RESPONSABILI</h4>' +
+            '<div id="responsabile"></div>' +
+            '<br>' +
+            '<h4>ATTREZZATURE</h4>' +
+            '<div id="attrezzatura"></div>' +
+            '<br>' +
+    /*        '<h4>GRUPPI</h4>' +
+            '<p class="info">è possibile anche rimandare la selezione del gruppo successivamente</p>'+
+            '<div id="gruppo"></div>' +
+            '<br>' + */
+            '<div id="button_operation_aula"></div>' +
+            '</div>' +
+            '</div>' +
+            '</div>';
+    $("#container").empty().append(form);
+
+    if (!id) {
+        let buttons = '<button type="button" id="button_aula" onclick="insertNewAula()" disabled>inserisci</button> '+
+                '<button type="button" id="button_importa" onclick="">importa</button>';
+        $("#button_operation_aula").empty().append(buttons);
+        fillResponsabiliTable();
+        fillAttrezzatureTable();
+    //    fillGruppiTable();
+    } else {
+        $("button_operation_aula").empty().append('<button type="button" onclick="modifyAula()>modifica</button>');
+        //fillFormAula(id);
+    }
+
+}
+
 
 
 

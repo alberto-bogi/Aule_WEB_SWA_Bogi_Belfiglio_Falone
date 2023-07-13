@@ -9,11 +9,12 @@ function fillAttrezzatureTable() {
                 let attrezzatura = response[key];
                 table +=
                         '<tr>' +
-                        '<td><input type="checkbox" class="attrezzatura" value="' + attrezzatura["ID"] + '" onchange="validateEventInputs()/></td>' +
-                        '<td>' + attrezzatura['nome'] + '</td>' +
-                        '<td>' + attrezzatura['numero_serie'] + '</td>' +
+                        '<td class="attrezzatura_check"><input type="checkbox" name="attrezzatura" value="' + key + '" onchange="validateAuleInputs()"/></td>' +
+                        '<td>' + attrezzatura["nome"] + '</td>' +
+                        '<td>' + attrezzatura["numeroDiSerie"] + '</td>';
                         '</tr>';
             });
+            table += '</table>';
             $("#attrezzatura").empty().append(table);
         },
         error: function (xhr) {
