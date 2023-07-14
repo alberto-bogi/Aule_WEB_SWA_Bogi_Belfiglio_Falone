@@ -8,7 +8,6 @@
         <link rel="stylesheet" href="style/auleweb_aule.css"  type="text/css" />
         <link rel="stylesheet" href="style/auleweb_eventi.css"  type="text/css" />
         <link rel="stylesheet" href="style/auleweb_admin.css"  type="text/css" />
-        <link rel="stylesheet" href="style/auleweb_export_eventi.css"  type="text/css" />
         <link rel="stylesheet" href="style/login.css"  type="text/css" />
     </head>
     <body>
@@ -19,14 +18,11 @@
             <div class="six columns">
 
                 <div id="export_eventi_div">
-
-
                 </div>
             </div>
 
             <div class="one column">
                 <div class="login" id="login_div">
-
                 </div>
             </div>
         </div>
@@ -61,17 +57,21 @@
 
 
         <div id="popupExport" style="display:none">
-            <div class="right">
-                <button type="button" class="buttonExit" onclick="fadeOutPopupExport()">X</button>
+            <div>
+                <div class="exit">
+                    <button type="button" onclick="fadeOutPopupExport()">X</button>
+                </div>
+                <div class="container">
+                    <div class="ten columns">
+                        <h2>CALENDARIO EVENTI</h2>
+                        <label>da:</label><br>
+                        <input type="date" name="data_inizio" id="input_csv_date_1" oninput="checkCSVButton()"/><br>
+                        <label>a:</label><br>
+                        <input type="date" name="data_fine" id="input_csv_date_2" oninput="checkCSVButton()"/><br>
+                        <button type="button" id="button_csv_eventi" onclick="exportEventiCalendar()" disabled>scarica</button>  
+                    </div>
+                </div>
             </div>
-            <p>Scarica gli eventi di un determinato periodo a tua scelta in formato CSV</p>
-            <form action="" method="get">
-                <label>data di inizio:</label>
-                <input type="date" name="data_inizio" id="input_csv_date_1" oninput="checkCSVButton()"/><br>
-                <label>data di fine:</label>
-                <input type="date" name="data_fine" id="input_csv_date_2" oninput="checkCSVButton()"/><br>
-                <button type="submit" id="button_csv_eventi" disabled>scarica</button>
-            </form>   
         </div>
 
 
@@ -95,7 +95,6 @@
         <script src="script/auleweb_corsi.js"></script>
         <script src="script/auleweb_view.js"></script>
         <script src="script/auleweb.js"></script>
-
         <script src="script/auleweb_export_eventi.js"></script>
 
     </body>

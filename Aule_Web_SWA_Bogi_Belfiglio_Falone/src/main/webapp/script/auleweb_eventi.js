@@ -339,6 +339,46 @@ function modifyEvento(id){
 }
 
 
+function exportEventiCalendar(){
+    let data_inizio = document.getElementById("input_csv_date_1").value;
+    let data_fine = document.getElementById("input_csv_date_2").value;
+    
+    let periodo = {
+        data_inizio: data_inizio,
+        data_fine: data_fine
+    };
+    
+    $.ajax({
+        url: "rest/eventi/calendar/export",
+        method: "post",
+        contentType: "application/json",
+        data: JSON.stringify(periodo),
+        xhrFields: {
+            responseType: "blob"
+        },
+        success: function (response) {
+            document.getElementById("input_csv_date_1").value = "";
+            document.getElementById("input_csv_date_2").value = "";
+            document.getElementById("button_csv_eventi").disabled = true;
+            
+            //specifichiamo un url temporaneo che ci servirà per accedere ai dati binari
+            let url = window.URL.createObjectURL(new Blob([response]));
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = "eventi.ics";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+        },
+        error: function (xhr) {
+            $("#container").empty().append(xhr.responseText);
+        }
+    });
+}
+
+
 
 
 

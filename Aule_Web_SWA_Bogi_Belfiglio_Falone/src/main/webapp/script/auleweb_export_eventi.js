@@ -1,13 +1,11 @@
 $(document).ready(function () {
- 
-    $("#popupExport").hide();
     
 });
 function fadeInPopupExport() {
-    $("#popupExport").slideDown(300);
+    $("#popupExport").fadeIn(1000);
 }
 function fadeOutPopupExport() {
-    $("#popupExport").slideUp(300);
+    $("#popupExport").fadeOut(1000);
 }
 function checkCSVButton() {
     let date1 = document.getElementById("input_csv_date_1").value;
