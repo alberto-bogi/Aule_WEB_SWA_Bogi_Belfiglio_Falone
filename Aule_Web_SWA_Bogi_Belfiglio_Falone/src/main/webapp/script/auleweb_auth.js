@@ -1,12 +1,14 @@
 $(document).ready(function () {
 
-    let count = 0;
-
     if (sessionStorage.getItem("authToken")) {
+        let count = 0;
+        let refresh_time = 30;
         let timer = setInterval(function () {
             count++;
             //alert(count);
-            if (count === 30) {
+            if (count === refresh_time) {
+                refresh_time += 30;
+                //alert("aggiornato il refresh_time");
                 $.ajax({
                     url: 'rest/auth/refresh',
                     type: 'GET',
@@ -72,12 +74,12 @@ function logout() {
             'Authorization': 'Bearer ' + sessionStorage.getItem("authToken")
         },
         success: function () {
-            if(sessionStorage.getItem("authToken") !== null){
+            if (sessionStorage.getItem("authToken") !== null) {
                 sessionStorage.removeItem("authToken");
-            }else if(sessionStorage.getItem("newToken") !== null){
+            } else if (sessionStorage.getItem("newToken") !== null) {
                 sessionStorage.removeItem("newToken");
             }
-            
+
             alert("Logout effettuato con successo.");
             location.reload();
         },

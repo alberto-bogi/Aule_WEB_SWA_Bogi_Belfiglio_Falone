@@ -36,6 +36,7 @@ function showCorsi() {
 
 
 function validateEventsInputs() {
+
     let nome = document.getElementById("nome").value;
     let data_evento = document.getElementById("data_evento").value;
     let ora_inizio = document.getElementById("ora_inizio").value;
@@ -76,6 +77,44 @@ function validateEventsInputs() {
         return;
     }
 }
+
+
+
+function validateAuleInputs() {
+
+    let nome = document.getElementById("nome").value;
+    let luogo = document.getElementById("luogo").value;
+    let edificio = document.getElementById("edificio").value;
+    let piano = document.getElementById("piano").value;
+    let capienza = document.getElementById("capienza").value;
+    let prese_elettriche = document.getElementById("prese_elettriche").value;
+    let prese_rete = document.getElementById("prese_rete").value;
+    let note_generiche = document.getElementById("note_generiche").value;
+    let responsabile = document.querySelector('input[type="radio"][name="responsabile"]:checked');
+    let attrezzatura = document.querySelectorAll('input[type="checkbox"][name="attrezzatura"]:checked');
+    let button = document.getElementById("button_aula");
+
+    if (nome && luogo && edificio && piano && capienza && prese_elettriche && prese_rete && note_generiche && responsabile && attrezzatura) {
+        button.disabled = false;
+        return;
+
+    } else {
+        button.disabled = true;
+        return;
+    }
+}
+
+function select_button_abilitato() {
+    let selectElements = document.getElementsByName("select_name");
+    let buttonElement = document.getElementById("button_assegna");
+    selectElements.forEach(function(select){
+        let selectedOption = select.value;
+        if(selectedOption !== ""){
+            buttonElement.disabled = false;
+        }
+    });
+}
+
 
 
 

@@ -78,7 +78,7 @@ $(document).ready(function () {
                 '</div>';
         let login_div = '<button type="button" id="button_logout" onclick="logout()">LOGOUT</button>';
         $("#login_div").append(login_div);
-        $("#container").append(container);
+        $("#container").empty().append(container);
 
     }
 

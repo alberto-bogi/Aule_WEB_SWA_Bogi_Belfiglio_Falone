@@ -7,17 +7,21 @@ package org.project.aule.web.swa.model;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-
-public class Gruppo{
-    
+public class Gruppo {
+    private int key;
     private String tipoGruppo;
     private String nome;
     private String descrizione;
-    
+
     public Gruppo() {
+        key = 0;
         tipoGruppo = "";
         nome = "";
         descrizione = "";
+    }
+
+    public int getKey() {
+        return this.key;
     }
 
     public String getTipoGruppo() {
@@ -40,13 +44,18 @@ public class Gruppo{
         return this.descrizione;
     }
 
+    public void setKey(int key) {
+        this.key = key;
+    }
+
     public void setDescrizione(String descrizione) {
         this.descrizione = descrizione;
     }
-    
-    public static Gruppo createGruppo(ResultSet rs)throws Exception {
+
+    public static Gruppo createGruppo(ResultSet rs) throws Exception {
         try {
             Gruppo gruppo = new Gruppo();
+            gruppo.setKey(rs.getInt("ID"));
             gruppo.setNome(rs.getString("nome"));
             gruppo.setTipoGruppo(rs.getString("tipo"));
             return gruppo;
@@ -55,5 +64,5 @@ public class Gruppo{
         }
 
     }
-    
+
 }

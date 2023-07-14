@@ -1,11 +1,11 @@
+/* global j */
+
 $(document).ready(function () {
     $("#popupAula").hide();
     $("#popupLogin").hide();
     $("#attrezzatureAula").hide();
     $("#gruppiAula").hide();
 });
-
-
 
 function showAulaInformationsByName() {
     $("#popupAula").empty();
@@ -56,8 +56,10 @@ function showAulaInformationsById(id) {
                     '<h2>INFORMAZIONI</h2>';
             if (sessionStorage.getItem("authToken") !== null) {
                 popupContent +=
-                        '<button type="button" value="' + response["id_aula"] + '" onclick="assignGruppoForAula(this.value)">assegna gruppi</button>' +
-                        '<button type="button" value="' + response["id_aula"] + '" onclick="exportAulaCSV(this.value)">esporta</button>';
+                        '<button type="button" value="' + response["id_aula"] + '" onclick="formAssign(this.value)">assegna gruppi</button>' +
+
+                        '<button type="button" value="' + response["id_aula"] + '" onclick="exportAulaCSV(this.value)">esporta</button>'
+
 
             } else {
                 popupContent += '<button type="button" value="' + response["id_aula"] + '" onclick="showEventiFormByAulaId(this.value)">eventi</button>';
@@ -157,6 +159,7 @@ function fillAuleTable(id) {
                         '</tr>';
                 delete response[id];
             }
+            
             Object.keys(response).forEach(function (key) {
                 let aula = response[key];
                 table +=
@@ -199,8 +202,8 @@ function exportAulaCSV(id) {
             $("#container").empty().append(xhr.responseText);
         }
     });
-}
 
+}
 
 function hideAttrezzature() {
     $("#attrezzatureAula").hide();
@@ -212,13 +215,9 @@ function hideGruppi() {
     $("#showGruppi").show();
 }
 
-
-
 function fadeOutPopupAula() {
     $('#popupAula').fadeOut(1000);
-
 }
-
 
 function fadeInPopupLogin() {
     $("#popupLogin").slideDown(300);
@@ -226,6 +225,70 @@ function fadeInPopupLogin() {
 
 function fadeOutPopupLogin() {
     $("#popupLogin").slideUp(300);
+}
+
+function insertNewAula() {
+    let idAttrezzatureArray = [];
+    let nome = document.getElementById("nome").value;
+    let luogo = document.getElementById("luogo").value;
+    let edificio = document.getElementById("edificio").value;
+    let piano = document.getElementById("piano").value;
+    let capienza = document.getElementById("capienza").value;
+    let prese_elettriche = document.getElementById("prese_elettriche").value;
+    let prese_rete = document.getElementById("prese_rete").value;
+    let note_generiche = document.getElementById("note_generiche").value;
+    let responsabileKey = document.querySelector('input[type="radio"][name="responsabile"]:checked').value;
+    let idAttrezzature = document.querySelectorAll('input[type="checkbox"][name="attrezzatura"]:checked');
+
+    for (let i = 0; i < idAttrezzature.length; i++) {
+        let id = idAttrezzature[i].value;
+        idAttrezzatureArray.push(id);
+    }
+
+    let aula = {
+        nome: nome,
+        luogo: luogo,
+        edificio: edificio,
+        piano: piano,
+        capienza: capienza,
+        prese_elettriche: prese_elettriche,
+        prese_rete: prese_rete,
+        note_generiche: note_generiche,
+        id_responsabile: responsabileKey,
+        attrezzature: idAttrezzatureArray
+    };
+
+    $.ajax({
+        url: "rest/aule",
+        method: "post",
+        headers: {
+            'Authorization': 'Bearer ' + sessionStorage.getItem("authToken")
+        },
+        contentType: "application/json",
+        data: JSON.stringify(aula),
+        success: function (data, textStatus, jqXHR) {
+            //jqXHR rappresenta l'oggetto jqXHR (XMLHttpRequest) che contiene le informazioni sulla richiesta AJAX
+            //come lo stato, gli header, i metodi ausiliari. Può essere utilizzato per accedere a informazioni aggiuntive sulla richiesta
+            //Prendiamo la URI che ci indirizza all'oggetto appena creato
+            if (jqXHR.status === 201) {
+                let uri = jqXHR.getResponseHeader('Location');
+                $.ajax({
+                    url: uri,
+                    method: 'get',
+                    success: function (response) {
+                        sessionStorage.setItem("ID_aula", response["id_aula"]);
+                        showPopupAssign();
+                    }
+
+                });
+            }
+        },
+        error: function (xhr) {
+            $("#container").empty().append(xhr.responseText);
+        }
+    });
+
+
 }
 
 
