@@ -7,7 +7,6 @@ function fillResponsabiliTable(id) {
             let table = "";
             table += '<table><th></th><th>EMAIL</th>';
             if (document.getElementById("form_evento") !== null) {
-                alert(document.getElementById("form_evento"));
                 if (id) {
                     table +=
                             '<tr>' +
@@ -25,7 +24,6 @@ function fillResponsabiliTable(id) {
                 });
                 table += '</table>';
             } else {
-                alert(document.getElementById("form_evento"));
                 if (id) {
                     table +=
                             '<tr>' +

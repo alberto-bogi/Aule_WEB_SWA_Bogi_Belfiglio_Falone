@@ -56,7 +56,7 @@ function showAulaInformationsById(id) {
                     '<h2>INFORMAZIONI</h2>';
             if (sessionStorage.getItem("authToken") !== null) {
                 popupContent +=
-                        '<button type="button" value="' + response["id_aula"] + '" onclick="assignGruppoForAula(this.value)">assegna gruppi</button>' +
+                        '<button type="button" value="' + response["id_aula"] + '" onclick="formAssign(this.value)">assegna gruppi</button>' +
 
                         '<button type="button" value="' + response["id_aula"] + '" onclick="exportAulaCSV(this.value)">esporta</button>'
 
@@ -277,8 +277,7 @@ function insertNewAula() {
                     method: 'get',
                     success: function (response) {
                         sessionStorage.setItem("ID_aula", response["id_aula"]);
-                        alert(sessionStorage.getItem("ID_aula"));
-                        location.reload();
+                        showPopupAssign();
                     }
 
                 });

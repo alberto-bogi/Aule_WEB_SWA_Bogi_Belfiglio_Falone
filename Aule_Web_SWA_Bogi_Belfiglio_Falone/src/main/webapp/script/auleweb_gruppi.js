@@ -20,3 +20,97 @@ function fillGruppiTable() {
         }
     });
 }
+
+function showPopupAssign(id) {
+    $("#popupAssegnaGruppo").empty();
+    id_aula = id;
+    let popupContent = "";
+    popupContent +=
+            '<div class="container">' +
+            '<div class="ten columns">' +
+            '<h2>VUOI ASSEGNARE L\'AULA APPENA CREATA AD UN GRUPPO? </h2>' +
+            '<p>ATTENZIONE: puoi sempre decidere di assegnare questa aula ad un\'gruppo successivamente</p>' +
+            '<button type="button" id="button_si" value="id_aula" onclick="formAssign()" >SI</button>' +
+            '<button type="button" id="button_no" value="id_aula" onclick="location.reload()" >NO</button>';
+    $("#popupAssegnaGruppo").empty().append(popupContent);
+    $("#popupAssegnaGruppo").fadeIn(1000);
+}
+
+
+function formAssign(id) {
+    let id_aula = id;
+    $("#popupAula").hide();
+    $("#popupAssegnaGruppo").hide();
+    $.ajax({
+        url: "rest/gruppi",
+        method: "GET",
+        success: function (response) {
+            $("#container").empty();
+            let tipiScritti = [];
+            let popupContent = "";
+            popupContent +=
+                    '<div class="form gruppo">' +
+                    '<div class="container">' +
+                    '<div class="ten columns">' +
+                    '<button type="button" onclick="location.reload()">annulla</button><br>' +
+                    '<p>Seleziona il gruppo in base al suo tipo:</p>';
+            Object.keys(response).forEach(function (key) {
+                let gruppo = response[key];
+                // alert(gruppo["tipo"]);
+                let salta = false;
+
+                for (let i = 0; i < tipiScritti.length; i++) {
+                    if (gruppo["tipo"] === tipiScritti[i]) {
+                        alert(tipiScritti[i]);
+                        salta = true;
+                    }
+                }
+                if (salta === false) {
+                    // alert(gruppo["tipo"]);
+                    tipiScritti.push(gruppo["tipo"]);
+                    popupContent +=
+                            '<label for="' + gruppo["tipo"] + '">' + gruppo["tipo"] + ": " + '</label>' +
+                            '<select name="select_name" onchange="select_button_abilitato()">' +
+                            '<option disabled selected value="">Seleziona un gruppo di tipo ' + gruppo["tipo"].toString().toLowerCase() + '</option>';
+                    Object.keys(response).forEach(function (key) {
+                        let gruppoCiclato = response[key];
+                        if (gruppoCiclato["tipo"] === gruppo["tipo"]) {
+                            popupContent +=
+                                    '<option value="' + gruppoCiclato["ID"] + '">' + gruppoCiclato["nome"] + '</option>';
+                        }
+                    });
+                    popupContent +=
+                            '</select>' +
+                            '<br>';
+                }
+
+            });
+            popupContent +=
+                    '<button type="button" id="button_assegna" value="id_aula" onclick="AssignGruppoToAula(this.value)" disabled>Assegna</button>' +
+                    '</div>';
+            $("#container").empty().append(popupContent);
+            $("#container").show();
+
+        },
+        error: function (xhr) {
+            $("#container").empty().append(xhr.responseText);
+        }
+    });
+}
+
+function AssignGruppoToAula(id) {
+    id_aula = id;
+    let selectElements = document.getElementsByName("select_name");
+    let arrayGruppiIds = [];
+    selectElements.forEach(function (select) {
+        let selectedOption = select.value;
+        if (selectedOption !== "") {
+            arrayGruppiIds.push(selectedOption.value);
+        }
+    });
+
+}
+
+
+
+

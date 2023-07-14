@@ -1,0 +1,27 @@
+<select id="mySelect">
+    <option disabled selected value="">Seleziona un'opzione</option>
+    <option value="opzione1">Opzione 1</option>
+    <option value="opzione2">Opzione 2</option>
+    <option value="opzione3">Opzione 3</option>
+  </select>
+  
+  <script>
+  var placeholderOption = document.querySelector("#mySelect option:first-child");
+  
+  function animateTextScroll() {
+    var scrollAmount = 0;
+    var scrollSpeed = 50; // Velocità di scorrimento (in millisecondi)
+  
+    function scrollStep() {
+      scrollAmount += 1;
+      placeholderOption.text = "Seleziona un'opzione ".substring(scrollAmount);
+      if (scrollAmount < "Seleziona un'opzione ".length) {
+        requestAnimationFrame(scrollStep);
+      }
+    }
+  
+    requestAnimationFrame(scrollStep);
+  }
+  
+  animateTextScroll();
+  </script>

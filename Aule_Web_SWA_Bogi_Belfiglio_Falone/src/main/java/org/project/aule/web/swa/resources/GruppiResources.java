@@ -4,7 +4,9 @@
  */
 package org.project.aule.web.swa.resources;
 
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -19,6 +21,7 @@ import org.project.aule.web.swa.model.Corso;
 import org.project.aule.web.swa.model.Gruppo;
 import org.project.aule.web.swa.model.Responsabile;
 import org.project.aule.web.swa.resources.database.DBConnection;
+import org.project.aule.web.swa.security.Logged;
 
 /**
  *
@@ -30,13 +33,18 @@ public class GruppiResources {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getGruppi() throws Exception {
-        Map<Integer, Object> response = new HashMap<>();
+        Map<Integer, Map<String,Object>> response = new HashMap<>();
         try {
             PreparedStatement allGruppi = DBConnection.getConnection().prepareStatement("SELECT * FROM Gruppo");
             try ( ResultSet rs = allGruppi.executeQuery()) {
                 while (rs.next()) {
                     Gruppo gruppo = Gruppo.createGruppo(rs);
-                    response.put(gruppo.getKey(), gruppo.getNome());
+                    Map<String,Object> item = new HashMap<>();
+                    item.put("ID", gruppo.getKey());
+                    item.put("tipo",gruppo.getTipoGruppo());
+                    item.put("nome", gruppo.getNome());
+                    item.put("descrizione",gruppo.getDescrizione());
+                    response.put(gruppo.getKey(), item);
                 }
             }
             return Response.ok(response).build();
@@ -44,4 +52,5 @@ public class GruppiResources {
             throw new RESTWebApplicationException(ex.getMessage());
         }
     }
+
 }

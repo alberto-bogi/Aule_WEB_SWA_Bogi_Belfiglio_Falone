@@ -104,6 +104,17 @@ function validateAuleInputs() {
     }
 }
 
+function select_button_abilitato() {
+    let selectElements = document.getElementsByName("select_name");
+    let buttonElement = document.getElementById("button_assegna");
+    selectElements.forEach(function(select){
+        let selectedOption = select.value;
+        if(selectedOption !== ""){
+            buttonElement.disabled = false;
+        }
+    });
+}
+
 
 
 

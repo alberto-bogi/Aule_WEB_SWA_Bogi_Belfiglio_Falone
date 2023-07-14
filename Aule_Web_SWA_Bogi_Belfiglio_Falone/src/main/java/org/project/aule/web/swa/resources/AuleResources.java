@@ -323,4 +323,12 @@ public class AuleResources {
 
     }
 
+    @Path("{id_aula: [0-9]+}/gruppi")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response AssignGruppo() {
+
+        return Response.ok().build();
+    }
+
 }

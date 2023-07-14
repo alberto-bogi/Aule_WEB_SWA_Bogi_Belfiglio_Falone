@@ -4,7 +4,6 @@ $(document).ready(function () {
         sessionStorage.removeItem("ID_evento");
     }else if(sessionStorage.getItem("ID_aula") !== null){
         showAulaInformationsById(sessionStorage.getItem("ID_aula"));
-        alert(sessionStorage.getItem(("ID_aula")));
         sessionStorage.removeItem("ID_aula");
     }
 
@@ -225,7 +224,6 @@ function fillFormEvent(id) {
             if (response["tipo"] === "LEZIONE") {
                 document.querySelector('input[type="radio"][name="tipologia"]').checked = false;
                 document.querySelector('input[type="radio"][name="tipologia"][value="1"]').checked = true;
-                alert(response["id_corso"]);
                 fillCorsiTable(response["id_corso"]);
                 document.getElementById("corso").style.display = "block";
             } else if (response["tipo"] === "ESAME") {
@@ -342,7 +340,7 @@ function insertAula(id) {
             '<div id="form_aula" class="form aula">' +
             '<div class="container">' +
             '<div class="ten columns">' +
-            '<button type="button" onclick="">annulla</button><br>' +
+            '<button type="button" onclick="location.reload()">annulla</button><br>' +
             '<label for="input_aula_1">nome:</label>' +
             '<input type="text" name="nome" id="nome" placeholder="inserisci nome aula" oninput="validateAuleInputs()" />' +
             '<br>' +
