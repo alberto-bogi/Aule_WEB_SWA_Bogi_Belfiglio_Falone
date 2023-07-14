@@ -80,7 +80,8 @@ public class CSVResult {
 
             for (CSVRecord record : records) {
                 input.put("nome",record.get("nome"));
-                input.put("luogo",record.get("via") + "," + record.get("civico"));
+                input.put("via",record.get("via"));
+                input.put("civico", record.get("civico"));
                 input.put("edificio", record.get("edificio"));
                 input.put("piano",record.get("piano"));
                 input.put("capienza",record.get("capienza"));
@@ -89,7 +90,7 @@ public class CSVResult {
                 input.put("note",record.get("note"));
                 input.put("responsabile",record.get("responsabile"));
                 input.put("attrezzature",record.get("attrezzature"));
-                input.put("gruppi",record.get("gruppi"));
+                //input.put("gruppi",record.get("gruppi"));
                 
             }
             

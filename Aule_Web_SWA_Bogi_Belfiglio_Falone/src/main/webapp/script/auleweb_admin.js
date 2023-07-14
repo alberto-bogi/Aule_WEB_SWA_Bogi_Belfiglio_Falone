@@ -2,7 +2,7 @@ $(document).ready(function () {
     if (sessionStorage.getItem("ID_evento") !== null) {
         showEventInformations(sessionStorage.getItem("ID_evento"));
         sessionStorage.removeItem("ID_evento");
-    }else if(sessionStorage.getItem("ID_aula") !== null){
+    } else if (sessionStorage.getItem("ID_aula") !== null) {
         showAulaInformationsById(sessionStorage.getItem("ID_aula"));
         sessionStorage.removeItem("ID_aula");
     }
@@ -10,7 +10,6 @@ $(document).ready(function () {
 
 
 });
-
 //FUNZIONI PER EVENTI LATO AMMINISTRATIVO
 function getEventiAdministration() {
     $.ajax({
@@ -40,7 +39,6 @@ function getEventiAdministration() {
         },
         error: function (xhr) {
             $("#eventi_administration").append(xhr.responseText);
-
         }
     });
 }
@@ -77,7 +75,7 @@ function dynamicSearchEvent(input) {
 }
 
 function insertOrModifyEvent(id) {
-    //////svuotiamo il container totale per inserire la form dell'evento
+//////svuotiamo il container totale per inserire la form dell'evento
     let form = "";
     form +=
             '<div id="form_evento" class="form event">' +
@@ -174,7 +172,6 @@ function insertOrModifyEvent(id) {
             '</div>' +
             '</div>';
     $("#container").empty().append(form);
-
     if (!id) {
         let button = '<button type="button" id="button_event" onclick="insertNewEvento()"disabled>inserisci</button>';
         $("#button_operation_event").empty().append(button);
@@ -182,7 +179,7 @@ function insertOrModifyEvent(id) {
         fillAuleTable();
         fillCorsiTable();
     } else {
-        let button = '<button type="button" id="button_event" value="' + id +'" onclick="modifyEvento(this.value)">modifica</button>';
+        let button = '<button type="button" id="button_event" value="' + id + '" onclick="modifyEvento(this.value)">modifica</button>';
         $("#button_operation_event").empty().append(button);
         fillFormEvent(id);
         $("#popupEvento").hide();
@@ -333,7 +330,7 @@ function dynamicSearchAula(input) {
 }
 
 function insertAula(id) {
-    //////svuotiamo il container totale per inserire la form dell'evento
+//////svuotiamo il container totale per inserire la form dell'evento
     let form = "";
     form +=
             '<h3>FORM AULA</h3>' +
@@ -341,28 +338,32 @@ function insertAula(id) {
             '<div class="container">' +
             '<div class="ten columns">' +
             '<button type="button" onclick="location.reload()">annulla</button><br>' +
+            '<label><i>configurazione di un\'aula: </i></label>' +
+            '<button type="button" id="button_importa" onclick="fadeInPopupImportAula()">importa</button><br>' +
             '<label for="input_aula_1">nome:</label>' +
             '<input type="text" name="nome" id="nome" placeholder="inserisci nome aula" oninput="validateAuleInputs()" />' +
             '<br>' +
-            '<label for="input_aula_2">luogo:</label>' +
-            '<input type="text" name="luogo" id="luogo" placeholder="inserisci nome luogo" oninput="validateAuleInputs()" />' +
+            '<label for="input_aula_2">via:</label>' +
+            '<input type="text" name="via" id="via" placeholder="inserisci nome via" oninput="validateAuleInputs()" />' +
+            '<label for="input_aula_3">civico:</label>' +
+            '<input type="number" name="civico" id="civico" min="1" oninput="validateAuleInputs()" />' +
             '<br>' +
-            '<label for="input_aula_3">edificio:</label>' +
+            '<label for="input_aula_4">edificio:</label>' +
             '<input type="text" name="edificio" id="edificio" placeholder="inserisci nome edificio" oninput="validateAuleInputs()" />' +
             '<br>' +
-            '<label for="input_aula_4">piano:</label>' +
+            '<label for="input_aula_5">piano:</label>' +
             '<input type="number" min="0" name="piano" id="piano" oninput="validateAuleInputs()" />' +
             '<br>' +
-            '<label for="input_aula_5">capienza:</label>' +
+            '<label for="input_aula_6">capienza:</label>' +
             '<input type="number" min="0" name="capienza" id="capienza" oninput="validateAuleInputs()" />' +
             '<br>' +
-            '<label for="input_aula_6">numero prese elettriche:</label>' +
+            '<label for="input_aula_7">numero prese elettriche:</label>' +
             '<input type="number" min="0" name="prese_elettriche" id="prese_elettriche" oninput="validateAuleInputs()" />' +
             '<br>' +
-            '<label for="input_aula_7">numero prese di rete:</label>' +
+            '<label for="input_aula_8">numero prese di rete:</label>' +
             '<input type="number" min="0" name="prese_rete" id="prese_rete" oninput="validateAuleInputs()" />' +
             '<br>' +
-            '<label for="input_aula_8">note generiche:</label><br>' +
+            '<label for="input_aula_9">note generiche:</label><br>' +
             '<textarea name="note_generiche" id="note_generiche" placeholder="inserisci delle note generiche" oninput="validateAuleInputs()"></textarea>' +
             '<br>' +
             '<h4>RESPONSABILI</h4>' +
@@ -371,29 +372,28 @@ function insertAula(id) {
             '<h4>ATTREZZATURE</h4>' +
             '<div id="attrezzatura"></div>' +
             '<br>' +
-    /*        '<h4>GRUPPI</h4>' +
-            '<p class="info">è possibile anche rimandare la selezione del gruppo successivamente</p>'+
-            '<div id="gruppo"></div>' +
-            '<br>' + */
-            '<div id="button_operation_aula"></div>' +
+            '<div id="button_operation_aula">' +
+            '<button type="button" id="button_aula" onclick="insertNewAula()" disabled>inserisci</button>' +
+            '</div>' +
             '</div>' +
             '</div>' +
             '</div>';
     $("#container").empty().append(form);
-
-    if (!id) {
-        let buttons = '<button type="button" id="button_aula" onclick="insertNewAula()" disabled>inserisci</button> '+
-                '<button type="button" id="button_importa" onclick="">importa</button>';
-        $("#button_operation_aula").empty().append(buttons);
-        fillResponsabiliTable();
-        fillAttrezzatureTable();
+    fillResponsabiliTable();
+    fillAttrezzatureTable();
     //    fillGruppiTable();
-    } else {
-        $("button_operation_aula").empty().append('<button type="button" onclick="modifyAula()>modifica</button>');
-        //fillFormAula(id);
-    }
-
 }
+
+function fadeInPopupImportAula(){
+    $("#popupImportAula").fadeIn(1000);
+}
+
+function fadeOutPopupImportAula(){
+    $("#popupImportAula").fadeOut(1000);
+}
+
+
+
 
 
 

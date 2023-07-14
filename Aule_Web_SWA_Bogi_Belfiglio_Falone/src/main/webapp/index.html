@@ -53,6 +53,9 @@
                 <div class="center button">
                     <button type="button" id="button_access" name="login">Accedi</button>
                 </div>
+                <div id="error_login" style="display:none">
+                    <p>username e/o password errati</p>
+                </div>
             </form>
         </div>
 
@@ -66,10 +69,13 @@
                     <div class="ten columns">
                         <h2>CALENDARIO EVENTI</h2>
                         <label>da:</label><br>
-                        <input type="date" name="data_inizio" id="input_csv_date_1" oninput="checkCSVButton()"/><br>
+                        <input type="date" name="data_inizio" id="input_csv_date_1" oninput="checkCalendarInput()"/><br>
                         <label>a:</label><br>
-                        <input type="date" name="data_fine" id="input_csv_date_2" oninput="checkCSVButton()"/><br>
+                        <input type="date" name="data_fine" id="input_csv_date_2" oninput="checkCalendarInput()"/><br>
                         <button type="button" id="button_csv_eventi" onclick="exportEventiCalendar()" disabled>download</button>  
+                        <div id="error_input_event_calendar" style="display: none">
+                            <p>Attenzione. La data di fine non deve precedere la data di inizio</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -82,7 +88,7 @@
                 <div class="container">
                     <div class="ten columns">
                         <h2>SELEZIONA FILE</h2>
-                        <input type="file" name="aula_import" id="aula_import" oninput="checkImportButton()"/><br>
+                        <input type="file" name="aula_import" id="aula_import" oninput="checkImportButton()" /><br>
                         <button type="button" id="button_aula_import" onclick="importAula()" disabled>upload</button>  
                     </div>
                 </div>
@@ -112,7 +118,6 @@
         <script src="script/auleweb_corsi.js"></script>
         <script src="script/auleweb_view.js"></script>
         <script src="script/auleweb.js"></script>
-        <script src="script/auleweb_export_eventi.js"></script>
 
     </body>
 </html>

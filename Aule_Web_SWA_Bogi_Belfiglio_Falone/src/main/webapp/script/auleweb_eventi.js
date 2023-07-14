@@ -77,7 +77,7 @@ function showEventiFormByAulaId(id) {
             let contentForm =
                     '<div class="eventi correnti">' +
                     '<label>vedi gli eventi attuali: </label>' +
-                    '<button type="button" id="currentEventButton" onclick="getCurrentEventi()">cerca</button> ' +
+                    '<button type="button" id="currentEventButton" onclick="getCurrentEventi()">vedi</button> ' +
                     '</div>' +
                     '<h3>AULA ' + response["nome"].toUpperCase() + '</h3>' +
                     '<form id="eventi_aula" method="GET">' +
@@ -136,72 +136,73 @@ function showEventInformationsByName() {
     let form = document.getElementById("search_evento");
     let search = form.elements["searchEvento"].value;
     let sanitizedSearch = search.replace(/[<>"'=()*!?]/g, '');
+    if (sanitizedSearch) {
+        $.ajax({
+            url: "rest/eventi/" + sanitizedSearch,
+            method: "GET",
+            success: function (response) {
+                if (Object.keys(response).length > 0) {
+                    $("#popupEvento").empty();
+                    let eventContent =
+                            '<div>' +
+                            '<div class="exit">' +
+                            '<button type="button" onclick="fadeOutPopupEvento()">X</button>' +
+                            '</div>' +
+                            '<h2  style="clear: right">INFORMAZIONI</h2>' +
+                            "<p><b>NOME:</b> " + response["nome"].toLowerCase() + "</p>" +
+                            "<p><b>DATA:</b> " + response["data"] + "</p>" +
+                            "<p><b>INTERVALLO:</b> " + response["ora_inizio"] + " - " + response["ora_fine"] + "</p>" +
+                            "<p><b>AULA:</b> " + response["aula"].toLowerCase() + "</p>" +
+                            "<p><b>RESPONSABILE:</b> " + response["responsabile"].toLowerCase() + "</p>" +
+                            "<p><b>TIPOLOGIA:</b> " + response["tipo"].toLowerCase() + "</p>";
+                    if (response["tipo"] === "LEZIONE" || response["tipo"] === "ESAME" || response["tipo"] === "PARZIALE") {
+                        eventContent += "<p><b>CORSO:</b> " + response["corso"].toLowerCase() + "</p>";
+                    }
+                    eventContent += "<p><b>RICORRENZA:</b> " + response["ricorrenza"].toLowerCase() + "</p>";
+                    if (response["ricorrenza"] !== "NESSUNA") {
+                        eventContent += "<p><b>INTERVALLO RICORRENZA:</b> " + response["data"] + " - " + response["data_ricorrenza"] + "</p>";
+                    }
 
-    $.ajax({
-        url: "rest/eventi/" + sanitizedSearch,
-        method: "GET",
-        success: function (response) {
-            if (Object.keys(response).length > 0) {
+                    $("#popupEvento").append(eventContent);
+                    $("#popupEvento").fadeIn(1000);
+                } else {
+                    $("#popupEvento").empty();
+                    let eventContent =
+                            '<div>' +
+                            '<div class="exit">' +
+                            '<button type="button" onclick="fadeOutPopupEvento()">X</button>' +
+                            '</div>' +
+                            '<h2  style="clear: right;">Evento non trovato</h2>' +
+                            '<p class="search null">Non è stato trovato alcun evento con nome <b><em>' + sanitizedSearch + '</b></em></p>';
+                    $("#popupEvento").append(eventContent);
+                    $("#popupEvento").fadeIn(1000);
+                }
+
+            },
+            error: function (xhr, status, error) {
+                $("#tableEventi").append(xhr.responseText);
                 $("#popupEvento").empty();
                 let eventContent =
                         '<div>' +
                         '<div class="exit">' +
                         '<button type="button" onclick="fadeOutPopupEvento()">X</button>' +
                         '</div>' +
-                        '<h2  style="clear: right">INFORMAZIONI</h2>' +
-                        "<p><b>NOME:</b> " + response["nome"].toLowerCase() + "</p>" +
-                        "<p><b>DATA:</b> " + response["data"] + "</p>" +
-                        "<p><b>INTERVALLO:</b> " + response["ora_inizio"] + " - " + response["ora_fine"] + "</p>" +
-                        "<p><b>AULA:</b> " + response["aula"].toLowerCase() + "</p>" +
-                        "<p><b>RESPONSABILE:</b> " + response["responsabile"].toLowerCase() + "</p>" +
-                        "<p><b>TIPOLOGIA:</b> " + response["tipo"].toLowerCase() + "</p>";
-                if (response["tipo"] === "LEZIONE" || response["tipo"] === "ESAME" || response["tipo"] === "PARZIALE") {
-                    eventContent += "<p><b>CORSO:</b> " + response["corso"].toLowerCase() + "</p>";
-                }
-                eventContent += "<p><b>RICORRENZA:</b> " + response["ricorrenza"].toLowerCase() + "</p>";
-                if (response["ricorrenza"] !== "NESSUNA") {
-                    eventContent += "<p><b>INTERVALLO RICORRENZA:</b> " + response["data"] + " - " + response["data_ricorrenza"] + "</p>";
-                }
+                        '<h2  style="clear: right; color: red">Evento non trovato</h2>' +
+                        '<p>Non sono permessi caratteri speciali per la ricerca di un evento</p>';
+                $("#popupEvento").append(eventContent);
+                $("#popupEvento").fadeIn(1000);
 
-                $("#popupEvento").append(eventContent);
-                $("#popupEvento").fadeIn(1000);
-            } else {
-                $("#popupEvento").empty();
-                let eventContent =
-                        '<div>' +
-                        '<div class="exit">' +
-                        '<button type="button" onclick="fadeOutPopupEvento()">X</button>' +
-                        '</div>' +
-                        '<h2  style="clear: right;">Evento non trovato</h2>' +
-                        '<p class="search null">Non è stato trovato alcun evento con nome <b><em>' + sanitizedSearch + '</b></em></p>';
-                $("#popupEvento").append(eventContent);
-                $("#popupEvento").fadeIn(1000);
             }
-
-        },
-        error: function (xhr, status, error) {
-            $("#tableEventi").append(xhr.responseText);
-            $("#popupEvento").empty();
-            let eventContent =
-                    '<div>' +
-                    '<div class="exit">' +
-                    '<button type="button" onclick="fadeOutPopupEvento()">X</button>' +
-                    '</div>' +
-                    '<h2  style="clear: right; color: red">Evento non trovato</h2>' +
-                    '<p>Non sono permessi caratteri speciali per la ricerca di un evento</p>';
-            $("#popupEvento").append(eventContent);
-            $("#popupEvento").fadeIn(1000);
-
-        }
-    });
+        });
+    }
 }
 
 function insertNewEvento() {
-    let nome = document.getElementById("nome").value;
+    let nome = document.getElementById("nome").value.toUpperCase();
     let data_evento = document.getElementById("data_evento").value;
     let ora_inizio = document.getElementById("ora_inizio").value;
     let ora_fine = document.getElementById("ora_fine").value;
-    let descrizione = document.getElementById("descrizione").value;
+    let descrizione = document.getElementById("descrizione").value.toUpperCase();
     let ricorrenza = document.querySelector('input[type="radio"][name="ricorrenza"]:checked').value;
     let data_ricorrenza;
     if (document.getElementById("data_ricorrenza").value)
@@ -252,7 +253,7 @@ function insertNewEvento() {
                     success: function (response) {
                         sessionStorage.setItem("ID_evento", response["ID"]);
                         location.reload();
-                        
+
                     }
 
                 });
@@ -266,12 +267,12 @@ function insertNewEvento() {
 }
 
 
-function modifyEvento(id){
-    let nome = document.getElementById("nome").value;
+function modifyEvento(id) {
+    let nome = document.getElementById("nome").value.toUpperCase();
     let data_evento = document.getElementById("data_evento").value;
     let ora_inizio = document.getElementById("ora_inizio").value;
     let ora_fine = document.getElementById("ora_fine").value;
-    let descrizione = document.getElementById("descrizione").value;
+    let descrizione = document.getElementById("descrizione").value.toUpperCase();
     let ricorrenza = document.querySelector('input[type="radio"][name="ricorrenza"]:checked').value;
     let data_ricorrenza;
     if (document.getElementById("data_ricorrenza").value)
@@ -324,7 +325,7 @@ function modifyEvento(id){
                     success: function (response) {
                         sessionStorage.setItem("ID_evento", response["ID"]);
                         location.reload();
-                        
+
                     }
 
                 });
@@ -335,19 +336,19 @@ function modifyEvento(id){
         }
     });
 
-    
+
 }
 
 
-function exportEventiCalendar(){
+function exportEventiCalendar() {
     let data_inizio = document.getElementById("input_csv_date_1").value;
     let data_fine = document.getElementById("input_csv_date_2").value;
-    
+
     let periodo = {
         data_inizio: data_inizio,
         data_fine: data_fine
     };
-    
+
     $.ajax({
         url: "rest/eventi/calendar/export",
         method: "post",
@@ -360,7 +361,7 @@ function exportEventiCalendar(){
             document.getElementById("input_csv_date_1").value = "";
             document.getElementById("input_csv_date_2").value = "";
             document.getElementById("button_csv_eventi").disabled = true;
-            
+
             //specifichiamo un url temporaneo che ci servirà per accedere ai dati binari
             let url = window.URL.createObjectURL(new Blob([response]));
             let a = document.createElement('a');
@@ -370,7 +371,7 @@ function exportEventiCalendar(){
             a.click();
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
-            
+
         },
         error: function (xhr) {
             $("#container").empty().append(xhr.responseText);

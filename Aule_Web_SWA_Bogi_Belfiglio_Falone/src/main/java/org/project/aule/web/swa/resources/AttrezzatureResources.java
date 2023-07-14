@@ -5,6 +5,7 @@
 package org.project.aule.web.swa.resources;
 
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -14,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.project.aule.web.swa.exception.RESTWebApplicationException;
 import org.project.aule.web.swa.model.Attrezzatura;
@@ -31,7 +33,7 @@ public class AttrezzatureResources {
     public Response getAttrezzature() throws Exception {
         Map<Integer, Map<String, Object>> response = new HashMap<>();
         try {
-            PreparedStatement allAttrezzature = DBConnection.getConnection().prepareStatement("SELECT * FROM Attrezzatura");
+            PreparedStatement allAttrezzature = DBConnection.getConnection().prepareStatement("SELECT * FROM Attrezzatura WHERE ID_aula IS NULL");
             try ( ResultSet rs = allAttrezzature.executeQuery()) {
                 while (rs.next()) {
                     Attrezzatura attrezzatura = Attrezzatura.createAttrezzatura(rs);
@@ -43,6 +45,39 @@ public class AttrezzatureResources {
                     }
 
                 }
+            }
+            return Response.ok(response).build();
+
+        } catch (SQLException | ClassNotFoundException ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
+        }
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAttrezzatureImport(
+            Map<String, Object> attrezzatureJson
+    ) throws Exception {
+        Map<Integer, Map<String, Object>> response = new HashMap<>();
+        try {
+            PreparedStatement attrezzaturaByNome = DBConnection.getConnection().prepareStatement("SELECT * FROM Attrezzatura WHERE ID_aula IS NULL AND nome = ?");
+            List<String> nomiAttrezzature = (List<String>) attrezzatureJson.get("nomi");
+
+            for (String nome : nomiAttrezzature) {
+                attrezzaturaByNome.setString(1, nome);
+                try ( ResultSet rs = attrezzaturaByNome.executeQuery()) {
+                    while (rs.next()) {
+                        Attrezzatura attrezzatura = Attrezzatura.createAttrezzatura(rs);
+                        if (attrezzatura.getAulaKey() == 0) {
+                            Map<String, Object> item = new HashMap<>();
+                            item.put("nome", attrezzatura.getNome());
+                            item.put("numeroDiSerie", attrezzatura.getNumeroDiSerie());
+                            response.put(attrezzatura.getKey(), item);
+                        }
+
+                    }
+                }
+
             }
             return Response.ok(response).build();
 

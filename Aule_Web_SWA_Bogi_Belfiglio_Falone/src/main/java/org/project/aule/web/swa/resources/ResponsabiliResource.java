@@ -6,6 +6,7 @@ package org.project.aule.web.swa.resources;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -41,5 +42,28 @@ public class ResponsabiliResource {
         }catch(SQLException | ClassNotFoundException ex){
             throw new RESTWebApplicationException(ex.getMessage());
         }
+    }
+    
+    @Path("{email}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getResponsabileByEmail(
+            @PathParam("email") String email
+    ){
+        try{
+            Map<String, Object> response = new HashMap<>();
+            PreparedStatement responsabileByEmail = DBConnection.getConnection().prepareStatement("SELECT ID FROM RESPONSABILE WHERE email = ?");
+            responsabileByEmail.setString(1,email);
+            try(ResultSet rs = responsabileByEmail.executeQuery()){
+                if(rs.next()){
+                    response.put("ID", rs.getInt("ID"));
+                }
+            }
+            
+            return Response.ok(response).build();
+        }catch(SQLException | ClassNotFoundException ex){
+            throw new RESTWebApplicationException(ex.getMessage());
+        }
+        
     }
 }

@@ -52,6 +52,7 @@ function formAssign(id) {
                     '<div class="form gruppo">' +
                     '<div class="container">' +
                     '<div class="ten columns">' +
+                    '<h3>ASSEGNAZIONE GRUPPI</h3>' +
                     '<button type="button" onclick="location.reload()">annulla</button><br>' +
                     '<p>Seleziona il gruppo in base al suo tipo:</p>';
             Object.keys(response).forEach(function (key) {
@@ -86,7 +87,7 @@ function formAssign(id) {
 
             });
             popupContent +=
-                    '<button type="button" id="button_assegna" value="id_aula" onclick="AssignGruppoToAula(this.value)" disabled>Assegna</button>' +
+                    '<button type="button" id="button_assegna" value="id_aula" onclick="AssignGruppoToAula(this.value)" disabled>assegna</button>' +
                     '</div>';
             $("#container").empty().append(popupContent);
             $("#container").show();
