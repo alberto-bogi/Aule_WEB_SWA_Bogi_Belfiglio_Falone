@@ -62,16 +62,11 @@
 
 /* Stili di base per il select */
 .form.gruppo select {
-    padding: 6px;
-    border: 2px solid #add8e6;
-    border-radius: 4px;
-    background-color: #fff;
-    margin-bottom: 2%;
+    padding: 0.5%;
+    border: 2px solid black;
+    margin-bottom: 1%;
 }
 
-.form.gruppo label{
-    margin-right: 1%;
-}
 
 .form.gruppo button{
     font-weight: bold;

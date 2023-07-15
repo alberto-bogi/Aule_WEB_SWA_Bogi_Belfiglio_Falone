@@ -23,6 +23,7 @@ import jakarta.ws.rs.core.UriInfo;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.sql.Date;
@@ -36,6 +37,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.glassfish.jersey.server.Uri;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.project.aule.web.swa.exception.RESTWebApplicationException;
 import org.project.aule.web.swa.model.Attrezzatura;
 import org.project.aule.web.swa.model.Aula;
@@ -354,6 +357,22 @@ public class AuleResources {
             throw new RESTWebApplicationException(ex.getMessage());
         }
         return Response.ok(response).build();
+    }
+    
+    @Path("import")
+    @POST
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response importAulaCSV(
+            @FormDataParam("file") FormDataBodyPart part,
+            @Context ServletContext sc
+    ){
+        //convertiamo il contenuto della parte identificata con la chiave "file" in un oggetto di tipo File
+        File file = part.getValueAs(File.class);
+        Map<String, String> response = CSVResult.readCSVAulaFile(file);
+        
+        return Response.ok(response).build();
+        
     }
 
 }

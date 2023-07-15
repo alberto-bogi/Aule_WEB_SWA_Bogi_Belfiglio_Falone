@@ -202,5 +202,9 @@ p{
     border: 2px solid black;
 }
 
+#error_login p{
+    font-size: small;
+    color: red;
+}
 
 

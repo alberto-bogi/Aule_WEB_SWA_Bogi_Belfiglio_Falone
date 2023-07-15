@@ -12,33 +12,35 @@ function showAulaInformationsByName() {
     let form = document.getElementById("search_aula");
     let search = form.elements["aula"].value;
     let sanitizedSearch = search.replace(/[<>"'=()*!?]/g, '');
-    $.ajax({
-        url: "rest/aule/" + sanitizedSearch,
-        method: "GET",
-        success: function (response) {
-            if (Object.keys(response).length > 0) {
-                let id = response["id_aula"];
-                showAulaInformationsById(id);
-            } else {
-                let popupContent =
-                        '<div>' +
-                        '<div class="exit">' +
-                        '<button type="button" onclick="fadeOutPopupAula()">X</button>' +
-                        '</div>' +
-                        '<h2  style="clear: right">NESSUN RISULTATO</h2>' +
-                        '<p class="search null">ci dispiace, ma la ricerca <b><em>' + sanitizedSearch + '</b></em> non ha fornito risultati</p>' +
-                        '</div>';
-                $("#popupAula").append(popupContent);
-                $("#popupAula").fadeIn(1000);
-                let form = document.getElementById("search_aula");
-                let search = form.elements["aula"].value = "";
+    if (sanitizedSearch) {
+        $.ajax({
+            url: "rest/aule/" + sanitizedSearch,
+            method: "GET",
+            success: function (response) {
+                if (Object.keys(response).length > 0) {
+                    let id = response["id_aula"];
+                    showAulaInformationsById(id);
+                } else {
+                    let popupContent =
+                            '<div>' +
+                            '<div class="exit">' +
+                            '<button type="button" onclick="fadeOutPopupAula()">X</button>' +
+                            '</div>' +
+                            '<h2  style="clear: right">NESSUN RISULTATO</h2>' +
+                            '<p class="search null">ci dispiace, ma la ricerca <b><em>' + sanitizedSearch + '</b></em> non ha fornito risultati</p>' +
+                            '</div>';
+                    $("#popupAula").append(popupContent);
+                    $("#popupAula").fadeIn(1000);
+                    let form = document.getElementById("search_aula");
+                    let search = form.elements["aula"].value = "";
+                }
+            },
+            error: function (xhr, status, error) {
+                $("auleweb").append(xhr.responseText);
+                $("auleweb").show();
             }
-        },
-        error: function (xhr, status, error) {
-            $("auleweb").append(xhr.responseText);
-            $("auleweb").show();
-        }
-    });
+        });
+    }
 }
 
 function showAulaInformationsById(id) {
@@ -57,8 +59,7 @@ function showAulaInformationsById(id) {
             if (sessionStorage.getItem("authToken") !== null) {
                 popupContent +=
                         '<button type="button" value="' + response["id_aula"] + '" onclick="formAssign(this.value)">assegna gruppi</button>' +
-
-                        '<button type="button" value="' + response["id_aula"] + '" onclick="exportAulaCSV(this.value)">esporta</button>'
+                        '<button type="button" value="' + response["id_aula"] + '" onclick="exportAulaCSV(this.value)">download</button>';
 
 
             } else {
@@ -159,7 +160,7 @@ function fillAuleTable(id) {
                         '</tr>';
                 delete response[id];
             }
-            
+
             Object.keys(response).forEach(function (key) {
                 let aula = response[key];
                 table +=
@@ -221,6 +222,7 @@ function fadeOutPopupAula() {
 
 function fadeInPopupLogin() {
     $("#popupLogin").slideDown(300);
+    $("#error_login").hide();
 }
 
 function fadeOutPopupLogin() {
@@ -229,14 +231,14 @@ function fadeOutPopupLogin() {
 
 function insertNewAula() {
     let idAttrezzatureArray = [];
-    let nome = document.getElementById("nome").value;
-    let luogo = document.getElementById("luogo").value;
-    let edificio = document.getElementById("edificio").value;
+    let nome = document.getElementById("nome").value.toUpperCase();
+    let luogo = ("via " + document.getElementById("via").value + "," + document.getElementById("civico").value).toUpperCase();
+    let edificio = document.getElementById("edificio").value.toUpperCase();
     let piano = document.getElementById("piano").value;
     let capienza = document.getElementById("capienza").value;
     let prese_elettriche = document.getElementById("prese_elettriche").value;
     let prese_rete = document.getElementById("prese_rete").value;
-    let note_generiche = document.getElementById("note_generiche").value;
+    let note_generiche = document.getElementById("note_generiche").value.toUpperCase();
     let responsabileKey = document.querySelector('input[type="radio"][name="responsabile"]:checked').value;
     let idAttrezzature = document.querySelectorAll('input[type="checkbox"][name="attrezzatura"]:checked');
 
@@ -289,6 +291,64 @@ function insertNewAula() {
     });
 
 
+}
+
+function importAula() {
+    let input = document.getElementById("aula_import");
+    let file = input.files[0];
+    let formData = new FormData();
+    formData.append("file", file);
+    $.ajax({
+        url: "rest/aule/import",
+        method: "post",
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (response) {
+            document.getElementById("nome").value = response["nome"];
+            document.getElementById("via").value = response["via"];
+            document.getElementById("civico").value = response["civico"];
+            document.getElementById("edificio").value = response["edificio"];
+            document.getElementById("piano").value = response["piano"];
+            document.getElementById("capienza").value = response["capienza"];
+            document.getElementById("prese_elettriche").value = response["prese_elettriche"];
+            document.getElementById("prese_rete").value = response["prese_di_rete"];
+            document.getElementById("note_generiche").value = response["note"];
+
+            $.ajax({
+                url: "rest/responsabili/" + response["responsabile"],
+                method: "get",
+                success: function (response) {
+                    fillResponsabiliTable(response["ID"]);
+                }
+            });
+
+            let array = [];
+            array = response["attrezzature"].split(",");
+            let attrezzature = {
+                nomi: array
+            };
+
+            $.ajax({
+                url: "rest/attrezzature",
+                method: "post",
+                contentType: "application/json",
+                data: JSON.stringify(attrezzature),
+                success: function (response) {
+                    fillAttrezzatureTable(response);
+                }
+            });
+            //document.querySelector('input[type="radio"][name="responsabile"]:checked').value;
+            //let idAttrezzature = document.querySelectorAll('input[type="checkbox"][name="attrezzatura"]:checked');
+            document.getElementById("button_aula").disabled = false;
+            $("#popupImportAula").fadeOut(1000);
+        },
+        error: function (xhr) {
+            let errorContent = "<h2>ERRORE</h2><p>errore nel caricamento della configurazione dell\'aula</p>";
+            $("#popupImportAula").empty().append(errorContent);
+        }
+
+    });
 }
 
 

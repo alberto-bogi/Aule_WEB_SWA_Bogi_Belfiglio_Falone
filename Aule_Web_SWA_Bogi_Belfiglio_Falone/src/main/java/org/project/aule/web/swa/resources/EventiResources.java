@@ -4,6 +4,8 @@
  */
 package org.project.aule.web.swa.resources;
 
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.annotation.ServletSecurity;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -16,6 +18,10 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -24,14 +30,31 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import net.fortuna.ical4j.data.CalendarOutputter;
+import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.TimeZone;
+import net.fortuna.ical4j.model.TimeZoneRegistry;
+import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
+import net.fortuna.ical4j.model.ValidationException;
+import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.component.VTimeZone;
+import net.fortuna.ical4j.model.property.CalScale;
+import net.fortuna.ical4j.model.property.ProdId;
+import net.fortuna.ical4j.model.property.Uid;
+import net.fortuna.ical4j.model.property.Version;
+import net.fortuna.ical4j.util.UidGenerator;
 import org.glassfish.jersey.server.Uri;
 import org.project.aule.web.swa.exception.RESTWebApplicationException;
 import org.project.aule.web.swa.model.Aula;
@@ -504,5 +527,93 @@ public class EventiResources {
 
         throw new RESTWebApplicationException();
 
+    }
+
+    @Path("calendar/export")
+    @POST
+    public Response exportEventiByPeriod(
+            @Context ServletContext sc,
+            Map<String, Object> periodoJson
+    ) {
+        File response = new File(sc.getRealPath("") + File.separatorChar + "eventi.ics");
+        // Create a calendar
+        net.fortuna.ical4j.model.Calendar eventiCalendar = new net.fortuna.ical4j.model.Calendar();
+        eventiCalendar.getProperties().add(new ProdId("-//Events Calendar//iCal4j 1.0//EN"));
+        eventiCalendar.getProperties().add(CalScale.GREGORIAN);
+        eventiCalendar.getProperties().add(Version.VERSION_2_0);
+
+        // Create a TimeZone
+        TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
+        TimeZone timezone = registry.getTimeZone("Europe/Rome");
+        VTimeZone tz = timezone.getVTimeZone();
+
+        try {
+
+            List<Evento> eventi = new ArrayList();
+            PreparedStatement getEventiByPeriod = DBConnection.getConnection().prepareStatement("SELECT * FROM EVENTO WHERE data_evento BETWEEN ? AND ?;");
+            PreparedStatement getEventiRicorrentiByPeriod = DBConnection.getConnection().prepareStatement("SELECT * FROM EVENTO_RICORRENTE  WHERE data_evento BETWEEN ? AND ?;");
+
+            LocalDate data_inizio = LocalDate.parse(periodoJson.get("data_inizio").toString());
+            LocalDate data_fine = LocalDate.parse(periodoJson.get("data_fine").toString());
+            getEventiByPeriod.setDate(1, Date.valueOf(data_inizio));
+            getEventiByPeriod.setDate(2, Date.valueOf(data_fine));
+            getEventiRicorrentiByPeriod.setDate(1, Date.valueOf(data_inizio));
+            getEventiRicorrentiByPeriod.setDate(2, Date.valueOf(data_fine));
+            try ( ResultSet rs = getEventiByPeriod.executeQuery()) {
+                while (rs.next()) {
+                    Evento evento = Evento.createEvento(rs);
+                    eventi.add(evento);
+                }
+            }
+            try ( ResultSet rs2 = getEventiRicorrentiByPeriod.executeQuery()) {
+                while (rs2.next()) {
+                    EventoRicorrente eventoRicorrente = EventoRicorrente.createEventoRicorrente(rs2);
+                    Evento evento = eventoRicorrente.getEvento();
+                    evento.setDataEvento(eventoRicorrente.getDataEvento());
+                    eventi.add(evento);
+                }
+
+            }
+            Collections.sort(eventi, new EventoComparator());
+            for (Evento evento : eventi) {
+                LocalDate data_evento = evento.getDataEvento();
+                LocalTime ora_inizio = evento.getOraInizio();
+                LocalTime ora_fine = evento.getOraFine();
+
+                Calendar start_event = new GregorianCalendar();
+                start_event.setTimeZone(timezone);
+                start_event.set(data_evento.getYear(), data_evento.getMonthValue() - 1, data_evento.getDayOfMonth(), ora_inizio.getHour(), ora_inizio.getMinute());
+
+                Calendar end_event = new GregorianCalendar();
+                end_event.setTimeZone(timezone);
+                end_event.set(data_evento.getYear(), data_evento.getMonthValue() - 1, data_evento.getDayOfMonth(), ora_fine.getHour(), ora_fine.getMinute());
+
+                //creaimo l'evento per il calendario
+                DateTime start = new DateTime(start_event.getTime());
+                DateTime end = new DateTime(end_event.getTime());
+                VEvent calendarEvent = new VEvent(start, end, evento.getNome());
+
+                // add timezone info..
+                calendarEvent.getProperties().add(tz.getTimeZoneId());
+
+                // generate unique identifier..
+                UidGenerator ug = new UidGenerator("uidGen");
+                Uid uid = ug.generateUid();
+                calendarEvent.getProperties().add(uid);
+
+                eventiCalendar.getComponents().add(calendarEvent);
+            }
+
+            FileOutputStream fout = new FileOutputStream(response);
+
+            CalendarOutputter outputter = new CalendarOutputter();
+            outputter.output(eventiCalendar, fout);
+
+            return Response.ok(response).build();
+        } catch (SQLException | ClassNotFoundException | FileNotFoundException ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
+        } catch (Exception ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
+        }
     }
 }

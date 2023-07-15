@@ -68,7 +68,7 @@ $(document).ready(function () {
                 location.reload();
             },
             error: function () {
-                alert("Username e/o Password errati.");
+                $("#error_login").show();
             }
         });
     });

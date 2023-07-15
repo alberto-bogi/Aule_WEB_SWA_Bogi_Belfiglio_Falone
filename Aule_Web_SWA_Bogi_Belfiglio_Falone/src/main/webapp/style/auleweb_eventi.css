@@ -157,3 +157,92 @@ table td button:hover{
     color: black;
 }
 
+
+#popupExport{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #c0c0c0;
+  border-radius: 2px;
+  border: 1px solid black;
+  width:70%;
+  text-align: center;
+  padding-bottom: 5%;
+}
+
+
+#popupExport h2{
+    font-family: sans-serif;
+    color: white;
+    text-shadow: -1.5px 0 #000000, 0 1.5px #000000, 1.5px 0 #000000, 0 -1.5px #000000;
+}
+
+#popupExport .exit{
+    float:right;
+    width: 10%;
+    margin-top: 2%;
+}
+
+#popupExport .exit button{
+    height: 30px;
+    width: 30px;
+    border-radius: 0px;
+    border-color: black;
+    background-color: white; 
+    font-weight: bold;
+    font-size: large;
+    color: red;
+    cursor: pointer;
+}
+
+#popupExport .exit button:hover{
+    background-color: red; 
+    color: white;
+    cursor: pointer;
+}
+#popupExport p{
+    font-weight: bold;
+    font-style: italic;
+    font-size: large;
+}
+#popupExport input[type="date"]{
+    border-color: black;
+    width: 15%;
+    padding: 0.2%;
+    margin-right: 0.5%;
+    cursor: pointer;
+    width: 20%;
+    font-family: sans-serif;
+    font-weight: bold;
+    margin-top: 1%;
+    margin-bottom: 2%;
+
+}
+
+#popupExport button{
+    font-weight: bold;
+    font-size: medium;
+    color:white;
+    background-color: #9c9c9c;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#popupExport button:hover{
+    color: black;
+    background-color: white;
+}
+
+#popupExport button:disabled{
+    background-color: #c0c0c0;
+    color: white;
+    cursor: inherit;
+}
+
+#error_input_event_calendar p{
+    font-style: inherit;
+    font-size: small;
+    color: red;
+}
+

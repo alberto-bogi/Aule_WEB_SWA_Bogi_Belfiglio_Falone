@@ -8,7 +8,6 @@
         <link rel="stylesheet" href="style/auleweb_aule.css"  type="text/css" />
         <link rel="stylesheet" href="style/auleweb_eventi.css"  type="text/css" />
         <link rel="stylesheet" href="style/auleweb_admin.css"  type="text/css" />
-        <link rel="stylesheet" href="style/auleweb_export_eventi.css"  type="text/css" />
         <link rel="stylesheet" href="style/auleweb_gruppi.css"  type="text/css" />
         <link rel="stylesheet" href="style/login.css"  type="text/css" />
     </head>
@@ -20,14 +19,11 @@
             <div class="six columns">
 
                 <div id="export_eventi_div">
-
-
                 </div>
             </div>
 
             <div class="one column">
                 <div class="login" id="login_div">
-
                 </div>
             </div>
         </div>
@@ -57,22 +53,46 @@
                 <div class="center button">
                     <button type="button" id="button_access" name="login">Accedi</button>
                 </div>
+                <div id="error_login" style="display:none">
+                    <p>username e/o password errati</p>
+                </div>
             </form>
         </div>
 
 
         <div id="popupExport" style="display:none">
-            <div class="right">
-                <button type="button" class="buttonExit" onclick="fadeOutPopupExport()">X</button>
+            <div>
+                <div class="exit">
+                    <button type="button" onclick="fadeOutPopupExport()">X</button>
+                </div>
+                <div class="container">
+                    <div class="ten columns">
+                        <h2>CALENDARIO EVENTI</h2>
+                        <label>da:</label><br>
+                        <input type="date" name="data_inizio" id="input_csv_date_1" oninput="checkCalendarInput()"/><br>
+                        <label>a:</label><br>
+                        <input type="date" name="data_fine" id="input_csv_date_2" oninput="checkCalendarInput()"/><br>
+                        <button type="button" id="button_csv_eventi" onclick="exportEventiCalendar()" disabled>download</button>  
+                        <div id="error_input_event_calendar" style="display: none">
+                            <p>Attenzione. La data di fine non deve precedere la data di inizio</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <p>Scarica gli eventi di un determinato periodo a tua scelta in formato CSV</p>
-            <form action="" method="get">
-                <label>data di inizio:</label>
-                <input type="date" name="data_inizio" id="input_csv_date_1" oninput="checkCSVButton()"/><br>
-                <label>data di fine:</label>
-                <input type="date" name="data_fine" id="input_csv_date_2" oninput="checkCSVButton()"/><br>
-                <button type="submit" id="button_csv_eventi" disabled>scarica</button>
-            </form>   
+        </div>
+        
+        <div id="popupImportAula" style="display: none">
+           <div class="exit">
+                    <button type="button" onclick="fadeOutPopupImportAula()">X</button>
+                </div>
+                <div class="container">
+                    <div class="ten columns">
+                        <h2>SELEZIONA FILE</h2>
+                        <input type="file" name="aula_import" id="aula_import" oninput="checkImportButton()" /><br>
+                        <button type="button" id="button_aula_import" onclick="importAula()" disabled>upload</button>  
+                    </div>
+                </div>
+            
         </div>
 
 
@@ -98,8 +118,6 @@
         <script src="script/auleweb_corsi.js"></script>
         <script src="script/auleweb_view.js"></script>
         <script src="script/auleweb.js"></script>
-
-        <script src="script/auleweb_export_eventi.js"></script>
 
     </body>
 </html>

@@ -83,7 +83,8 @@ function validateEventsInputs() {
 function validateAuleInputs() {
 
     let nome = document.getElementById("nome").value;
-    let luogo = document.getElementById("luogo").value;
+    let via = document.getElementById("via").value;
+    let civico = document.getElementById("civico").value;
     let edificio = document.getElementById("edificio").value;
     let piano = document.getElementById("piano").value;
     let capienza = document.getElementById("capienza").value;
@@ -94,7 +95,7 @@ function validateAuleInputs() {
     let attrezzatura = document.querySelectorAll('input[type="checkbox"][name="attrezzatura"]:checked');
     let button = document.getElementById("button_aula");
 
-    if (nome && luogo && edificio && piano && capienza && prese_elettriche && prese_rete && note_generiche && responsabile && attrezzatura) {
+    if (nome && civico && via && edificio && piano && capienza && prese_elettriche && prese_rete && note_generiche && responsabile && attrezzatura) {
         button.disabled = false;
         return;
 
@@ -120,6 +121,44 @@ function select_button_abilitato() {
 
 function verifyCorrectnessTimeEvento() {
 
+}
+
+function fadeInPopupExport() {
+    $("#popupExport").fadeIn(1000);
+}
+function fadeOutPopupExport() {
+    $("#popupExport").fadeOut(1000);
+}
+
+function checkCalendarInput() {
+    let date1 = document.getElementById("input_csv_date_1").value;
+    let date2 = document.getElementById("input_csv_date_2").value;
+    let button = document.getElementById("button_csv_eventi");
+
+
+    if (date1 && date2) {
+        if(date1 >= date2){
+            button.disabled = true;
+            $("#error_input_event_calendar").show();
+            return;
+        }else{
+            $("#error_input_event_calendar").hide();
+            button.disabled = false;
+            return;
+        }
+        return;
+    } else {
+        button.disabled = true;
+        return;
+    }
+}
+
+function checkImportButton(){
+    if(document.getElementById("aula_import").value){
+        document.getElementById("button_aula_import").disabled = false;
+    }else{
+        document.getElementById("button_aula_import").disabled = true;
+    }
 }
 
 

@@ -37,8 +37,8 @@ $(document).ready(function () {
         //Riempiamo
         let export_eventi_div =
                 '<div class="export">' +
-                '<button type="button" onclick="myFunction()">' +
-                '<img src="images/calendar.png" alt="calendar">' +
+                '<button type="button" onclick="fadeInPopupExport()">' +
+                ' <img src="images/calendar.png" alt="calendar">' +
                 '</button>' +
                 '</div>';
         let login_div = '<button type="button" id="button_login" onclick="fadeInPopupLogin()">LOGIN</button>';
@@ -90,7 +90,7 @@ $(document).ready(function () {
         firstPageAdmin();
         getEventiAdministration();
         getAuleAdministration();
-
+        
     }
 
 
