@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.glassfish.jersey.server.Uri;
 import org.project.aule.web.swa.exception.RESTWebApplicationException;
 import org.project.aule.web.swa.model.Attrezzatura;
 import org.project.aule.web.swa.model.Aula;
@@ -326,9 +327,33 @@ public class AuleResources {
     @Path("{id_aula: [0-9]+}/gruppi")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response AssignGruppo() {
-
-        return Response.ok().build();
+    public Response AssignGruppo(
+            @Context ContainerRequestContext req,
+            @PathParam("id_aula") int aulaKey,
+            Map<String, Object> eventoJson
+    ) {
+        String response;
+        try {
+            PreparedStatement sAssociation = DBConnection.getConnection().prepareStatement("SELECT * FROM associazione_aula_gruppo WHERE ID_aula = ? AND ID_gruppo = ?");
+            PreparedStatement iAssociation = DBConnection.getConnection().prepareStatement("INSERT INTO associazione_aula_gruppo(ID_aula, ID_gruppo) VALUES (?, ?)");
+            List<String> arrayGruppi = new ArrayList<>();
+            arrayGruppi = (List<String>) eventoJson.get("array");
+            for (String gruppo : arrayGruppi) {
+                sAssociation.setInt(1, aulaKey);
+                sAssociation.setInt(2, Integer.parseInt(gruppo));
+                try ( ResultSet rs = sAssociation.executeQuery()) {
+                    if (!rs.next()) {
+                        iAssociation.setInt(1, aulaKey);
+                        iAssociation.setInt(2, Integer.parseInt(gruppo));
+                        iAssociation.executeUpdate();
+                    }
+                }
+            }
+            response = "Associazione Aula Gruppo avvenuta con successo!";
+        } catch (SQLException | ClassNotFoundException ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
+        }
+        return Response.ok(response).build();
     }
 
 }

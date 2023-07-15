@@ -277,9 +277,9 @@ function insertNewAula() {
                     method: 'get',
                     success: function (response) {
                         sessionStorage.setItem("ID_aula", response["id_aula"]);
-                        showPopupAssign();
+                        let id_aula = sessionStorage.getItem("ID_aula");
+                        showPopupAssign(id_aula);
                     }
-
                 });
             }
         },
