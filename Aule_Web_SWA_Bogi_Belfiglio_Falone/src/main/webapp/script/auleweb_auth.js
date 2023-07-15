@@ -63,8 +63,6 @@ $(document).ready(function () {
                 sessionStorage.setItem("authToken", response);
                 sessionStorage.setItem("count", count);
                 sessionStorage.setItem("refresh_time", refresh_time);
-                alert(sessionStorage.getItem("count"));
-                alert(sessionStorage.getItem("refresh_time"));
                 location.reload();
             },
             error: function () {
