@@ -4,10 +4,13 @@
  */
 package org.project.aule.web.swa.model;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.project.aule.web.swa.resources.database.DBConnection;
 
 public class Gruppo {
+
     private int key;
     private String tipoGruppo;
     private String nome;
@@ -50,6 +53,24 @@ public class Gruppo {
 
     public void setDescrizione(String descrizione) {
         this.descrizione = descrizione;
+    }
+
+    public static Gruppo createGruppoById(Integer id) throws Exception {
+        try {
+            Gruppo gruppo = new Gruppo();
+            PreparedStatement gruppoById = DBConnection.getConnection().prepareStatement("SELECT * FROM Gruppo WHERE ID = ? ");
+            gruppoById.setInt(1, id);
+            try ( ResultSet rs = gruppoById.executeQuery()) {
+                if (rs.next()) {
+                    gruppo = Gruppo.createGruppo(rs);
+
+                }
+            }
+            return gruppo;
+        } catch (SQLException ex) {
+            throw new Exception("Impossibile creare l'oggetto Gruppo da questo ID", ex);
+        }
+
     }
 
     public static Gruppo createGruppo(ResultSet rs) throws Exception {

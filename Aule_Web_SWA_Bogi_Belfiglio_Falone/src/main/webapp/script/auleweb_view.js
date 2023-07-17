@@ -120,15 +120,92 @@ function select_button_abilitato() {
 
 
 function verifyCorrectnessTimeEvento() {
+    let input_data = document.getElementById("data_evento");
+    let input_time_1 = document.getElementById("ora_inizio");
+    let input_time_2 = document.getElementById("ora_fine");
+    let div_message = document.getElementById("input_time_error");
+    if (input_data.value) {
+        let verify_data = new Date(input_data.value);
+        let current_data = new Date();
+        verify_data.setHours(0, 0, 0, 0);
+        current_data.setHours(0, 0, 0, 0);
+        if (verify_data < current_data) {
+            div_message.style.display = 'block';
+            input_data.value = "";
+            return;
+        } else if (verify_data.getTime() === current_data.getTime()) {
+            if (input_time_1.value) {
+                let timeComponents = input_time_1.value.split(":");
+                let hours = parseInt(timeComponents[0], 10);
+                let minutes = parseInt(timeComponents[1], 10);
+
+                let time_start = new Date();
+                time_start.setHours(hours);
+                time_start.setMinutes(minutes);
+                let current_time = new Date();
+
+                if (time_start < current_time) {
+                    div_message.style.display = 'block';
+                    input_time_1.value = "";
+                    return;
+
+                }
+            }
+        } else {
+            if (input_time_1.value && input_time_2.value) {
+                let timeComponents = input_time_1.value.split(":");
+                let hours = parseInt(timeComponents[0], 10);
+                let minutes = parseInt(timeComponents[1], 10);
+
+                let time_start = new Date();
+                time_start.setHours(hours);
+                time_start.setMinutes(minutes);
+
+                timeComponents = input_time_2.value.split(":");
+                hours = parseInt(timeComponents[0], 10);
+                minutes = parseInt(timeComponents[1], 10);
+                let time_end = new Date();
+                time_end.setHours(hours);
+                time_end.setMinutes(minutes);
+                if (time_end <= time_start) {
+                    div_message.style.display = 'block';
+                    input_time_2.value = "";
+                    return;
+
+                }
+            }
+
+        }
+
+    }
+
+    if (input_time_1.value) {
+        let timeComponents = input_time_1.value.split(":");
+        let minutes = parseInt(timeComponents[1], 10);
+        if (minutes % 15 !== 0) {
+            div_message.style.display = 'block';
+            input_time_1.value = "";
+            return;
+        }
+    }
+
+    if (input_time_2.value) {
+        let timeComponents = input_time_2.value.split(":");
+        let minutes = parseInt(timeComponents[1], 10);
+        if (minutes % 15 !== 0) {
+            div_message.style.display = 'block';
+            input_time_2.value = "";
+            return;
+        }
+    }
+
+
+    div_message.style.display = 'none';
+    return;
 
 }
 
-function fadeInPopupExport() {
-    $("#popupExport").fadeIn(1000);
-}
-function fadeOutPopupExport() {
-    $("#popupExport").fadeOut(1000);
-}
+
 
 function checkCalendarInput() {
     let date1 = document.getElementById("input_csv_date_1").value;
@@ -159,6 +236,50 @@ function checkImportButton(){
     }else{
         document.getElementById("button_aula_import").disabled = true;
     }
+}
+
+
+/* function for popup */
+
+function fadeInPopupExport() {
+    $("#popupExport").fadeIn(1000);
+}
+function fadeOutPopupExport() {
+    $("#popupExport").fadeOut(1000);
+}
+
+function fadeOutPopupEvento() {
+    $('#popupEvento').fadeOut(1000);
+
+}
+
+function fadeOutPopupError() {
+    $('#popupError').fadeOut(1000);
+
+}
+
+
+function hideAttrezzature() {
+    $("#attrezzatureAula").hide();
+    $("#showAule").show();
+}
+
+function hideGruppi() {
+    $("#gruppiAula").hide();
+    $("#showGruppi").show();
+}
+
+function fadeOutPopupAula() {
+    $('#popupAula').fadeOut(1000);
+}
+
+function fadeInPopupLogin() {
+    $("#popupLogin").slideDown(300);
+    $("#error_login").hide();
+}
+
+function fadeOutPopupLogin() {
+    $("#popupLogin").slideUp(300);
 }
 
 

@@ -95,6 +95,15 @@ function insertOrModifyEvent(id) {
             '<label for="ora_fine">ora fine:</label>' +
             '<input type="time" step="900" name="ora_fine" class="orario" id="ora_fine" onchange="validateEventsInputs(), verifyCorrectnessTimeEvento()"/>' +
             '<br>' +
+            '<div id="input_time_error" style="display:none">' +
+            '<p>Attenzione. verificare che:</p>' +
+            '<ul>' +
+            '<li>La data inserita sia almeno la data odierna</li>' +
+            '<li>In caso di data odierna, l\'orario di inizio non sia inferiore a quello attuale</li>' +
+            '<li>In caso di date successive, l\'orario di inizio sia inferiore a quello di fine</li>' +
+            '<li>L\'orario sia inserito con scarti di 15 minuti</li>' +
+            '</ul>' +
+            '</div><br>' +
             '<label for="descrizione">descrizione:</label><br>' +
             '<textarea name="descrizione" id="descrizione" oninput="validateEventsInputs()"></textarea>' +
             '<br>' +
@@ -131,15 +140,6 @@ function insertOrModifyEvent(id) {
             '</table>' +
             '<div id="corso" style="display:none">' +
             '</div>' +
-            '<div id="request_time_input" style="display:none">' +
-            '<p>Attenzione. verificare che:</p>' +
-            '<ul>' +
-            '<li>La data inserita sia almeno la data odierna</li>' +
-            '<li>In caso di data odierna, l\'orario di inizio non sia inferiore a quello attuale</li>' +
-            '<li>In caso di date successive, l\'orario di inizio sia inferiore a quello di fine</li>' +
-            '<li>L\'orario sia inserito con scarti di 15 minuti</li>' +
-            '</ul>' +
-            '</div>' +
             '<h4>RICORRENZA</h4>' +
             '<table><th></th><th>FREQUENZA</th>' +
             '<tr>' +
@@ -164,8 +164,12 @@ function insertOrModifyEvent(id) {
             '<input type="date" id="data_ricorrenza" name="fine_ricorrenza" onchange="validateEventsInputs()" />' +
             '</div>' +
             '<h4>RESPONSABILI</h4>' +
+            '<label>ricerca responsabile: </label>' +
+            '<input type="text" oninput="dynamicSearchResponsabile(this)" placeholder="email..." />' +
             '<div id="responsabile"></div>' +
             '<h4>AULA</h4>' +
+            '<label>ricerca aula: </label>' +
+            '<input type="text" oninput="dynamicSearchAula(this)" placeholder="nome aula..." />' +
             '<div id="aula"></div>' +
             '<div id="button_operation_event"></div>' +
             '</div>' +
@@ -308,19 +312,36 @@ function dynamicSearchAula(input) {
             url: "rest/aule/" + search + "/dynamic",
             method: "GET",
             success: function (response) {
-                $("#aule_administration").empty();
-                let tableAule = "<table><tr><th>NOME</th><th>RESPONSABILE</th><th>LUOGO</th><th>DETTAGLIO</th></tr>";
-                Object.keys(response).forEach(function (key) {
-                    let aula = response[key];
-                    tableAule += "<tr>" +
-                            "<td>" + aula["nome"] + "</td>" +
-                            "<td>" + aula["responsabile"] + '</td>' +
-                            "<td>" + aula["luogo"] + "</td>" +
-                            '<td><button type="button" name="ID_evento" value="' + key + '" onclick="showAulaInformationsById(this.value)" >vedi</button></td>' +
-                            "</tr>";
-                });
-                tableAule += "</table>";
-                $("#aule_administration").append(tableAule);
+                if (document.getElementById("aule_administration") !== null) {
+                    //alert("si");
+                    $("#aule_administration").empty();
+                    let tableAule = "<table><tr><th>NOME</th><th>RESPONSABILE</th><th>LUOGO</th><th>DETTAGLIO</th></tr>";
+                    Object.keys(response).forEach(function (key) {
+                        let aula = response[key];
+                        tableAule += "<tr>" +
+                                "<td>" + aula["nome"] + "</td>" +
+                                "<td>" + aula["responsabile"] + '</td>' +
+                                "<td>" + aula["luogo"] + "</td>" +
+                                '<td><button type="button" name="ID_evento" value="' + key + '" onclick="showAulaInformationsById(this.value)" >vedi</button></td>' +
+                                "</tr>";
+                    });
+                    tableAule += "</table>";
+                    $("#aule_administration").append(tableAule);
+                } else {
+                    //alert("ok");
+                    $("#aula").empty();
+                    let tableAule = "<table><tr><th></th><th>NOME</th></tr>";
+                    Object.keys(response).forEach(function (key) {
+                        let aula = response[key];
+                        tableAule += "<tr>" +
+                                '<td><input type="radio" name="aula" value="' + key + '" onchange="validateEventsInputs()"/></td>' +
+                                "<td>" + aula["nome"] + '</td>' +
+                                "</tr>";
+                    });
+                    tableAule += "</table>";
+                    $("#aula").append(tableAule);
+
+                }
             },
             error: function (xhr) {
 
@@ -333,10 +354,10 @@ function insertAula(id) {
 //////svuotiamo il container totale per inserire la form dell'evento
     let form = "";
     form +=
-            '<h3>FORM AULA</h3>' +
             '<div id="form_aula" class="form aula">' +
             '<div class="container">' +
             '<div class="ten columns">' +
+            '<h3>FORM AULA</h3>' +
             '<button type="button" onclick="location.reload()">annulla</button><br>' +
             '<label><i>configurazione di un\'aula: </i></label>' +
             '<button type="button" id="button_importa" onclick="fadeInPopupImportAula()">importa</button><br>' +
@@ -367,6 +388,8 @@ function insertAula(id) {
             '<textarea name="note_generiche" id="note_generiche" placeholder="inserisci delle note generiche" oninput="validateAuleInputs()"></textarea>' +
             '<br>' +
             '<h4>RESPONSABILI</h4>' +
+            '<label>ricerca responsabile: </label>' +
+            '<input type="text" oninput="dynamicSearchResponsabile(this)" placeholder="email..." />' +
             '<div id="responsabile"></div>' +
             '<br>' +
             '<h4>ATTREZZATURE</h4>' +
@@ -384,11 +407,11 @@ function insertAula(id) {
     //    fillGruppiTable();
 }
 
-function fadeInPopupImportAula(){
+function fadeInPopupImportAula() {
     $("#popupImportAula").fadeIn(1000);
 }
 
-function fadeOutPopupImportAula(){
+function fadeOutPopupImportAula() {
     $("#popupImportAula").fadeOut(1000);
 }
 

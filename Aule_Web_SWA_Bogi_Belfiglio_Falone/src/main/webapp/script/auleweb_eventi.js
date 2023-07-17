@@ -20,7 +20,21 @@ function getCurrentEventi() {
             $("#auleweb").append(tableCurrentEventi);
         },
         error: function (xhr, status, error) {
-            // Si è verificato un errore durante la richiesta
+            window.scrollTo(0,0);
+            document.querySelectorAll('input').forEach(input => input.value='');
+            document.querySelector('textarea').value='';
+            document.querySelectorAll('input[type="radio"]:checked').forEach(input => input.checked = false);
+            let content =
+                    '<div class="exit">' +
+                    '<button type="button" onclick="fadeOutPopupError()">X</button>' +
+                    '</div>' +
+                    '<div class="container">' +
+                    '<div class="ten columns">' +
+                    '<h2>ERRORE</h2>' +
+                    '<p>' + xhr.responseText + '</p>' +
+                    '</div>' + 
+                    '</div>';
+            $("#popupError").empty().append(content).fadeIn(1000);
 
         }
     });
@@ -63,6 +77,21 @@ function showEventInformations(id) {
             $("#popupEvento").fadeIn(1000);
         },
         error: function (xhr, status, error) {
+            window.scrollTo(0,0);
+            document.querySelectorAll('input').forEach(input => input.value='');
+            document.querySelector('textarea').value='';
+            document.querySelectorAll('input[type="radio"]:checked').forEach(input => input.checked = false);
+            let content =
+                    '<div class="exit">' +
+                    '<button type="button" onclick="fadeOutPopupError()">X</button>' +
+                    '</div>' +
+                    '<div class="container">' +
+                    '<div class="ten columns">' +
+                    '<h2>ERRORE</h2>' +
+                    '<p>' + xhr.responseText + '</p>' +
+                    '</div>' + 
+                    '</div>';
+            $("#popupError").empty().append(content).fadeIn(1000);
 
         }
     });
@@ -119,17 +148,25 @@ function showEventiByAulaAndWeek() {
             $("#table_eventi_aula").append(tableAulaEventi);
         },
         error: function (xhr, status, error) {
-            $("#table_eventi_aula").append(xhr.responseText);
+            window.scrollTo(0,0);
+            document.querySelectorAll('input').forEach(input => input.value='');
+            document.querySelector('textarea').value='';
+            document.querySelectorAll('input[type="radio"]:checked').forEach(input => input.checked = false);
+            let content =
+                    '<div class="exit">' +
+                    '<button type="button" onclick="fadeOutPopupError()">X</button>' +
+                    '</div>' +
+                    '<div class="container">' +
+                    '<div class="ten columns">' +
+                    '<h2>ERRORE</h2>' +
+                    '<p>' + xhr.responseText + '</p>' +
+                    '</div>' + 
+                    '</div>';
+            $("#popupError").empty().append(content).fadeIn(1000);
 
 
         }
     });
-}
-
-
-function fadeOutPopupEvento() {
-    $('#popupEvento').fadeOut(1000);
-
 }
 
 function showEventInformationsByName() {
@@ -260,7 +297,21 @@ function insertNewEvento() {
             }
         },
         error: function (xhr) {
-            $("#container").empty().append(xhr.responseText);
+            window.scrollTo(0,0);
+            document.querySelectorAll('input').forEach(input => input.value='');
+            document.querySelector('textarea').value='';
+            document.querySelectorAll('input[type="radio"]:checked').forEach(input => input.checked = false);
+            let content =
+                    '<div class="exit">' +
+                    '<button type="button" onclick="fadeOutPopupError()">X</button>' +
+                    '</div>' +
+                    '<div class="container">' +
+                    '<div class="ten columns">' +
+                    '<h2>ERRORE</h2>' +
+                    '<p>' + xhr.responseText + '</p>' +
+                    '</div>' + 
+                    '</div>';
+            $("#popupError").empty().append(content).fadeIn(1000);
         }
     });
 
@@ -280,7 +331,6 @@ function modifyEvento(id) {
     else
         data_ricorrenza = "";
     let tipologia = document.querySelector('input[type="radio"][name="tipologia"]:checked').value;
-    alert(tipologia);
     let responsabileKey = document.querySelector('input[type="radio"][name="responsabile"]:checked').value;
     let aulaKey = document.querySelector('input[type="radio"][name="aula"]:checked').value;
     let corsoKey;
@@ -289,7 +339,6 @@ function modifyEvento(id) {
     else
         corsoKey = 0;
 
-    alert(corsoKey);
     let evento = {
         nome: nome,
         data_evento: data_evento,
@@ -332,7 +381,21 @@ function modifyEvento(id) {
             }
         },
         error: function (xhr) {
-            $("#container").empty().append(xhr.responseText);
+            window.scrollTo(0,0);
+            document.querySelectorAll('input').forEach(input => input.value='');
+            document.querySelector('textarea').value='';
+            document.querySelectorAll('input[type="radio"]:checked').forEach(input => input.checked = false);
+            let content =
+                    '<div class="exit">' +
+                    '<button type="button" onclick="fadeOutPopupError()">X</button>' +
+                    '</div>' +
+                    '<div class="container">' +
+                    '<div class="ten columns">' +
+                    '<h2>ERRORE</h2>' +
+                    '<p>' + xhr.responseText + '</p>' +
+                    '</div>' + 
+                    '</div>';
+            $("#popupError").empty().append(content).fadeIn(1000);
         }
     });
 
@@ -374,7 +437,21 @@ function exportEventiCalendar() {
 
         },
         error: function (xhr) {
-            $("#container").empty().append(xhr.responseText);
+            window.scrollTo(0,0);
+            document.querySelectorAll('input').forEach(input => input.value='');
+            document.querySelector('textarea').value='';
+            document.querySelectorAll('input[type="radio"]:checked').forEach(input => input.checked = false);
+            let content =
+                    '<div class="exit">' +
+                    '<button type="button" onclick="fadeOutPopupError()">X</button>' +
+                    '</div>' +
+                    '<div class="container">' +
+                    '<div class="ten columns">' +
+                    '<h2>ERRORE</h2>' +
+                    '<p>' + xhr.responseText + '</p>' +
+                    '</div>' + 
+                    '</div>';
+            $("#popupError").empty().append(content).fadeIn(1000);
         }
     });
 }

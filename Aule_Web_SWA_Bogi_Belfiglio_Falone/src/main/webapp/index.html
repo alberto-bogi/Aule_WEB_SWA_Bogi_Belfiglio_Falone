@@ -9,6 +9,7 @@
         <link rel="stylesheet" href="style/auleweb_eventi.css"  type="text/css" />
         <link rel="stylesheet" href="style/auleweb_admin.css"  type="text/css" />
         <link rel="stylesheet" href="style/auleweb_gruppi.css"  type="text/css" />
+        <link rel="stylesheet" href="style/auleweb_error.css"  type="text/css" />
         <link rel="stylesheet" href="style/login.css"  type="text/css" />
     </head>
     <body>
@@ -17,22 +18,17 @@
                 <p class="title header">AULE WEB</p>
             </div>
             <div class="six columns">
-
-                <div id="export_eventi_div">
-                </div>
+                <div id="export_eventi_div"> </div>
             </div>
 
             <div class="one column">
-                <div class="login" id="login_div">
-                </div>
+                <div class="login" id="login_div"> </div>
             </div>
         </div>
 
 
 
-        <div id="container">
-
-        </div>
+        <div id="container">  </div>
 
 
 
@@ -80,32 +76,29 @@
                 </div>
             </div>
         </div>
-        
+
         <div id="popupImportAula" style="display: none">
-           <div class="exit">
-                    <button type="button" onclick="fadeOutPopupImportAula()">X</button>
+            <div class="exit">
+                <button type="button" onclick="fadeOutPopupImportAula()">X</button>
+            </div>
+            <div class="container">
+                <div class="ten columns">
+                    <h2>SELEZIONA FILE</h2>
+                    <input type="file" name="aula_import" id="aula_import" oninput="checkImportButton()" /><br>
+                    <button type="button" id="button_aula_import" onclick="importAula()" disabled>upload</button>  
                 </div>
-                <div class="container">
-                    <div class="ten columns">
-                        <h2>SELEZIONA FILE</h2>
-                        <input type="file" name="aula_import" id="aula_import" oninput="checkImportButton()" /><br>
-                        <button type="button" id="button_aula_import" onclick="importAula()" disabled>upload</button>  
-                    </div>
-                </div>
-            
+            </div>
+
         </div>
 
 
         <div id="popupEvento" style="display: none"> </div>
 
         <div id="popupAula" style="display: none"> </div>
-        
+
         <div id="popupAssegnaGruppo" style="display:none"> </div>
-
-
-
-
-
+        
+        <div id ="popupError" style="display:none"> </div>
 
 
         <script src="script/auleweb_eventi.js"></script>

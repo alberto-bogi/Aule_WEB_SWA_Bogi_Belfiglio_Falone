@@ -20,7 +20,6 @@ $(document).ready(function () {
                     },
                     contentType: 'application/x-www-form-urlencoded',
                     success: function (response) {
-                        let authToken = response; //mi salvo il nuovo token dalla response
                         sessionStorage.removeItem("authToken");
                         sessionStorage.setItem("authToken", response);
                         sessionStorage.setItem("refresh_time", refresh_time);
@@ -57,7 +56,6 @@ $(document).ready(function () {
             contentType: 'application/x-www-form-urlencoded',
             data: formData,
             success: function (response) {
-                let token = response;
                 let count = 0;
                 let refresh_time = 30;
                 sessionStorage.setItem("authToken", response);
@@ -89,7 +87,7 @@ function logout() {
                 sessionStorage.removeItem("refresh_time");
             }
 
-            alert("Logout effettuato con successo.");
+            //alert("Logout effettuato con successo.");
             location.reload();
         },
         error: function (request, status, error) {

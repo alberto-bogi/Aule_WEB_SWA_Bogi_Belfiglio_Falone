@@ -39,6 +39,14 @@ function showPopupAssign(id) {
 
 function formAssign(id) {
     let id_aula = id;
+    let nome_aula = "";
+    $.ajax({
+        url: "rest/aule/" + id_aula,
+        method: "get",
+        success: function(response){
+            nome_aula = response["nome"];    
+        }
+    });
     $("#popupAula").hide();
     $("#popupAssegnaGruppo").hide();
     $.ajax({
@@ -46,45 +54,32 @@ function formAssign(id) {
         method: "GET",
         success: function (response) {
             $("#container").empty();
-            let tipiScritti = [];
             let popupContent = "";
             popupContent +=
                     '<div class="form gruppo">' +
                     '<div class="container">' +
                     '<div class="ten columns">' +
-                    '<h3>ASSEGNAZIONE GRUPPI</h3>' +
+                    '<h3>ASSEGNAZIONE GRUPPI PER AULA ' + nome_aula + '</h3>' +
                     '<button type="button" onclick="location.reload()">annulla</button><br>' +
                     '<p>Seleziona il gruppo in base al suo tipo:</p>';
             Object.keys(response).forEach(function (key) {
-                let gruppo = response[key];
-                let salta = false;
-
-                for (let i = 0; i < tipiScritti.length; i++) {
-                    if (gruppo["tipo"] === tipiScritti[i]) {
-                        salta = true;
-                    }
-                }
-                if (salta === false) {
-                    tipiScritti.push(gruppo["tipo"]);
+                let gruppi = response[key];
+                popupContent +=
+                        '<label>' + key + ": " + '</label>' +
+                        '<select name="select_name" onchange="select_button_abilitato()">' +
+                        '<option disabled selected value="">Seleziona un gruppo di tipo ' + key.toLowerCase() + '</option>';
+                Object.keys(gruppi).forEach(function (key) {
+                    //alert(key);
                     popupContent +=
-                            '<label for="' + gruppo["tipo"] + '">' + gruppo["tipo"] + ": " + '</label>' +
-                            '<select name="select_name" onchange="select_button_abilitato()">' +
-                            '<option disabled selected value="">Seleziona un gruppo di tipo ' + gruppo["tipo"].toString().toLowerCase() + '</option>';
-                    Object.keys(response).forEach(function (key) {
-                        let gruppoCiclato = response[key];
-                        if (gruppoCiclato["tipo"] === gruppo["tipo"]) {
-                            popupContent +=
-                                    '<option value="' + gruppoCiclato["ID"] + '">' + gruppoCiclato["nome"] + '</option>';
-                        }
-                    });
-                    popupContent +=
-                            '</select>' +
-                            '<br>';
-                }
+                            '<option value="' + key + '">' + gruppi[key] + '</option>';
+                });
 
+                popupContent +=
+                    '</select>' +
+                    '<br>';
             });
-            popupContent +=
-                    '<button type="button" id="button_assegna" value="' + id_aula + '" onclick="AssignGruppoToAula(this.value)" disabled>Assegna</button>' +
+          popupContent +=
+                    '<button type="button" id="button_assegna" value="' + id_aula + '" onclick="assignGruppoToAula(this.value)" disabled>Assegna</button>' +
                     '</div>';
             $("#container").empty().append(popupContent);
             $("#container").show();
@@ -96,7 +91,7 @@ function formAssign(id) {
     });
 }
 
-function AssignGruppoToAula(id) {
+function assignGruppoToAula(id) {
     let id_aula = id;
     let selectElements = document.getElementsByName("select_name");
     let arrayGruppiIds = [];
@@ -120,11 +115,12 @@ function AssignGruppoToAula(id) {
         contentType: "application/json",
         data: JSON.stringify(array),
         success: function (response) {
-            alert(response);
+            //alert(response);
             location.reload();
         },
         error: function (xhr, status, error) {
-            $("#container").empty().append(xhr.responseText);
+            let content = "<p>" + xhr.responseText + "</p>";
+            $("#container").empty().append(content).fadeIn(1000);
         }
     });
 

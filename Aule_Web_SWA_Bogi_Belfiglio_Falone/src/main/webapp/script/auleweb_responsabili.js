@@ -50,3 +50,39 @@ function fillResponsabiliTable(id) {
     });
 }
 
+function dynamicSearchResponsabile(input) {
+    let search = input.value;
+    if (!search) {
+        fillResponsabiliTable();
+    } else {
+        $.ajax({
+            url: "rest/responsabili/" + search + "/dynamic",
+            method: "GET",
+            success: function (response) {
+                $("#responsabile").empty();
+                let tableResponsabili = "<table><tr><th></th><th>EMAIL</th>";
+                if (document.getElementById("form_evento") !== null) {
+                Object.keys(response).forEach(function (key) {
+                    tableResponsabili += "<tr>" +
+                            '<td><input type="radio" name="responsabile" value="' + key + '" onchange="validateEventsInputs()"/></td>' +
+                            "<td>" + response[key] + "</td>" +
+                            "</tr>";
+                });
+            }else{
+              Object.keys(response).forEach(function (key) {
+                    tableResponsabili += "<tr>" +
+                            '<td><input type="radio" name="responsabile" value="' + key + '" onchange="validateAuleInputs()"/></td>' +
+                            "<td>" + response[key] + "</td>" +
+                            "</tr>";
+                });  
+            }
+                tableResponsabili += "</table>";
+                $("#responsabile").append(tableResponsabili);
+            },
+            error: function (xhr) {
+                $("#eventi_administration").append(xhr.responseText);
+            }
+        });
+    }
+}
+

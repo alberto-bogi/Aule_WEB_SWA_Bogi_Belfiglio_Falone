@@ -50,6 +50,7 @@ import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.model.property.CalScale;
+import net.fortuna.ical4j.model.property.Description;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Version;
@@ -591,6 +592,9 @@ public class EventiResources {
                 DateTime start = new DateTime(start_event.getTime());
                 DateTime end = new DateTime(end_event.getTime());
                 VEvent calendarEvent = new VEvent(start, end, evento.getNome());
+                calendarEvent.getProperties().add(new Description("AULA " + evento.getAula().getNome().toUpperCase() +
+                        ": " + evento.getDescrizione().toUpperCase()));
+                        
 
                 // add timezone info..
                 calendarEvent.getProperties().add(tz.getTimeZoneId());

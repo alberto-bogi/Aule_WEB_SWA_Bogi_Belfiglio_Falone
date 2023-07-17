@@ -66,4 +66,31 @@ public class ResponsabiliResource {
         }
         
     }
+
+
+@Path("{search:[A-Za-z0-9(%20)]*}/dynamic")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getResponsabiliByDynamicSearch(
+            @PathParam("search") String search) {
+
+        Map<Integer, String> response = new HashMap();
+        try {
+            PreparedStatement responsabiliByDynamicSearch = DBConnection.getConnection().prepareStatement("SELECT * FROM Responsabile WHERE substring(email,1,?) = ?");
+            // da vedere
+            responsabiliByDynamicSearch.setInt(1, search.length());
+            responsabiliByDynamicSearch.setString(2, search);
+            try ( ResultSet rs = responsabiliByDynamicSearch.executeQuery()) {
+                while (rs.next()) {
+                    Responsabile responsabile = Responsabile.createResponsabile(rs);
+                    response.put(responsabile.getKey(), responsabile.getEmail());
+                }
+            }
+        } catch (SQLException | ClassNotFoundException ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
+        } catch (Exception ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
+        }
+        return Response.ok(response).build();
+    }
 }

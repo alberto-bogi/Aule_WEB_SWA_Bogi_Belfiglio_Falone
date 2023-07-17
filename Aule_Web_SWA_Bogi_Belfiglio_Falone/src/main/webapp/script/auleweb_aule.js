@@ -127,8 +127,8 @@ function showAttrezzatureByAula(id) {
             if (Object.keys(response).length > 0) {
                 attrezzatureContent += "<p>";
                 Object.keys(response).forEach(function (key) {
-                    let attrezzatura = response[key];
-                    attrezzatureContent += attrezzatura["nome"] + " ";
+                    //alert(key);
+                    attrezzatureContent += key + " x" + response[key] + "<br>";
                 });
                 attrezzatureContent += '</p><p class="attrezzature" id="hide" onclick="hideAttrezzature()">nascondi attrezzature</p>';
                 $("#attrezzatureAula").append(attrezzatureContent);
@@ -206,28 +206,7 @@ function exportAulaCSV(id) {
 
 }
 
-function hideAttrezzature() {
-    $("#attrezzatureAula").hide();
-    $("#showAule").show();
-}
 
-function hideGruppi() {
-    $("#gruppiAula").hide();
-    $("#showGruppi").show();
-}
-
-function fadeOutPopupAula() {
-    $('#popupAula').fadeOut(1000);
-}
-
-function fadeInPopupLogin() {
-    $("#popupLogin").slideDown(300);
-    $("#error_login").hide();
-}
-
-function fadeOutPopupLogin() {
-    $("#popupLogin").slideUp(300);
-}
 
 function insertNewAula() {
     let idAttrezzatureArray = [];
@@ -286,7 +265,22 @@ function insertNewAula() {
             }
         },
         error: function (xhr) {
-            $("#container").empty().append(xhr.responseText);
+            window.scrollTo(0,0);
+            document.querySelectorAll('input').forEach(input => input.value='');
+            document.querySelector('textarea').value='';
+            document.querySelectorAll('input[type="radio"]:checked').forEach(input => input.checked = false);
+            document.querySelectorAll('input[type="checkbox"]:checked').forEach(input => input.checked = false);
+            let content =
+                    '<div class="exit">' +
+                    '<button type="button" onclick="fadeOutPopupError()">X</button>' +
+                    '</div>' +
+                    '<div class="container">' +
+                    '<div class="ten columns">' +
+                    '<h2>ERRORE</h2>' +
+                    '<p>' + xhr.responseText + '</p>' +
+                    '</div>' + 
+                    '</div>';
+            $("#popupError").empty().append(content).fadeIn(1000);
         }
     });
 
@@ -338,8 +332,6 @@ function importAula() {
                     fillAttrezzatureTable(response);
                 }
             });
-            //document.querySelector('input[type="radio"][name="responsabile"]:checked').value;
-            //let idAttrezzature = document.querySelectorAll('input[type="checkbox"][name="attrezzatura"]:checked');
             document.getElementById("button_aula").disabled = false;
             $("#popupImportAula").fadeOut(1000);
         },

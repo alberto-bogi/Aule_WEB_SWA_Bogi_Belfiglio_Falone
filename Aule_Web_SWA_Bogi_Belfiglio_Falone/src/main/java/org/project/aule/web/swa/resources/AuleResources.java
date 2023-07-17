@@ -145,17 +145,14 @@ public class AuleResources {
             @PathParam("id_aula") int aulaKey
     ) {
         try {
-            PreparedStatement attrezzatureByAulaId = DBConnection.getConnection().prepareStatement("SELECT * FROM Attrezzatura WHERE ID_aula = ?");
+            PreparedStatement attrezzatureByAulaId = DBConnection.getConnection().prepareStatement("SELECT nome, count(nome) AS numero FROM Attrezzatura WHERE ID_aula = ? GROUP BY nome");
             //PrepareStatement attrezzatureByAulaId = DBConnection.getConnection().prepareStatement(sql)
-            Map<Integer, Map<String, Object>> response = new HashMap<>();
+            Map<String, Object> response = new HashMap<>();
             attrezzatureByAulaId.setInt(1, aulaKey);
             try ( ResultSet rs = attrezzatureByAulaId.executeQuery()) {
                 while (rs.next()) {
-                    Attrezzatura attrezzatura = Attrezzatura.createAttrezzatura(rs);
-                    Map<String, Object> item = new HashMap<>();
-                    item.put("nome", attrezzatura.getNome());
-
-                    response.put(rs.getInt("ID"), item);
+                    //Attrezzatura attrezzatura = Attrezzatura.createAttrezzatura(rs);
+                    response.put(rs.getString("nome"), rs.getInt("numero"));
                 }
             }
             return Response.ok(response).build();
@@ -330,35 +327,46 @@ public class AuleResources {
     @Path("{id_aula: [0-9]+}/gruppi")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response AssignGruppo(
+    public Response assignGruppo(
             @Context ContainerRequestContext req,
             @PathParam("id_aula") int aulaKey,
             Map<String, Object> eventoJson
     ) {
-        String response;
+        String response = "";
         try {
-            PreparedStatement sAssociation = DBConnection.getConnection().prepareStatement("SELECT * FROM associazione_aula_gruppo WHERE ID_aula = ? AND ID_gruppo = ?");
+            PreparedStatement sAssociation = DBConnection.getConnection().prepareStatement("SELECT AG.ID FROM associazione_aula_gruppo AG, Gruppo G WHERE AG.ID_aula = ? AND AG.ID_gruppo = G.ID AND G.tipo = ?");
             PreparedStatement iAssociation = DBConnection.getConnection().prepareStatement("INSERT INTO associazione_aula_gruppo(ID_aula, ID_gruppo) VALUES (?, ?)");
+            PreparedStatement uAssociation = DBConnection.getConnection().prepareStatement("UPDATE associazione_aula_gruppo SET ID_gruppo = ? WHERE ID = ?");
             List<String> arrayGruppi = new ArrayList<>();
             arrayGruppi = (List<String>) eventoJson.get("array");
-            for (String gruppo : arrayGruppi) {
+            for (String gruppoID : arrayGruppi) {
+                Gruppo gruppo = Gruppo.createGruppoById(Integer.parseInt(gruppoID));
                 sAssociation.setInt(1, aulaKey);
-                sAssociation.setInt(2, Integer.parseInt(gruppo));
+                sAssociation.setString(2, gruppo.getTipoGruppo());
                 try ( ResultSet rs = sAssociation.executeQuery()) {
                     if (!rs.next()) {
                         iAssociation.setInt(1, aulaKey);
-                        iAssociation.setInt(2, Integer.parseInt(gruppo));
+                        iAssociation.setInt(2, gruppo.getKey());
                         iAssociation.executeUpdate();
+                        response = "Associazione Aula Gruppo avvenuta con successo!";
+                    } else {
+                        uAssociation.setInt(1, gruppo.getKey());
+                        uAssociation.setInt(2, rs.getInt(1));
+                        if (uAssociation.executeUpdate() == 1) {
+                            response = "Modifica Aula Gruppo avvenuta con successo!";
+                        }
                     }
                 }
             }
-            response = "Associazione Aula Gruppo avvenuta con successo!";
+
         } catch (SQLException | ClassNotFoundException ex) {
+            throw new RESTWebApplicationException(ex.getMessage());
+        } catch (Exception ex) {
             throw new RESTWebApplicationException(ex.getMessage());
         }
         return Response.ok(response).build();
     }
-    
+
     @Path("import")
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -366,13 +374,13 @@ public class AuleResources {
     public Response importAulaCSV(
             @FormDataParam("file") FormDataBodyPart part,
             @Context ServletContext sc
-    ){
+    ) {
         //convertiamo il contenuto della parte identificata con la chiave "file" in un oggetto di tipo File
         File file = part.getValueAs(File.class);
         Map<String, String> response = CSVResult.readCSVAulaFile(file);
-        
+
         return Response.ok(response).build();
-        
+
     }
 
 }

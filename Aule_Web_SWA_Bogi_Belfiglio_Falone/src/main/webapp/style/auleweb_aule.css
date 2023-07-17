@@ -162,7 +162,7 @@
 #popupImportAula input[type="file"]{
     padding: 0.2%;
     cursor: pointer;
-    width: 50%;
+    width: 20%;
     font-family: sans-serif;
     font-weight: bold;
     margin-top: 1%;

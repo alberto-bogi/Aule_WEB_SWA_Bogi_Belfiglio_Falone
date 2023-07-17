@@ -33,21 +33,29 @@ public class GruppiResources {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getGruppi() throws Exception {
-        Map<Integer, Map<String,Object>> response = new HashMap<>();
+        Map<String, Map<Integer, String>> response = new HashMap<>();
         try {
-            PreparedStatement allGruppi = DBConnection.getConnection().prepareStatement("SELECT * FROM Gruppo");
-            try ( ResultSet rs = allGruppi.executeQuery()) {
+            PreparedStatement allTipi = DBConnection.getConnection().prepareStatement("SELECT tipo FROM Gruppo GROUP BY tipo");
+            PreparedStatement allGruppi = DBConnection.getConnection().prepareStatement("SELECT * FROM Gruppo WHERE tipo = ?");
+            try ( ResultSet rs = allTipi.executeQuery()) {
                 while (rs.next()) {
-                    Gruppo gruppo = Gruppo.createGruppo(rs);
-                    Map<String,Object> item = new HashMap<>();
-                    item.put("ID", gruppo.getKey());
-                    item.put("tipo",gruppo.getTipoGruppo());
-                    item.put("nome", gruppo.getNome());
-                    item.put("descrizione",gruppo.getDescrizione());
-                    response.put(gruppo.getKey(), item);
+                    allGruppi.setString(1, rs.getString("tipo"));
+                    try ( ResultSet rs2 = allGruppi.executeQuery()) {
+                        Map<Integer, String> item = new HashMap<>();
+                        while (rs2.next()) {
+                            Gruppo gruppo = Gruppo.createGruppo(rs2);
+                            
+                            item.put(gruppo.getKey(), gruppo.getNome());
+                            //item.put("tipo", gruppo.getTipoGruppo());
+                            //item.put("nome", gruppo.getNome());
+                            //item.put("descrizione", gruppo.getDescrizione());
+                            
+                        }
+                        response.put(rs.getString("tipo"), item);
+                    }
                 }
+                return Response.ok(response).build();
             }
-            return Response.ok(response).build();
         } catch (SQLException | ClassNotFoundException ex) {
             throw new RESTWebApplicationException(ex.getMessage());
         }
